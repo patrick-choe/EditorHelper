@@ -12,8 +12,8 @@ namespace EditorHelper.Patch
 	[HarmonyPatch(typeof(scnEditor), "Update")]
 	internal static class UpdatePatch
 	{
-		private static readonly MethodInfo _copyFloor = typeof(scnEditor).GetMethod("CopyFloor", AccessTools.all);
-		private static readonly MethodInfo _multiSelectFloors = typeof(scnEditor).GetMethod("MultiSelectFloors", AccessTools.all);
+		private static readonly MethodInfo CopyFloor = typeof(scnEditor).GetMethod("CopyFloor", AccessTools.all);
+		private static readonly MethodInfo MultiSelectFloors = typeof(scnEditor).GetMethod("MultiSelectFloors", AccessTools.all);
 
 		private static void Prefix(scnEditor __instance, ref bool ___refreshBgSprites, ref bool ___refreshDecSprites)
 		{
@@ -34,7 +34,7 @@ namespace EditorHelper.Patch
 
 			if (Input.GetKeyDown(KeyCode.A))
 			{
-				_multiSelectFloors.Invoke(__instance, new object[] { __instance.customLevel.levelMaker.listFloors.First(), __instance.customLevel.levelMaker.listFloors.Last(), true });
+				MultiSelectFloors.Invoke(__instance, new object[] { __instance.customLevel.levelMaker.listFloors.First(), __instance.customLevel.levelMaker.listFloors.Last(), true });
 			}
 
 			if (!Input.GetKeyDown(KeyCode.X) || __instance.selectedFloor == null || __instance.selectedFloor.seqID != 0)
@@ -42,7 +42,7 @@ namespace EditorHelper.Patch
 				return;
 			}
 
-			_copyFloor.Invoke(__instance, new object[] { __instance.selectedFloor, true, false });
+			CopyFloor.Invoke(__instance, new object[] { __instance.selectedFloor, true, false });
 
 			foreach (var ev in __instance.events.FindAll(x => x.floor == 0).Where(ev => __instance.EventHasBackgroundSprite(ev) || ev.eventType == LevelEventType.AddDecoration))
 			{
