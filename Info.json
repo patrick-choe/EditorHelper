@@ -2,7 +2,7 @@
   "Id": "EditorHelper",
   "DisplayName": "ADOFAI Editor Helper",
   "Author": "PatrickKR",
-  "Version": "1.2.0-r73+",
+  "Version": "1.2.1-r73+",
   "AssemblyName": "EditorHelper.dll",
   "EntryMethod": "EditorHelper.Main.Load"
 }
