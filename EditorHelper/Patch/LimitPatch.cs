@@ -6,6 +6,7 @@ using GDMiniJSON;
 using HarmonyLib;
 using org.mariuszgromada.math.mxparser;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace EditorHelper.Patch
 {
@@ -204,6 +205,52 @@ namespace EditorHelper.Patch
 				}
 			}
 			__result = intNum.ToString();
+			return false;
+		}
+	}
+
+	[HarmonyPatch(typeof(PropertyControl_Vector2), "Validate")]
+	internal static class ValidateVectorPatch
+	{
+		private static bool Prefix(PropertyControl __instance, ref string __result, InputField x, InputField y, bool returnX)
+		{
+			if (!Main.Settings.RemoveLimits)
+			{
+				return true;
+			}
+
+			var resultX = 0f;
+			if (float.TryParse(x.text, out var parsedX))
+			{
+				resultX = parsedX;
+			}
+			else
+			{
+				var expr = new Expression(x.text).calculate();
+				if (double.IsFinite(expr))
+				{
+					resultX = (float)expr;
+				}
+			}
+
+			var resultY = 0f;
+			if (float.TryParse(y.text, out var parsedY))
+			{
+				resultY = parsedY;
+			}
+			else
+			{
+				var expr = new Expression(y.text).calculate();
+				if (double.IsFinite(expr))
+				{
+					resultY = (float)expr;
+				}
+			}
+
+			var vector2 = __instance.propertyInfo.Validate(new Vector2(resultX, resultY));
+
+			__result = !returnX ? vector2.y.ToString() : vector2.x.ToString();
+
 			return false;
 		}
 	}

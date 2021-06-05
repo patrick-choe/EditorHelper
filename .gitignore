@@ -6,3 +6,6 @@
 bin/
 obj/
 *.zip
+
+# Packages
+packages/
