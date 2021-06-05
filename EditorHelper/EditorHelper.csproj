@@ -51,12 +51,18 @@
       <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
         <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
       </Reference>
+      <Reference Include="MathParser.org-mXparser, Version=4.4.2.0, Culture=neutral, PublicKeyToken=0fbab7add73ed6e2">
+        <HintPath>..\packages\MathParser.org-mXparser.4.4.2\lib\net48\MathParser.org-mXparser.dll</HintPath>
+        <Private>True</Private>
+      </Reference>
       <Reference Include="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
         <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\mscorlib.dll</HintPath>
       </Reference>
       <Reference Include="RDTools, Version=1.0.7156.29099, Culture=neutral, PublicKeyToken=null">
         <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\RDTools.dll</HintPath>
       </Reference>
+      <Reference Include="System" />
+      <Reference Include="System.Data" />
       <Reference Include="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
         <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice_r68\A Dance of Fire and Ice_Data\Managed\System.Windows.Forms.dll</HintPath>
       </Reference>
@@ -75,6 +81,9 @@
       <Reference Include="UnityModManager, Version=0.23.4.0, Culture=neutral, PublicKeyToken=null">
         <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityModManager\UnityModManager.dll</HintPath>
       </Reference>
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="packages.config" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

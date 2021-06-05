@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using ADOFAI;
@@ -58,6 +59,7 @@ namespace EditorHelper
         private static void StopTweaks()
         {
             _harmony.UnpatchAll(_harmony.Id);
+            _harmony = null;
         }
         
         private static void OnGUI(UnityModManager.ModEntry modEntry)

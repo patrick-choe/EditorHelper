@@ -6,6 +6,7 @@ using ADOFAI;
 using HarmonyLib;
 using SFB;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace EditorHelper.Patch
 {
@@ -17,8 +18,7 @@ namespace EditorHelper.Patch
 
 		private static void Prefix(scnEditor __instance, ref bool ___refreshBgSprites, ref bool ___refreshDecSprites)
 		{
-			if (!Main.IsEnabled ||
-				!Main.Settings.EnableFloor0Events ||
+			if (!Main.Settings.EnableFloor0Events ||
 				!scrController.instance.paused ||
 				GCS.standaloneLevelMode ||
 				StandaloneFileBrowser.lastFrameCount == Time.frameCount ||
@@ -27,6 +27,13 @@ namespace EditorHelper.Patch
 				return;
 			}
 
+			var selectedObj = __instance.eventSystem.currentSelectedGameObject;
+
+			if (selectedObj != null && selectedObj.GetComponent<InputField>() != null)
+			{
+				return;
+			}
+			
 			if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl) && !Input.GetKey(KeyCode.LeftCommand) && !Input.GetKey(KeyCode.RightCommand))
 			{
 				return;
