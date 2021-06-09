@@ -58,7 +58,7 @@ namespace EditorHelper.Patch
 					___refreshBgSprites = true;
 				}
 
-				if (ev.eventType == LevelEventType.AddDecoration || ev.eventType == LevelEventType.AddText)
+				if (ev.eventType == LevelEventType.AddDecoration)// || ev.eventType == LevelEventType.AddText)
 				{
 					___refreshDecSprites = true;
 				}
@@ -105,7 +105,7 @@ namespace EditorHelper.Patch
 
 			__instance.events.Add(new LevelEvent(floorID, eventType));
 
-			if (eventType == LevelEventType.AddDecoration || eventType == LevelEventType.AddText)
+			if (eventType == LevelEventType.AddDecoration)// || eventType == LevelEventType.AddText)
 			{
 				___refreshDecSprites = true;
 			}
@@ -185,7 +185,7 @@ namespace EditorHelper.Patch
 					___refreshBgSprites = true;
 				}
 
-				if (ev.eventType == LevelEventType.AddDecoration || ev.eventType == LevelEventType.AddText)
+				if (ev.eventType == LevelEventType.AddDecoration)// || ev.eventType == LevelEventType.AddText)
 				{
 					___refreshDecSprites = true;
 				}

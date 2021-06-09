@@ -20,8 +20,8 @@ namespace EditorHelper.Patch
             if (seqId == 0)
                 return;
             var rotDirection = Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)
-                ? GetSmallRotDirection(floor.stringDirection, CW)
-                : __instance.lm.GetRotDirection(floor.stringDirection, CW);
+                ? GetSmallRotDirection(floor.direction, CW)
+                : __instance.lm.GetRotDirection(floor.direction, CW);
             __instance.levelData.pathData = __instance.levelData.pathData.Remove(floor.seqID - 1, 1);
             __instance.levelData.pathData = __instance.levelData.pathData.Insert(floor.seqID - 1, rotDirection.ToString());
             if (!remakePath)
