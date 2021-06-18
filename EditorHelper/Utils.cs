@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ADOFAI;
 
@@ -26,5 +27,7 @@ namespace EditorHelper
 			}
 			return dictionary;
 		}
+		
+		internal static bool IsFinite(this double d) => (BitConverter.DoubleToInt64Bits(d) & long.MaxValue) < 9218868437227405312L;
 	}
 }

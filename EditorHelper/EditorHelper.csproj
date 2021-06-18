@@ -37,6 +37,7 @@
         <Compile Include="Patch\DeltaDegPatch.cs" />
         <Compile Include="Patch\LimitPatch.cs" />
         <Compile Include="Patch\Floor0Patch.cs" />
+        <Compile Include="Patch\RotateScreenPatch.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Settings\MainSettings.cs" />
         <Compile Include="Utils.cs" />

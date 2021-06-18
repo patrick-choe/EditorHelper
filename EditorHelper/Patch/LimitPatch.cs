@@ -79,7 +79,7 @@ namespace EditorHelper.Patch
 							else
 							{
 								var expr = new Expression(__instance.inputField.text).calculate();
-								if (double.IsFinite(expr))
+								if (expr.IsFinite())
 								{
 									intNum = __instance.propertyInfo.Validate(Mathf.RoundToInt((float)expr));
 								}
@@ -132,11 +132,12 @@ namespace EditorHelper.Patch
 							__instance.customLevel.SetBackground();
 							break;
 						case LevelEventType.AddDecoration:
+							case LevelEventType.AddText:
 							__instance.editor.UpdateDecorationSprites();
 							break;
 					}
 					__instance.editor.ApplyEventsToFloors();
-					__instance.editor.ShowEventIndicators(__instance.editor.selectedFloor);
+					__instance.editor.ShowEventIndicators(__instance.editor.selectedFloors[0]);
 					--__instance.editor.changingState;
 				});
 			}

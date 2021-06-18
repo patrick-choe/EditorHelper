@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 using ADOFAI;
@@ -15,12 +14,18 @@ namespace EditorHelper
     {
         private static Harmony _harmony;
         private static UnityModManager.ModEntry _mod;
-        internal static bool IsEnabled { get; private set; }
         internal static MainSettings Settings { get; private set; }
         internal static bool FirstLoaded;
 
         private static bool Load(UnityModManager.ModEntry modEntry)
         {
+            var version = AccessTools.Field(typeof(GCNS), "releaseNumber").GetValue(null);
+
+            if (version == null || (int) version != 75)
+            {
+                return false;
+            }
+            
             Settings = UnityModManager.ModSettings.Load<MainSettings>(modEntry);
 
             _mod = modEntry;
@@ -34,9 +39,8 @@ namespace EditorHelper
         private static bool OnToggle(UnityModManager.ModEntry modEntry, bool value)
         {
             _mod = modEntry;
-            IsEnabled = value;
 
-            if (IsEnabled)
+            if (value)
             {
                 StartTweaks();
                 ApplyConfig();

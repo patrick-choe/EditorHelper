@@ -21,8 +21,7 @@ namespace EditorHelper.Patch
 			if (!Main.Settings.EnableFloor0Events ||
 				!scrController.instance.paused ||
 				GCS.standaloneLevelMode ||
-				StandaloneFileBrowser.lastFrameCount == Time.frameCount ||
-				(Input.GetKeyDown(KeyCode.Escape) && !GCS.standaloneLevelMode && !scrController.instance.paused))
+				StandaloneFileBrowser.lastFrameCount == Time.frameCount)
 			{
 				return;
 			}
@@ -44,12 +43,12 @@ namespace EditorHelper.Patch
 				MultiSelectFloors.Invoke(__instance, new object[] { __instance.customLevel.levelMaker.listFloors.First(), __instance.customLevel.levelMaker.listFloors.Last(), true });
 			}
 
-			if (!Input.GetKeyDown(KeyCode.X) || __instance.selectedFloor == null || __instance.selectedFloor.seqID != 0)
+			if (!Input.GetKeyDown(KeyCode.X) || !__instance.SelectionIsSingle() || __instance.selectedFloors[0].seqID != 0)
 			{
 				return;
 			}
 
-			CopyFloor.Invoke(__instance, new object[] { __instance.selectedFloor, true, false });
+			CopyFloor.Invoke(__instance, new object[] { __instance.selectedFloors[0], true, false });
 
 			foreach (var ev in __instance.events.FindAll(x => x.floor == 0).Where(ev => __instance.EventHasBackgroundSprite(ev) || ev.eventType == LevelEventType.AddDecoration))
 			{
@@ -67,7 +66,7 @@ namespace EditorHelper.Patch
 			__instance.events.RemoveAll(x => x.floor == 0);
 			__instance.ApplyEventsToFloors();
 			__instance.levelEventsPanel.ShowTabsForFloor(0);
-			__instance.ShowEventIndicators(__instance.selectedFloor);
+			__instance.ShowEventIndicators(__instance.selectedFloors[0]);
 		}
 	}
 
@@ -79,15 +78,15 @@ namespace EditorHelper.Patch
 
 		private static bool Prefix(scnEditor __instance)
 		{
-			if (!Main.IsEnabled || !Main.Settings.EnableFloor0Events || __instance.selectedFloor == null)
+			if (!Main.Settings.EnableFloor0Events || !__instance.SelectionIsSingle())
 			{
 				return true;
 			}
 
-			__instance.levelEventsPanel.ShowTabsForFloor(__instance.selectedFloor.seqID);
-			ShowEventPicker.Invoke(__instance, new object[] { true });
+			__instance.levelEventsPanel.ShowTabsForFloor(__instance.selectedFloors[0].seqID);
 			UpdateFloorDirectionButtons.Invoke(__instance, new object[] { true });
-			__instance.ShowEventIndicators(__instance.selectedFloor);
+			ShowEventPicker.Invoke(__instance, new object[] { true });
+			__instance.ShowEventIndicators(__instance.selectedFloors[0]);
 
 			return false;
 		}
@@ -98,7 +97,7 @@ namespace EditorHelper.Patch
 	{
 		private static bool Prefix(scnEditor __instance, int floorID, LevelEventType eventType, ref bool ___refreshDecSprites)
 		{
-			if (!Main.IsEnabled || !Main.Settings.EnableFloor0Events)
+			if (!Main.Settings.EnableFloor0Events)
 			{
 				return true;
 			}
@@ -119,7 +118,7 @@ namespace EditorHelper.Patch
 	{
 		private static bool Prefix(scnEditor __instance, LevelEventType eventType)
 		{
-			if (!Main.IsEnabled || !Main.Settings.EnableFloor0Events || __instance.selectedFloor == null)
+			if (!Main.Settings.EnableFloor0Events || !__instance.SelectionIsSingle())
 			{
 				return true;
 			}
@@ -128,18 +127,19 @@ namespace EditorHelper.Patch
 
 			++__instance.editor.changingState;
 
-			if (__instance.events.Exists(x => x.eventType == eventType && x.floor == __instance.selectedFloor.seqID))
+			if (__instance.events.Exists(x => x.eventType == eventType && x.floor == __instance.selectedFloors[0].seqID))
 			{
 				if (Array.Exists(EditorConstants.soloTypes, element => element == eventType))
 				{
+					--__instance.editor.changingState;
 					return false;
 				}
 			}
 
-			__instance.AddEvent(__instance.selectedFloor.seqID, eventType);
+			__instance.AddEvent(__instance.selectedFloors[0].seqID, eventType);
 			__instance.editor.levelEventsPanel.selectedEventType = eventType;
 
-			var count = __instance.events.FindAll(x => x.eventType == eventType && x.floor == __instance.selectedFloor.seqID).Count;
+			var count = __instance.events.FindAll(x => x.eventType == eventType && x.floor == __instance.selectedFloors[0].seqID).Count;
 
 			if (count == 1)
 			{
@@ -152,7 +152,7 @@ namespace EditorHelper.Patch
 			}
 
 			__instance.ApplyEventsToFloors();
-			__instance.ShowEventIndicators(__instance.selectedFloor);
+			__instance.ShowEventIndicators(__instance.selectedFloors[0]);
 			--__instance.editor.changingState;
 
 			return false;
@@ -168,7 +168,7 @@ namespace EditorHelper.Patch
 		private static bool Prefix(scnEditor __instance, scrFloor targetFloor, IReadOnlyList<LevelEvent> eventsList, bool overwrite, bool selectAfterward, ref bool ___refreshBgSprites,
 			ref bool ___refreshDecSprites)
 		{
-			if (!Main.IsEnabled || !Main.Settings.EnableFloor0Events || !eventsList.Any())
+			if (!Main.Settings.EnableFloor0Events || !eventsList.Any())
 			{
 				return true;
 			}
@@ -203,7 +203,7 @@ namespace EditorHelper.Patch
 			var eventType = eventsList[0].eventType;
 
 			SelectFloor.Invoke(__instance, new object[] { targetFloor, true });
-			__instance.levelEventsPanel.ShowTabsForFloor(__instance.selectedFloor.seqID);
+			__instance.levelEventsPanel.ShowTabsForFloor(__instance.selectedFloors[0].seqID);
 			__instance.editor.levelEventsPanel.selectedEventType = eventType;
 			__instance.editor.levelEventsPanel.ShowPanel(eventType);
 			__instance.ShowEventIndicators(targetFloor);

@@ -11,7 +11,7 @@ namespace EditorHelper.Patch
 
         private static void Postfix(scnEditor __instance, scrFloor floor, bool CW, bool remakePath)
         {
-            if (!Main.IsEnabled || !Main.Settings.SmallerDeltaDeg)
+            if (!Main.Settings.SmallerDeltaDeg)
             {
                 return;
             }

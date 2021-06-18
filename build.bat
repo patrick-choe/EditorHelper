@@ -1,4 +1,4 @@
-dotnet "C:\Program Files\dotnet\sdk\5.0.201\MSBuild.dll" /p:Configuration=Release
+dotnet "C:\Program Files\dotnet\sdk\5.0.301\MSBuild.dll" /p:Configuration=Release
 mkdir Release
 cd ./Release
 mkdir EditorHelper

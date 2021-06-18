@@ -7,7 +7,7 @@ namespace EditorHelper.Patch
     {
         private static void Postfix(ADOBase __instance, bool ___onlyChecking, ArtistData ___currentArtistData)
         {
-            if (!Main.IsEnabled || !Main.Settings.AutoArtistURL || ___onlyChecking || ___currentArtistData == null)
+            if (!Main.Settings.AutoArtistURL || ___onlyChecking || ___currentArtistData == null)
             {
                 return;
             }
