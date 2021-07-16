@@ -16,6 +16,13 @@ namespace EditorHelper
         private static UnityModManager.ModEntry _mod;
         internal static MainSettings Settings { get; private set; }
         internal static bool FirstLoaded;
+        public static UnityModManager.ModEntry.ModLogger Logger
+        {
+            get
+            {
+                return _mod?.Logger;
+            }
+        }
 
         private static bool Load(UnityModManager.ModEntry modEntry)
         {
