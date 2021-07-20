@@ -16,6 +16,8 @@ namespace EditorHelper
         private static UnityModManager.ModEntry _mod;
         internal static MainSettings Settings { get; private set; }
         internal static bool FirstLoaded;
+        internal static bool IsEnabled;
+        internal static bool highlightEnabled;
         // internal static UnityModManager.ModEntry.ModLogger Logger => _mod?.Logger;
 
         private static bool Load(UnityModManager.ModEntry modEntry)
@@ -40,6 +42,7 @@ namespace EditorHelper
         private static bool OnToggle(UnityModManager.ModEntry modEntry, bool value)
         {
             _mod = modEntry;
+            IsEnabled = value;
 
             if (value)
             {
@@ -59,17 +62,93 @@ namespace EditorHelper
         {
             _harmony = new Harmony(_mod.Info.Id);
             _harmony.PatchAll(Assembly.GetExecutingAssembly());
+
+            MethodInfo original = AccessTools.Method(typeof(scnEditor), "CreateFloorWithCharOrAngle");
+            MethodInfo prefix = AccessTools.Method(typeof(FloorPatch), nameof(FloorPatch.SetFloors));
+            MethodInfo postfix = AccessTools.Method(typeof(FloorPatch), nameof(FloorPatch.AfterCreateFloor));
+            _harmony.Patch(original, prefix: new HarmonyMethod(prefix), postfix: new HarmonyMethod(postfix));
+            original = AccessTools.Method(typeof(scnEditor), "DeleteFloor");
+            postfix = AccessTools.Method(typeof(FloorPatch), nameof(FloorPatch.AfterDeleteFloor));
+            _harmony.Patch(original, prefix: new HarmonyMethod(prefix), postfix: new HarmonyMethod(postfix));
+            original = AccessTools.Method(typeof(scnEditor), "PasteFloors");
+            postfix = AccessTools.Method(typeof(FloorPatch), nameof(FloorPatch.AfterPasteFloors));
+            _harmony.Patch(original, prefix: new HarmonyMethod(prefix), postfix: new HarmonyMethod(postfix));
+
+            original = AccessTools.Method(typeof(scnEditor), "SelectFloor");
+            prefix = AccessTools.Method(typeof(TargetPatch), nameof(TargetPatch.BeforeSelectFloor));
+            _harmony.Patch(original, prefix: new HarmonyMethod(prefix));
+            original = AccessTools.Method(typeof(scnEditor), "MultiSelectFloors");
+            prefix = AccessTools.Method(typeof(TargetPatch), nameof(TargetPatch.UntargetFloor));
+            _harmony.Patch(original, prefix: new HarmonyMethod(prefix));
+            original = AccessTools.Method(typeof(scnEditor), "RemoveEventAtSelected");
+            postfix = AccessTools.Method(typeof(TargetPatch), nameof(TargetPatch.AfterRemoveEventAtSelected));
+            _harmony.Patch(original, postfix: new HarmonyMethod(postfix));
+            original = AccessTools.Method(typeof(PropertyControl_Text), nameof(PropertyControl_Text.Setup));
+            postfix = AccessTools.Method(typeof(TargetPatch), nameof(TargetPatch.AfterTextSetup));
+            _harmony.Patch(original, postfix: new HarmonyMethod(postfix));
+            original = AccessTools.Method(typeof(PropertyControl_Tile), nameof(PropertyControl_Tile.Setup));
+            postfix = AccessTools.Method(typeof(TargetPatch), nameof(TargetPatch.AfterTileSetup));
+            _harmony.Patch(original, postfix: new HarmonyMethod(postfix));
+            original = AccessTools.Method(typeof(CustomLevel), "RemakePath");
+            prefix = AccessTools.Method(typeof(TargetPatch), nameof(TargetPatch.BeforeRemakePath));
+            postfix = AccessTools.Method(typeof(TargetPatch), nameof(TargetPatch.AfterRemakePath));
+            _harmony.Patch(original, prefix: new HarmonyMethod(prefix), postfix: new HarmonyMethod(postfix));
+            original = AccessTools.Method(typeof(InspectorPanel), nameof(InspectorPanel.ShowPanel));
+            prefix = AccessTools.Method(typeof(TargetPatch), nameof(TargetPatch.UntargetFloor));
+            postfix = AccessTools.Method(typeof(TargetPatch), nameof(TargetPatch.AfterShowPanel));
+            _harmony.Patch(original, prefix: new HarmonyMethod(prefix), postfix: new HarmonyMethod(postfix));
+            original = AccessTools.Method(typeof(scnEditor), "QuitToMenu");
+            postfix = AccessTools.Method(typeof(TargetPatch), nameof(TargetPatch.AfterQuitToMenu));
+            _harmony.Patch(original, postfix: new HarmonyMethod(postfix));
         }
 
         private static void StopTweaks()
         {
+            TargetPatch.UntargetFloor();
             _harmony.UnpatchAll(_harmony.Id);
+
+            MethodInfo original = AccessTools.Method(typeof(scnEditor), "CreateFloorWithCharOrAngle");
+            _harmony.Unpatch(original, HarmonyPatchType.All);
+            original = AccessTools.Method(typeof(scnEditor), "DeleteFloor");
+            _harmony.Unpatch(original, HarmonyPatchType.All);
+            original = AccessTools.Method(typeof(scnEditor), "PasteFloors");
+            _harmony.Unpatch(original, HarmonyPatchType.All);
+            original = AccessTools.Method(typeof(scnEditor), "SelectFloor");
+            _harmony.Unpatch(original, HarmonyPatchType.All);
+            original = AccessTools.Method(typeof(scnEditor), "MultiSelectFloors");
+            _harmony.Unpatch(original, HarmonyPatchType.All);
+            original = AccessTools.Method(typeof(scnEditor), "RemoveEventAtSelected");
+            _harmony.Unpatch(original, HarmonyPatchType.All);
+            original = AccessTools.Method(typeof(PropertyControl_Text), nameof(PropertyControl_Text.Setup));
+            _harmony.Unpatch(original, HarmonyPatchType.All);
+            original = AccessTools.Method(typeof(PropertyControl_Tile), nameof(PropertyControl_Tile.Setup));
+            _harmony.Unpatch(original, HarmonyPatchType.All);
+            original = AccessTools.Method(typeof(CustomLevel), "RemakePath");
+            _harmony.Unpatch(original, HarmonyPatchType.All);
+            original = AccessTools.Method(typeof(InspectorPanel), nameof(InspectorPanel.ShowPanel));
+            _harmony.Unpatch(original, HarmonyPatchType.All);
+            original = AccessTools.Method(typeof(scnEditor), "QuitToMenu");
+            _harmony.Unpatch(original, HarmonyPatchType.All);
+
             _harmony = null;
         }
         
         private static void OnGUI(UnityModManager.ModEntry modEntry)
         {
             Settings.Draw(modEntry);
+            if (Settings.highlightTargetedTiles && !highlightEnabled)
+            {
+                highlightEnabled = true;
+                if (scnEditor.instance?.selectedFloors.Count == 1)
+                    if (scnEditor.instance.levelEventsPanel.selectedEventType == LevelEventType.MoveTrack || scnEditor.instance.levelEventsPanel.selectedEventType == LevelEventType.RecolorTrack)
+                        TargetPatch.TargetFloor();
+            }
+            if (!Settings.highlightTargetedTiles && highlightEnabled)
+            {
+                highlightEnabled = false;
+                if (TargetPatch.targets.Count != 0)
+                    TargetPatch.UntargetFloor();
+            }
         }
 
         private static void OnSaveGUI(UnityModManager.ModEntry modEntry)
