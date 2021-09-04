@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using ADOFAI;
@@ -51,12 +52,19 @@ namespace EditorHelper {
         // internal static UnityModManager.ModEntry.ModLogger Logger => _mod?.Logger;
 
         private static bool Load(UnityModManager.ModEntry modEntry) {
-            var version = AccessTools.Field(typeof(GCNS), "releaseNumber").GetValue(null);
-
-            if (version == null || (int) version != 76) {
+            var version = AccessTools.Field(typeof(GCNS), "releaseNumber").GetValue(null) as int?;
+            var editorHelperDir = Path.Combine(Directory.GetCurrentDirectory(), "Mods", "EditorHelper");
+            var target = 76;
+            if (File.Exists(Path.Combine(editorHelperDir, "Version.txt"))) {
+                if (int.TryParse(File.ReadAllText(Path.Combine(editorHelperDir, "Version.txt")), out var value)) {
+                    target = value;
+                    UnityModManager.Logger.Log($"EditorHelper version set to {target}");
+                }
+            }
+            if (version == null || version != target) {
                 return false;
             }
-
+            
             Settings = UnityModManager.ModSettings.Load<MainSettings>(modEntry);
             Settings.moreEditorSettings_prev = Settings.moreEditorSettings;
 
