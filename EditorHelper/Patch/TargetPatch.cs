@@ -15,7 +15,7 @@ namespace EditorHelper
 
         public static void AfterShowPanel(LevelEventType eventType)
         {
-            if (!Main.Settings.highlightTargetedTiles)
+            if (!Main.Settings.HighlightTargetedTiles)
                 return;
             if (eventType == LevelEventType.MoveTrack || eventType == LevelEventType.RecolorTrack)
             {
@@ -29,7 +29,7 @@ namespace EditorHelper
 
         public static bool BeforeSelectFloor(scrFloor floorToSelect)
         {
-            if (Main.Settings.selectTileWithShortcutKeys)
+            if (Main.Settings.SelectTileWithShortcutKeys)
             {
                 if (scnEditor.instance.levelEventsPanel != null)
                 {
@@ -91,7 +91,7 @@ namespace EditorHelper
                         }
                 }
             }
-            if (!Main.Settings.highlightTargetedTiles)
+            if (!Main.Settings.HighlightTargetedTiles)
                 return true;
             if (scnEditor.instance.selectedFloors.Count == 0)
                 return true;
@@ -122,7 +122,7 @@ namespace EditorHelper
 
         public static void TargetFloor()
         {
-            if (!Main.Settings.highlightTargetedTiles)
+            if (!Main.Settings.HighlightTargetedTiles)
                 return;
             if (scnEditor.instance.selectedFloors.Count != 1)
                 return;
@@ -243,14 +243,14 @@ namespace EditorHelper
                     case TileRelativeTo.ThisTile:
                         return;
                     case TileRelativeTo.Start:
-                        if (!Main.Settings.changeIndexWhenToggle)
+                        if (!Main.Settings.ChangeIndexWhenToggle)
                             break;
                         int selectedFloor = scnEditor.instance.selectedFloors[0].seqID;
                         int floor = tuple.Item1;
                         scnEditor.instance.levelEventsPanel.selectedEvent.data[__instance.propertyInfo.name] = Tuple.Create(floor - selectedFloor, tuple.Item2);
                         break;
                     case TileRelativeTo.End:
-                        if (!Main.Settings.changeIndexWhenToggle)
+                        if (!Main.Settings.ChangeIndexWhenToggle)
                             break;
                         selectedFloor = scnEditor.instance.selectedFloors[0].seqID;
                         floor = scnEditor.instance.customLevel.levelMaker.listFloors.Count + tuple.Item1 - 1;
@@ -270,7 +270,7 @@ namespace EditorHelper
                 switch (trt)
                 {
                     case TileRelativeTo.ThisTile:
-                        if (!Main.Settings.changeIndexWhenToggle)
+                        if (!Main.Settings.ChangeIndexWhenToggle)
                             break;
                         int selectedFloor = scnEditor.instance.selectedFloors[0].seqID;
                         int floor = tuple.Item1 + selectedFloor;
@@ -279,7 +279,7 @@ namespace EditorHelper
                     case TileRelativeTo.Start:
                         return;
                     case TileRelativeTo.End:
-                        if (!Main.Settings.changeIndexWhenToggle)
+                        if (!Main.Settings.ChangeIndexWhenToggle)
                             break;
                         selectedFloor = scnEditor.instance.selectedFloors[0].seqID;
                         floor = scnEditor.instance.customLevel.levelMaker.listFloors.Count + tuple.Item1 - 1;
@@ -299,14 +299,14 @@ namespace EditorHelper
                 switch (trt)
                 {
                     case TileRelativeTo.ThisTile:
-                        if (!Main.Settings.changeIndexWhenToggle)
+                        if (!Main.Settings.ChangeIndexWhenToggle)
                             break;
                         int selectedFloor = scnEditor.instance.selectedFloors[0].seqID;
                         int floor = tuple.Item1 + selectedFloor;
                         scnEditor.instance.levelEventsPanel.selectedEvent.data[__instance.propertyInfo.name] = Tuple.Create(1 + floor - scnEditor.instance.customLevel.levelMaker.listFloors.Count, tuple.Item2);
                         break;
                     case TileRelativeTo.Start:
-                        if (!Main.Settings.changeIndexWhenToggle)
+                        if (!Main.Settings.ChangeIndexWhenToggle)
                             break;
                         selectedFloor = scnEditor.instance.selectedFloors[0].seqID;
                         floor = tuple.Item1;
