@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using HarmonyLib;
 using SA.GoogleDoc;
-using UnityEngine;
 
-namespace MoreEditorOptions.Util {
+namespace EditorHelper.Utils {
     public static class PatchRDString {
         public static Dictionary<string, Dictionary<LangCode, string>> Translations =
             new Dictionary<string, Dictionary<LangCode, string>>();

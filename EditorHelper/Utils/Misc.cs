@@ -10,8 +10,8 @@ using UnityModManagerNet;
 using Object = System.Object;
 using PropertyInfo = ADOFAI.PropertyInfo;
 
-namespace EditorHelper {
-	internal static class Utils {
+namespace EditorHelper.Utils {
+	internal static class Misc {
 		internal static Dictionary<string, LevelEventInfo> Decode(IEnumerable<object> eventInfoList) {
 			var dictionary = new Dictionary<string, LevelEventInfo>();
 			foreach (Dictionary<string, object> eventInfo in eventInfoList) {

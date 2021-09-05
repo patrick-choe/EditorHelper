@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ADOFAI;
+using EditorHelper.Utils;
 using GDMiniJSON;
 using HarmonyLib;
 using org.mariuszgromada.math.mxparser;
@@ -269,8 +270,8 @@ namespace EditorHelper.Patch {
 					return;
 				}
 
-				var levelEventsInfo = Utils.Decode(dictionary["levelEvents"] as IEnumerable<object>);
-				var settingsInfo = Utils.Decode(dictionary["settings"] as IEnumerable<object>);
+				var levelEventsInfo = Misc.Decode(dictionary["levelEvents"] as IEnumerable<object>);
+				var settingsInfo = Misc.Decode(dictionary["settings"] as IEnumerable<object>);
 
 				foreach (var (key, value) in GCS.levelEventsInfo) {
 					var levelEventInfo = levelEventsInfo[key];

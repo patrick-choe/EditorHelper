@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ADOFAI;
 using DG.Tweening;
+using EditorHelper.Utils;
 using HarmonyLib;
 using MoreEditorOptions.Util;
 using SFB;
@@ -23,7 +24,6 @@ namespace EditorHelper.Patch {
 	[HarmonyPatch(typeof(scnEditor), "Update")]
 	internal static class UpdateRotationPatch {
 		internal static float CurrentRot => Camera.current.transform.eulerAngles.z;
-
 		private static void Prefix(scnEditor __instance, ref bool ___refreshBgSprites, ref bool ___refreshDecSprites) {
 			if (!Main.Settings.EnableScreenRot ||
 			    !scrController.instance.paused ||
@@ -57,25 +57,50 @@ namespace EditorHelper.Patch {
 			}
 
 			if (Input.GetKeyDown(KeyCode.Period) || Input.GetKeyDown(KeyCode.Comma)) {
-				scnEditor.instance.buttonA.transform.parent.parent.rotation = Quaternion.Euler(0f, 0f, CurrentRot);
-				__instance.AddListener(__instance.buttonD, 'R');
-				__instance.AddListener(__instance.buttonE, 'E');
-				__instance.AddListener(__instance.buttonW, 'U');
-				__instance.AddListener(__instance.buttonQ, 'Q');
-				__instance.AddListener(__instance.buttonA, 'L');
-				__instance.AddListener(__instance.buttonZ, 'Z');
-				__instance.AddListener(__instance.buttonS, 'D');
-				__instance.AddListener(__instance.buttonC, 'C');
-				__instance.AddListener(__instance.buttonT, 'T');
-				__instance.AddListener(__instance.buttonG, 'G');
-				__instance.AddListener(__instance.buttonF, 'F');
-				__instance.AddListener(__instance.buttonB, 'B');
-				__instance.AddListener(__instance.buttonJ, 'J');
-				__instance.AddListener(__instance.buttonH, 'H');
-				__instance.AddListener(__instance.buttonN, 'N');
-				__instance.AddListener(__instance.buttonM, 'M');
-				__instance.invoke("UpdateFloorDirectionButtons")(true);
+				UpdateDirectionButtonsRot(__instance);
 			}
+		}
+
+		public static void ResetDirectionButtonsRot(scnEditor instance) {
+			scnEditor.instance.buttonA.transform.parent.parent.rotation = Quaternion.Euler(0f, 0f, 0);
+			instance.ResetListener(instance.buttonD, 'R');
+			instance.ResetListener(instance.buttonE, 'E');
+			instance.ResetListener(instance.buttonW, 'U');
+			instance.ResetListener(instance.buttonQ, 'Q');
+			instance.ResetListener(instance.buttonA, 'L');
+			instance.ResetListener(instance.buttonZ, 'Z');
+			instance.ResetListener(instance.buttonS, 'D');
+			instance.ResetListener(instance.buttonC, 'C');
+			instance.ResetListener(instance.buttonT, 'T');
+			instance.ResetListener(instance.buttonG, 'G');
+			instance.ResetListener(instance.buttonF, 'F');
+			instance.ResetListener(instance.buttonB, 'B');
+			instance.ResetListener(instance.buttonJ, 'J');
+			instance.ResetListener(instance.buttonH, 'H');
+			instance.ResetListener(instance.buttonN, 'N');
+			instance.ResetListener(instance.buttonM, 'M');
+			instance.invoke("UpdateFloorDirectionButtons")(true);
+		}
+		
+		public static void UpdateDirectionButtonsRot(scnEditor instance) {
+			scnEditor.instance.buttonA.transform.parent.parent.rotation = Quaternion.Euler(0f, 0f, CurrentRot);
+			instance.AddListener(instance.buttonD, 'R');
+			instance.AddListener(instance.buttonE, 'E');
+			instance.AddListener(instance.buttonW, 'U');
+			instance.AddListener(instance.buttonQ, 'Q');
+			instance.AddListener(instance.buttonA, 'L');
+			instance.AddListener(instance.buttonZ, 'Z');
+			instance.AddListener(instance.buttonS, 'D');
+			instance.AddListener(instance.buttonC, 'C');
+			instance.AddListener(instance.buttonT, 'T');
+			instance.AddListener(instance.buttonG, 'G');
+			instance.AddListener(instance.buttonF, 'F');
+			instance.AddListener(instance.buttonB, 'B');
+			instance.AddListener(instance.buttonJ, 'J');
+			instance.AddListener(instance.buttonH, 'H');
+			instance.AddListener(instance.buttonN, 'N');
+			instance.AddListener(instance.buttonM, 'M');
+			instance.invoke("UpdateFloorDirectionButtons")(true);
 		}
 
 		public static Dictionary<int, Button> Buttons = new Dictionary<int, Button> { };
@@ -83,16 +108,55 @@ namespace EditorHelper.Patch {
 		public static void AddListener(this scnEditor instance, Button button, char angle) {
 			button.onClick.RemoveAllListeners();
 			button.onClick.AddListener(() => instance.CreateFloorWithShiftedCharOrAngle(0f, angle));
-			//UnityModManager.Logger.Log($"{button.name} => {RotateFloor(angle, CurrentRot)}");
+			//UnityModManager.Logger.Log($"{button.name} => {Angle.RotateFloor(angle, CurrentRot)}");
+		}
+		
+		public static void ResetListener(this scnEditor instance, Button button, char angle) {
+			button.onClick.RemoveAllListeners();
+			button.onClick.AddListener(() => instance.invoke("CreateFloorWithCharOrAngle")(0f, angle, true, false));
+			//UnityModManager.Logger.Log($"{button.name} => {Angle.RotateFloor(angle, CurrentRot)}");
 		}
 
 		public static void CreateFloor(this scnEditor instance, char floorType, bool pulseFloorButtons = true,
 			bool fullSpin = false) {
 			instance.invoke("CreateFloor")(floorType, pulseFloorButtons, fullSpin);
 		}
+		
+		public static void CreateFloor(this scnEditor instance, float floorAngle, bool pulseFloorButtons = true,
+			bool fullSpin = false) {
+			instance.invoke("CreateFloor")(floorAngle, pulseFloorButtons, fullSpin);
+		}
 
-		[HarmonyPatch(typeof(scnEditor), "UpdateDirectionButton")]
-		public static class UpdateDirectionPath {
+		public static void CreateFloorWithShiftedCharOrAngle(this scnEditor instance, float angle, char chara,
+			bool pulseFloorButtons = true, bool fullSpin = false) {
+			if (!Input.GetKeyDown(KeyCode.Space))
+				chara = Angle.RotateFloor(chara, CurrentRot);
+			if (scnEditor.instance.levelData.isOldLevel && chara != '?')
+			{
+				instance.CreateFloor(chara, pulseFloorButtons, fullSpin);
+				return;
+			}
+
+			float angleFromFloorCharDirectionWithCheck = scrLevelMaker.GetAngleFromFloorCharDirectionWithCheck(chara, out bool flag);
+			if (flag)
+			{
+				instance.CreateFloor(angleFromFloorCharDirectionWithCheck, true, false);
+				return;
+			}
+			instance.CreateFloor(angle, pulseFloorButtons, fullSpin);
+			
+		}
+
+		public static void ReplaceFloorWithShiftedCharOrAngle(this scnEditor instance, float angle, char chara,
+			bool pulseFloorButtons = true, bool fullSpin = false) {
+			instance.invoke("DeleteFloor")(instance.selectedFloors[0].seqID + 1, true);
+			instance.invoke("CreateFloorWithCharOrAngle")(angle, Angle.RotateFloor(chara, CurrentRot), pulseFloorButtons,
+				fullSpin);
+		}
+	}
+	
+	[HarmonyPatch(typeof(scnEditor), "UpdateDirectionButton")]
+		public static class UpdateDirectionPatch {
 			public static bool Prefix(scnEditor __instance, FloorDirectionButton btn, float oppositeAngle) {
 				if (btn == null) {
 					return false;
@@ -157,72 +221,36 @@ namespace EditorHelper.Patch {
 						break;
 				}
 
-				num = Mathf.RoundToInt(num + CurrentRot).NormalizeAngle();
+				num = Mathf.RoundToInt(num + UpdateRotationPatch.CurrentRot).NormalizeAngle();
 				btn.delete = (Mathf.Approximately(oppositeAngle, (float) num) && !flag);
 				btn.gameObject.SetActive(!btn.delete || __instance.selectedFloors[0].seqID != 0);
 				btn.Init();
 				var transform = btn.text.transform;
 				var euler = transform.eulerAngles;
-				transform.eulerAngles = new Vector3(euler.x, euler.y, CurrentRot);
-				btn.textShifted.transform.eulerAngles = new Vector3(euler.x, euler.y, CurrentRot);
+				transform.eulerAngles = new Vector3(euler.x, euler.y, UpdateRotationPatch.CurrentRot);
+				btn.textShifted.transform.eulerAngles = new Vector3(euler.x, euler.y, UpdateRotationPatch.CurrentRot);
 				return false;
 			}
 		}
 
-		public static void CreateFloor(this scnEditor instance, float floorAngle, bool pulseFloorButtons = true,
-			bool fullSpin = false) {
-			instance.invoke("CreateFloor")(floorAngle, pulseFloorButtons, fullSpin);
-		}
 
-		public static void CreateFloorWithShiftedCharOrAngle(this scnEditor instance, float angle, char chara,
-			bool pulseFloorButtons = true, bool fullSpin = false) {
-			chara = RotateFloor(chara, CurrentRot);
-			if (scnEditor.instance.levelData.isOldLevel && chara != '?')
-			{
-				instance.CreateFloor(chara, pulseFloorButtons, fullSpin);
-				return;
-			}
-
-			float angleFromFloorCharDirectionWithCheck = scrLevelMaker.GetAngleFromFloorCharDirectionWithCheck(chara, out bool flag);
-			if (flag)
-			{
-				instance.CreateFloor(angleFromFloorCharDirectionWithCheck, true, false);
-				return;
-			}
-			instance.CreateFloor(angle, pulseFloorButtons, fullSpin);
-			
-		}
-
-		public static void ReplaceFloorWithShiftedCharOrAngle(this scnEditor instance, float angle, char chara,
-			bool pulseFloorButtons = true, bool fullSpin = false) {
-			instance.invoke("DeleteFloor")(instance.selectedFloors[0].seqID + 1, true);
-			instance.invoke("CreateFloorWithCharOrAngle")(angle, RotateFloor(chara, CurrentRot), pulseFloorButtons,
-				fullSpin);
-		}
-
-		public static readonly List<char> Specials = new List<char> {'!', '5', '6', '7', '8', '9'};
-
-		public static char RotateFloor(char chara, float rotation) {
-			if (Specials.Contains(chara)) return chara;
-			var angle = scrLevelMaker.GetAngleFromFloorCharDirectionWithCheck(chara, out _);
-			var rot = Mathf.RoundToInt(angle + rotation).NormalizeAngle();
-			return Main.AngleChar[rot];
-		}
-
-		public static float NormalizeAngle(this float rot) {
-			do {
-				rot = (rot + 360) % 360;
-			} while (rot < 0 || rot >= 360);
-
-			return rot;
-		}
-
-		public static int NormalizeAngle(this int rot) {
-			do {
-				rot = (rot + 360) % 360;
-			} while (rot < 0 || rot >= 360);
-
-			return rot;
+	[HarmonyPatch(typeof(scnEditor), "SwitchToEditMode")]
+	public static class ResetPatch {
+		public static void Postfix() {
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UnityModManager.Logger.Log("왜-이럴-까요");
+			UpdateRotationPatch.UpdateDirectionButtonsRot(scnEditor.instance);
 		}
 	}
 /*
@@ -265,7 +293,16 @@ namespace EditorHelper.Patch {
 
 		public static void Postfix(scnEditor __instance) {
 			if (scrController.instance.paused) {
-				if (!Input.GetMouseButtonDown(0) && Input.GetMouseButton(0)) {
+				if (!Input.GetMouseButtonDown(0) && Input.GetMouseButton(0) && 
+				    (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
+UnityModManager.Logger.Log("Ctrl Pressed");
+					var vector6 = __instance.get<Vector3>("cameraPositionAtDragStart");
+					Camera.current.transform.position = new Vector3(vector6.x, vector6.y, -10f);
+					return;
+				}
+				if (!Input.GetMouseButtonDown(0) && 
+				    Input.GetMouseButton(0) &&
+				    !__instance.get<bool>("cancelDrag")) {
 					Vector3 vector5 = (GetMousePositionWithAngle() - _lastPos) /
 					                  (float) Screen.height *
 					                  Camera.current.orthographicSize * 2f;

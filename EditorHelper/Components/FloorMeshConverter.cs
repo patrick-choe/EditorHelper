@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ADOFAI;
-using MoreEditorOptions.Util;
+using EditorHelper.Utils;
 using SA.GoogleDoc;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +20,7 @@ namespace EditorHelper.Components {
                 Control.exportButton.onClick.AddListener(() => {
                     var isMesh = !CustomLevel.instance.levelData.isOldLevel;
                     if (isMesh) {
-                        var data = toLegacy(CustomLevel.instance.levelData.angleData, out var unsucessfull);
+                        var data = ToLegacy(CustomLevel.instance.levelData.angleData, out var unsucessfull);
                         if (unsucessfull.HasValue) {
                             PatchRDString.Translations["editor.dialog.conversionSongNotFound"] =
                                 new Dictionary<LangCode, string> {
@@ -40,7 +40,7 @@ namespace EditorHelper.Components {
                             CustomLevel.instance.RemakePath();
                         }
                     } else {
-                        CustomLevel.instance.levelData.angleData = toMesh(CustomLevel.instance.levelData.pathData);
+                        CustomLevel.instance.levelData.angleData = ToMesh(CustomLevel.instance.levelData.pathData);
                         CustomLevel.instance.levelData.isOldLevel = false;
                         CustomLevel.instance.RemakePath();
                     }
@@ -58,7 +58,7 @@ namespace EditorHelper.Components {
                 : RDString.Get("editor.convertFloorMesh.toMesh");
         }
 
-        private static Dictionary<char, short> pathAngle = new Dictionary<char, short> {
+        private static readonly Dictionary<char, short> pathAngle = new Dictionary<char, short> {
             {'R', 0},
             {'p', 15},
             {'J', 30},
@@ -86,7 +86,7 @@ namespace EditorHelper.Components {
             {'!', 999}
         };
 
-        private static Dictionary<short, char> anglePath = new Dictionary<short, char> {
+        private static readonly Dictionary<short, char> anglePath = new Dictionary<short, char> {
             {0, 'R'},
             {15, 'p'},
             {30, 'J'},
@@ -114,14 +114,14 @@ namespace EditorHelper.Components {
             {999, '!'}
         };
 
-        private Dictionary<char, float> pathAngleCW = new Dictionary<char, float> {
+        private readonly Dictionary<char, float> pathAngleCW = new Dictionary<char, float> {
             {'5', 108},
             {'6', 252},
             {'7', 128.57143f},
             {'8', 231.42857f}
         };
 
-        private Dictionary<float, char> anglePathCW = new Dictionary<float, char> {
+        private readonly Dictionary<float, char> anglePathCW = new Dictionary<float, char> {
             {108, '5'},
             {252, '6'},
             {128.57143f, '7'},
@@ -130,7 +130,7 @@ namespace EditorHelper.Components {
 
         private const float delta = 0.01f;
 
-        private List<float> toMesh(string data) {
+        private List<float> ToMesh(string data) {
             var angleData = new List<float>();
             var prevAngle = 0f;
             foreach (var path in data) {
@@ -155,7 +155,7 @@ namespace EditorHelper.Components {
             return angleData;
         }
 
-        private string toLegacy(List<float> data, out (int, float)? UnsucessfullTile) {
+        private string ToLegacy(List<float> data, out (int, float)? UnsucessfullTile) {
             var pathData = new StringBuilder();
             var prevAngle = 0f;
             var tile = 0;

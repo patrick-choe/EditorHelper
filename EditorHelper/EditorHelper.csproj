@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <LangVersion>9</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,7 +35,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\FloorMeshConverter.cs" />
-    <Compile Include="Components\Rotator.cs" />
     <Compile Include="EventTileChanger.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Patch\ArtistPatch.cs" />
@@ -43,13 +43,17 @@
     <Compile Include="Patch\LimitPatch.cs" />
     <Compile Include="Patch\Floor0Patch.cs" />
     <Compile Include="Patch\MoreEditorOptionsPatch.cs" />
+    <Compile Include="Patch\RightClickToGenerate15Patch.cs" />
     <Compile Include="Patch\RotateScreenPatch.cs" />
+    <Compile Include="Patch\ShowSelectedTilePatch.cs" />
     <Compile Include="Patch\TargetPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\MainSettings.cs" />
+    <Compile Include="Utils\Angle.cs" />
+    <Compile Include="Utils\GUIEx.cs" />
     <Compile Include="Utils\PatchRDString.cs" />
     <Compile Include="Utils\ReflectionExtension.cs" />
-    <Compile Include="Utils\Utils.cs" />
+    <Compile Include="Utils\Misc.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

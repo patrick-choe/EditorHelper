@@ -20,7 +20,7 @@ namespace EditorHelper
                 switch (trt)
                 {
                     case TileRelativeTo.ThisTile:
-                        if (!Main.Settings.thisTile)
+                        if (!Main.Settings.ThisTile)
                             return;
                         if (e.floor >= at)
                         {
@@ -38,13 +38,13 @@ namespace EditorHelper
                         }
                         break;
                     case TileRelativeTo.Start:
-                        if (!Main.Settings.firstTile)
+                        if (!Main.Settings.FirstTile)
                             return;
                         if (i >= at)
                             e.data["startTile"] = Tuple.Create(i + change, trt);
                         break;
                     case TileRelativeTo.End:
-                        if (!Main.Settings.lastTile)
+                        if (!Main.Settings.LastTile)
                             return;
                         if (editor.customLevel.levelMaker.listFloors.Count + i < at)
                             e.data["startTile"] = Tuple.Create(i - change, trt);
@@ -58,7 +58,7 @@ namespace EditorHelper
                 switch (trt)
                 {
                     case TileRelativeTo.ThisTile:
-                        if (!Main.Settings.thisTile)
+                        if (!Main.Settings.ThisTile)
                             return;
                         if (e.floor >= at)
                         {
@@ -76,13 +76,13 @@ namespace EditorHelper
                         }
                         break;
                     case TileRelativeTo.Start:
-                        if (!Main.Settings.firstTile)
+                        if (!Main.Settings.FirstTile)
                             return;
                         if (i >= at)
                             e.data["endTile"] = Tuple.Create(i + change, trt);
                         break;
                     case TileRelativeTo.End:
-                        if (!Main.Settings.lastTile)
+                        if (!Main.Settings.LastTile)
                             return;
                         if (editor.customLevel.levelMaker.listFloors.Count + i < at)
                             e.data["endTile"] = Tuple.Create(i - change, trt);

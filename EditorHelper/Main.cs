@@ -5,9 +5,9 @@ using System.Linq;
 using System.Reflection;
 using ADOFAI;
 using EditorHelper.Settings;
+using EditorHelper.Utils;
 using GDMiniJSON;
 using HarmonyLib;
-using MoreEditorOptions.Util;
 using SA.GoogleDoc;
 using UnityEngine;
 using UnityModManagerNet;
@@ -22,51 +22,65 @@ namespace EditorHelper {
         internal static bool IsEnabled;
 
         internal static bool highlightEnabled;
-        
-        public static readonly Dictionary<int, char> AngleChar = new Dictionary<int, char> {
-            {0, 'R'},
-            {15, 'p'},
-            {30, 'J'},
-            {45, 'E'},
-            {60, 'T'},
-            {75, 'o'},
-            {90, 'U'},
-            {105, 'q'},
-            {120, 'G'},
-            {135, 'Q'},
-            {150, 'H'},
-            {165, 'W'},
-            {180, 'L'},
-            {195, 'x'},
-            {210, 'N'},
-            {225, 'Z'},
-            {240, 'F'},
-            {255, 'V'},
-            {270, 'D'},
-            {285, 'Y'},
-            {300, 'B'},
-            {315, 'C'},
-            {330, 'M'},
-            {345, 'A'},
-        };
         // internal static UnityModManager.ModEntry.ModLogger Logger => _mod?.Logger;
 
+        private const int Exact = 0;
+        private const int NotLess = 1;
+        private const int NotBigger = 2;
+        private const int Bigger = 3;
+        private const int Less = 4;
+        
         private static bool Load(UnityModManager.ModEntry modEntry) {
             var version = AccessTools.Field(typeof(GCNS), "releaseNumber").GetValue(null) as int?;
             var editorHelperDir = Path.Combine(Directory.GetCurrentDirectory(), "Mods", "EditorHelper");
             var target = 76;
+            var mode = Exact;
             if (File.Exists(Path.Combine(editorHelperDir, "Version.txt"))) {
-                if (int.TryParse(File.ReadAllText(Path.Combine(editorHelperDir, "Version.txt")), out var value)) {
-                    target = value;
-                    UnityModManager.Logger.Log($"EditorHelper version set to {target}");
+                var value = File.ReadAllText(Path.Combine(editorHelperDir, "Version.txt"));
+                if (value.StartsWith(">=")) {
+                    mode = NotLess;
+                    value = value.Substring(2);
+                } else if (value.StartsWith("<=")) {
+                    mode = NotBigger;
+                    value = value.Substring(2);
+                } else if (value.StartsWith(">")) {
+                    mode = Bigger;
+                    value = value.Substring(2);
+                } else if (value.StartsWith("<")) {
+                    mode = Less;
+                    value = value.Substring(2);
+                } else if (value.StartsWith("==")) {
+                    mode = Exact;
+                    value = value.Substring(2);
+                }
+                
+                if (int.TryParse(value, out var val)) {
+                    target = val;
+                    UnityModManager.Logger.Log($"EditorHelper version set to {value}");
                 }
             }
-            if (version == null || version != target) {
-                return false;
+
+            if (version == null) return false;
+            switch (mode) {
+                case Exact:
+                    if (version != target) return false;
+                    break;
+                case NotLess:
+                    if (version < target) return false;
+                    break;
+                case NotBigger:
+                    if (version > target) return false;
+                    break;
+                case Bigger:
+                    if (version <= target) return false;
+                    break;
+                case Less:
+                    if (version >= target) return false;
+                    break;
             }
             
             Settings = UnityModManager.ModSettings.Load<MainSettings>(modEntry);
-            Settings.moreEditorSettings_prev = Settings.moreEditorSettings;
+            Settings.moreEditorSettings_prev = Settings.MoreEditorSettings;
 
             _mod = modEntry;
             _mod.OnToggle = OnToggle;
@@ -115,7 +129,7 @@ namespace EditorHelper {
         }
 
         internal static void CheckMoreEditorSettings() {
-            if (Settings.moreEditorSettings) {
+            if (Settings.MoreEditorSettings) {
                 try {
                     GCS.settingsInfo["MiscSettings"].propertiesInfo["useLegacyFlash"] =
                         new PropertyInfo(new Dictionary<string, object> {
@@ -144,8 +158,41 @@ namespace EditorHelper {
         }
 
         private static void OnGUI(UnityModManager.ModEntry modEntry) {
-            Settings.Draw(modEntry);
-            if (Settings.highlightTargetedTiles && !highlightEnabled) {
+            GUIEx.Toggle(ref Settings.EnableFloor0Events, (LangCode.English, "Enable Floor 0 Events"), (LangCode.Korean, "첫 타일 이벤트 활성화"));
+            GUIEx.Toggle(ref Settings.RemoveLimits, (LangCode.English, "Remove All Editor Limits"), (LangCode.Korean, "에디터 입력값 제한 비활성화"));
+            GUIEx.Toggle(ref Settings.AutoArtistURL, (LangCode.English, "Enable Auto Paste Artist URL"), (LangCode.Korean, "작곡가 URL 자동 입력"));
+            GUIEx.Toggle(ref Settings.SmallerDeltaDeg, (LangCode.English, "Enable Smaller Delta Degree (90° -> 15°, Press 'Ctrl + Alt + ,' or 'Ctrl + Alt + .' to use 15°)"), (LangCode.Korean, "더 작은 각도로 타일 회전 (90° -> 15°, 'Ctrl + Alt + ,' 또는 'Ctrl + Alt + .'로 15° 단위 회전)"));
+            GUIEx.Toggle(ref Settings.EnableBetterBackup, (LangCode.English, "Enable better editor backup in nested directory"), (LangCode.Korean, "레벨이 있는 폴더에서 더 나은 백업"));
+            if (Settings.EnableBetterBackup) {
+                GUIEx.BeginIndent();
+                GUIEx.IntField(ref Settings.MaximumBackups, (LangCode.English, "Limit the amount of backups (0 is infinite)"), (LangCode.Korean, "백업 개수 제한 (0 ⇒ 제한 없음)"));
+                GUIEx.Toggle(ref Settings.SaveLatestBackup, (LangCode.English, "Still put the backup in backup.adofai after using better backup"), (LangCode.Korean, "더 나은 백업 활성화 후에도 backup.adofai 사용"));
+                GUIEx.EndIndent();
+            }
+
+            GUIEx.Toggle(ref Settings.ThisTile, (LangCode.English, "Change Event Using 'This Tile'"), (LangCode.Korean, "'이 타일'로 이벤트 변경"));
+            GUIEx.Toggle(ref Settings.FirstTile, (LangCode.English, "Change Event Using 'First Tile'"), (LangCode.Korean, "'첫 타일'로 이벤트 변경"));
+            GUIEx.Toggle(ref Settings.LastTile, (LangCode.English, "Change Event Using 'Last Tile'"), (LangCode.Korean, "'마지막 타일'로 이벤트 변경"));
+            GUIEx.Toggle(ref Settings.HighlightTargetedTiles, (LangCode.English, "Highlight Targeted Tiles"), (LangCode.Korean, "목표 타일 하이라이트"));
+            GUIEx.Toggle(ref Settings.SelectTileWithShortcutKeys, (LangCode.English, "Select Tile With ; + Click, ' + Click"), (LangCode.Korean, "타일을 ; + 클릭, ' + 클릭으로 선택"));
+            GUIEx.Toggle(ref Settings.ChangeIndexWhenToggle, (LangCode.English, "Change Index When Toggle This Tile, First Tile, Last Tile"), (LangCode.Korean, "이 타일, 첫 타일, 마지막 타일 전환 시 선택된 타일 유지"));
+            GUIEx.Toggle(ref Settings.MoreEditorSettings, (LangCode.English, "Enable More Editor Settings (Toggle Mesh tiles, etc.)"), (LangCode.Korean, "더 많은 에디터 설정 (자유 각도 토글 등)"));
+            GUIEx.Toggle(ref Settings.EnableScreenRot, (LangCode.English, "Enable Rotating Editor Screen (Press 'Alt + ,' or 'Alt + .' to rotate editor screen 15°)"), (LangCode.Korean, "에디터 화면 회전 ('Alt' + , 또는 'Alt' + .)"));
+            GUIEx.Toggle(ref Settings.EnableSelectedTileShowAngle, (LangCode.English, "Show Angle of Selected Tiles"), (LangCode.Korean, "선택된 타일의 각도 보기"));
+            GUIEx.Toggle(ref Settings.EnableChangeAngleByDragging, (LangCode.English, "Enable Change Angle By Dragging"), (LangCode.Korean, "드래그해서 각도 변경"));
+            if (Settings.EnableChangeAngleByDragging) {
+                GUIEx.BeginIndent();
+                GUILayout.BeginHorizontal();
+                GUIEx.IntField(ref Settings.MeshNumerator, 0, int.MaxValue, GUILayout.Width(60));
+                GUILayout.Label("/", GUILayout.Width(15));
+                GUIEx.IntField(ref Settings.MeshDenominator, 1, int.MaxValue, GUILayout.Width(60));
+                GUILayout.Label($"({Settings.MeshDelta})", GUILayout.Width(40));
+                GUIEx.Label((LangCode.English, "Changed Angle Delta"), (LangCode.Korean, "각도 변경 단위"));
+                GUILayout.EndHorizontal();
+                GUIEx.EndIndent();
+            }
+
+            if (Settings.HighlightTargetedTiles && !highlightEnabled) {
                 highlightEnabled = true;
                 if (scnEditor.instance?.selectedFloors.Count == 1)
                     if (scnEditor.instance.levelEventsPanel.selectedEventType == LevelEventType.MoveTrack ||
@@ -153,7 +200,7 @@ namespace EditorHelper {
                         TargetPatch.TargetFloor();
             }
 
-            if (!Settings.highlightTargetedTiles && highlightEnabled) {
+            if (!Settings.HighlightTargetedTiles && highlightEnabled) {
                 highlightEnabled = false;
                 if (TargetPatch.targets.Count != 0)
                     TargetPatch.UntargetFloor();
@@ -223,8 +270,8 @@ namespace EditorHelper {
                     return;
                 }
 
-                var levelEventsInfo = Utils.Decode(dictionary["levelEvents"] as IEnumerable<object>);
-                var settingsInfo = Utils.Decode(dictionary["settings"] as IEnumerable<object>);
+                var levelEventsInfo = Misc.Decode(dictionary["levelEvents"] as IEnumerable<object>);
+                var settingsInfo = Misc.Decode(dictionary["settings"] as IEnumerable<object>);
 
                 foreach (var (key, value) in GCS.levelEventsInfo) {
                     var levelEventInfo = levelEventsInfo[key];

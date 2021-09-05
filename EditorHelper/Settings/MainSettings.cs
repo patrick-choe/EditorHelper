@@ -6,46 +6,26 @@ using UnityEngine;
 
 namespace EditorHelper.Settings {
     public class MainSettings : UnityModManager.ModSettings, IDrawable {
-        [Draw("Enable Floor 0 Events")] public bool EnableFloor0Events = true;
-
-        [Draw("Remove All Editor Limits")] public bool RemoveLimits = true;
-
-        [Draw("Enable Auto Paste Artist URL")] public bool AutoArtistURL = true;
-
-        [Draw("Enable Smaller Delta Degree (90° -> 15°, Press 'Ctrl + Alt + ,' or 'Ctrl + Alt + .' to use 15°)")]
+        public bool EnableFloor0Events = true;
+        public bool RemoveLimits = true;
+        public bool AutoArtistURL = true;
         public bool SmallerDeltaDeg = true;
-
-        [Draw("Enable better editor backup in nested directory")]
         public bool EnableBetterBackup = true;
-
-        [Draw("Limit the amount of backups (0 is infinite)")]
         public int MaximumBackups = 25;
-
-        [Draw("Still put the backup in backup.adofai after using better backup")]
         public bool SaveLatestBackup = false;
-
-        [Draw("Change Event Using 'This Tile'")]
-        public bool thisTile = true;
-
-        [Draw("Change Event Using 'First Tile'")]
-        public bool firstTile = true;
-
-        [Draw("Change Event Using 'Last Tile'")]
-        public bool lastTile = true;
-
-        [Draw("Highlight Targeted Tiles")] public bool highlightTargetedTiles = true;
-
-        [Draw("Select Tile With ; + Click, ' + Click")]
-        public bool selectTileWithShortcutKeys = true;
-
-        [Draw("Change Index When Toggle This Tile, First Tile, Last Tile")]
-        public bool changeIndexWhenToggle = true;
-
-        [Draw("Enable More Editor Settings (Toggle Mesh tiles, etc.)")]
-        public bool moreEditorSettings = true;
-        // 능지 딸려서 구현 실패
-        [Draw("Enable Rotating Editor Screen (Press 'Alt + ,' or 'Alt + .' to rotate editor screen 15°)")] 
+        public bool ThisTile = true;
+        public bool FirstTile = true;
+        public bool LastTile = true;
+        public bool HighlightTargetedTiles = true;
+        public bool SelectTileWithShortcutKeys = true;
+        public bool ChangeIndexWhenToggle = true;
+        public bool MoreEditorSettings = true;
         public bool EnableScreenRot = true;
+        public bool EnableSelectedTileShowAngle = true;
+        public bool EnableChangeAngleByDragging = true;
+        public int MeshNumerator = 15;
+        public int MeshDenominator = 4;
+        public double MeshDelta => MeshNumerator / (double) MeshDenominator;
 
         public override void Save(UnityModManager.ModEntry modEntry) {
             Save(this, modEntry);
@@ -54,9 +34,9 @@ namespace EditorHelper.Settings {
         internal bool? moreEditorSettings_prev { get; set; }
 
         public void OnChange() {
-            if (moreEditorSettings != moreEditorSettings_prev) {
+            if (MoreEditorSettings != moreEditorSettings_prev) {
                 Main.CheckMoreEditorSettings();
-                moreEditorSettings_prev = moreEditorSettings;
+                moreEditorSettings_prev = MoreEditorSettings;
             }
         }
     }
