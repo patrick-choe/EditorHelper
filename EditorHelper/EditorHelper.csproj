@@ -42,7 +42,7 @@
     <Compile Include="Patch\LimitPatch.cs" />
     <Compile Include="Patch\Floor0Patch.cs" />
     <Compile Include="Patch\MoreEditorOptionsPatch.cs" />
-    <Compile Include="Patch\RightClickToGenerate15Patch.cs" />
+    <Compile Include="Patch\AltArrowEventPatch.cs" />
     <Compile Include="Patch\RotateScreenPatch.cs" />
     <Compile Include="Patch\ShowSelectedTilePatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
