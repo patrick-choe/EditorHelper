@@ -295,7 +295,6 @@ namespace EditorHelper.Patch {
 			if (scrController.instance.paused) {
 				if (!Input.GetMouseButtonDown(0) && Input.GetMouseButton(0) && 
 				    (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
-UnityModManager.Logger.Log("Ctrl Pressed");
 					var vector6 = __instance.get<Vector3>("cameraPositionAtDragStart");
 					Camera.current.transform.position = new Vector3(vector6.x, vector6.y, -10f);
 					return;
@@ -317,23 +316,29 @@ UnityModManager.Logger.Log("Ctrl Pressed");
 					Altdrag:
 					if (!__instance.get<bool>("cancelDrag") && __instance.get<EventIndicator>("draggedEvIndicator") == null)
 					{
-						if (__instance.SelectionIsSingle())
-						{
-							Vector3 vector7 = __instance.get<Dictionary<scrFloor, Vector3>>("floorPositionsAtDragStart")[__instance.selectedFloors[0]] + b5;
-							__instance.selectedFloors[0].transform.position = new Vector3(vector7.x, vector7.y, __instance.selectedFloors[0].transform.position.z);
-							return;
-						}
-						using (List<scrFloor>.Enumerator enumerator2 = __instance.selectedFloors.GetEnumerator())
-						{
-							while (enumerator2.MoveNext())
-							{
-								scrFloor scrFloor3 = enumerator2.Current;
-								Vector3 vector8 = __instance.get<Dictionary<scrFloor, Vector3>>("floorPositionsAtDragStart")[scrFloor3] + b5;
-								scrFloor3.transform.position = new Vector3(vector8.x, vector8.y, scrFloor3.transform.position.z);
+						try {
+							if (__instance.SelectionIsSingle()) {
+								Vector3 vector7 =
+									__instance.get<Dictionary<scrFloor, Vector3>>("floorPositionsAtDragStart")[
+										__instance.selectedFloors[0]] + b5;
+								__instance.selectedFloors[0].transform.position = new Vector3(vector7.x, vector7.y,
+									__instance.selectedFloors[0].transform.position.z);
+								return;
 							}
 
-							return;
-						}
+							using (List<scrFloor>.Enumerator enumerator2 = __instance.selectedFloors.GetEnumerator()) {
+								while (enumerator2.MoveNext()) {
+									scrFloor scrFloor3 = enumerator2.Current;
+									Vector3 vector8 =
+										__instance.get<Dictionary<scrFloor, Vector3>>("floorPositionsAtDragStart")[
+											scrFloor3] + b5;
+									scrFloor3.transform.position = new Vector3(vector8.x, vector8.y,
+										scrFloor3.transform.position.z);
+								}
+
+								return;
+							}
+						} catch (KeyNotFoundException) { }
 					}
 					return;
 				}

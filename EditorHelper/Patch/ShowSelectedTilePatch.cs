@@ -125,7 +125,7 @@ namespace EditorHelper.Patch {
                         field.text = $"{Math.Round(angle, 4)}";
                         gameObject.transform.eulerAngles = Vector3.zero;
                         Texts.Add(letterPress);
-                    } catch {
+                    } catch (Exception) {
                         UnityModManager.Logger.Log($"Error: {scrFloor.seqID}");
                     }
                 }

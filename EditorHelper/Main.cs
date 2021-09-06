@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using ADOFAI;
+using EditorHelper.Patch;
 using EditorHelper.Settings;
 using EditorHelper.Utils;
 using GDMiniJSON;
@@ -21,7 +22,7 @@ namespace EditorHelper {
         internal static bool FirstLoaded;
         internal static bool IsEnabled;
 
-        internal static bool highlightEnabled;
+        //internal static bool highlightEnabled;
         // internal static UnityModManager.ModEntry.ModLogger Logger => _mod?.Logger;
 
         private const int Exact = 0;
@@ -150,7 +151,7 @@ namespace EditorHelper {
         }
         
         private static void StopTweaks() {
-            TargetPatch.UntargetFloor();
+            //TargetPatch.UntargetFloor();
             _harmony.UnpatchAll(_harmony.Id);
             _harmony = null;
             GCS.settingsInfo["MiscSettings"].propertiesInfo.Remove("useLegacyFlash");
@@ -162,20 +163,18 @@ namespace EditorHelper {
             GUIEx.Toggle(ref Settings.RemoveLimits, (LangCode.English, "Remove All Editor Limits"), (LangCode.Korean, "에디터 입력값 제한 비활성화"));
             GUIEx.Toggle(ref Settings.AutoArtistURL, (LangCode.English, "Enable Auto Paste Artist URL"), (LangCode.Korean, "작곡가 URL 자동 입력"));
             GUIEx.Toggle(ref Settings.SmallerDeltaDeg, (LangCode.English, "Enable Smaller Delta Degree (90° -> 15°, Press 'Ctrl + Alt + ,' or 'Ctrl + Alt + .' to use 15°)"), (LangCode.Korean, "더 작은 각도로 타일 회전 (90° -> 15°, 'Ctrl + Alt + ,' 또는 'Ctrl + Alt + .'로 15° 단위 회전)"));
-            GUIEx.Toggle(ref Settings.EnableBetterBackup, (LangCode.English, "Enable better editor backup in nested directory"), (LangCode.Korean, "레벨이 있는 폴더에서 더 나은 백업"));
+            /*GUIEx.Toggle(ref Settings.EnableBetterBackup, (LangCode.English, "Enable better editor backup in nested directory"), (LangCode.Korean, "레벨이 있는 폴더에서 더 나은 백업"));
             if (Settings.EnableBetterBackup) {
                 GUIEx.BeginIndent();
                 GUIEx.IntField(ref Settings.MaximumBackups, (LangCode.English, "Limit the amount of backups (0 is infinite)"), (LangCode.Korean, "백업 개수 제한 (0 ⇒ 제한 없음)"));
                 GUIEx.Toggle(ref Settings.SaveLatestBackup, (LangCode.English, "Still put the backup in backup.adofai after using better backup"), (LangCode.Korean, "더 나은 백업 활성화 후에도 backup.adofai 사용"));
                 GUIEx.EndIndent();
-            }
+            }*/
 
-            GUIEx.Toggle(ref Settings.ThisTile, (LangCode.English, "Change Event Using 'This Tile'"), (LangCode.Korean, "'이 타일'로 이벤트 변경"));
-            GUIEx.Toggle(ref Settings.FirstTile, (LangCode.English, "Change Event Using 'First Tile'"), (LangCode.Korean, "'첫 타일'로 이벤트 변경"));
-            GUIEx.Toggle(ref Settings.LastTile, (LangCode.English, "Change Event Using 'Last Tile'"), (LangCode.Korean, "'마지막 타일'로 이벤트 변경"));
             GUIEx.Toggle(ref Settings.HighlightTargetedTiles, (LangCode.English, "Highlight Targeted Tiles"), (LangCode.Korean, "목표 타일 하이라이트"));
             GUIEx.Toggle(ref Settings.SelectTileWithShortcutKeys, (LangCode.English, "Select Tile With ; + Click, ' + Click"), (LangCode.Korean, "타일을 ; + 클릭, ' + 클릭으로 선택"));
             GUIEx.Toggle(ref Settings.ChangeIndexWhenToggle, (LangCode.English, "Change Index When Toggle This Tile, First Tile, Last Tile"), (LangCode.Korean, "이 타일, 첫 타일, 마지막 타일 전환 시 선택된 타일 유지"));
+            GUIEx.Toggle(ref Settings.ChangeIndexWhenCreateTile, (LangCode.English, "Change Index When Create/Delete Tile"), (LangCode.Korean, "타일 생성/제거 시 선택된 타일 유지"));
             GUIEx.Toggle(ref Settings.MoreEditorSettings, (LangCode.English, "Enable More Editor Settings (Toggle Mesh tiles, etc.)"), (LangCode.Korean, "더 많은 에디터 설정 (자유 각도 토글 등)"));
             GUIEx.Toggle(ref Settings.EnableScreenRot, (LangCode.English, "Enable Rotating Editor Screen (Press 'Alt + ,' or 'Alt + .' to rotate editor screen 15°)"), (LangCode.Korean, "에디터 화면 회전 ('Alt' + , 또는 'Alt' + .)"));
             GUIEx.Toggle(ref Settings.EnableSelectedTileShowAngle, (LangCode.English, "Show Angle of Selected Tiles"), (LangCode.Korean, "선택된 타일의 각도 보기"));
@@ -191,7 +190,7 @@ namespace EditorHelper {
                 GUILayout.EndHorizontal();
                 GUIEx.EndIndent();
             }
-
+            /*
             if (Settings.HighlightTargetedTiles && !highlightEnabled) {
                 highlightEnabled = true;
                 if (scnEditor.instance?.selectedFloors.Count == 1)
@@ -200,11 +199,12 @@ namespace EditorHelper {
                         TargetPatch.TargetFloor();
             }
 
+            
             if (!Settings.HighlightTargetedTiles && highlightEnabled) {
                 highlightEnabled = false;
                 if (TargetPatch.targets.Count != 0)
                     TargetPatch.UntargetFloor();
-            }
+            }*/
         }
 
         private static void OnSaveGUI(UnityModManager.ModEntry modEntry) {

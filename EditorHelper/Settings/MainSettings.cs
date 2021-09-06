@@ -13,12 +13,10 @@ namespace EditorHelper.Settings {
         public bool EnableBetterBackup = true;
         public int MaximumBackups = 25;
         public bool SaveLatestBackup = false;
-        public bool ThisTile = true;
-        public bool FirstTile = true;
-        public bool LastTile = true;
         public bool HighlightTargetedTiles = true;
         public bool SelectTileWithShortcutKeys = true;
         public bool ChangeIndexWhenToggle = true;
+        public bool ChangeIndexWhenCreateTile = true;
         public bool MoreEditorSettings = true;
         public bool EnableScreenRot = true;
         public bool EnableSelectedTileShowAngle = true;

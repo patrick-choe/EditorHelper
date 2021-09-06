@@ -35,18 +35,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\FloorMeshConverter.cs" />
-    <Compile Include="EventTileChanger.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Patch\ArtistPatch.cs" />
     <Compile Include="Patch\DeltaDegPatch.cs" />
-    <Compile Include="Patch\FloorPatch.cs" />
+    <Compile Include="Patch\TargetTilesPatch.cs" />
     <Compile Include="Patch\LimitPatch.cs" />
     <Compile Include="Patch\Floor0Patch.cs" />
     <Compile Include="Patch\MoreEditorOptionsPatch.cs" />
     <Compile Include="Patch\RightClickToGenerate15Patch.cs" />
     <Compile Include="Patch\RotateScreenPatch.cs" />
     <Compile Include="Patch\ShowSelectedTilePatch.cs" />
-    <Compile Include="Patch\TargetPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\MainSettings.cs" />
     <Compile Include="Utils\Angle.cs" />
