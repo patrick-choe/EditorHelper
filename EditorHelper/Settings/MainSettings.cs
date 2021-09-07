@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using SA.GoogleDoc;
 using UnityModManagerNet;
 using System.Reflection;
@@ -22,8 +23,13 @@ namespace EditorHelper.Settings {
         public bool EnableScreenRot = true;
         public bool EnableSelectedTileShowAngle = true;
         public bool EnableChangeAngleByDragging = true;
+        public bool GraveToSee15Degs = true;
         public int MeshNumerator = 15;
         public int MeshDenominator = 4;
+        public bool AllowOtherSongTypes = true;
+        public bool AllowMP3 = false;
+        public bool AllowWAV = true;
+        public string levelEvents;
         public double MeshDelta => MeshNumerator / (double) MeshDenominator;
 
         public override void Save(UnityModManager.ModEntry modEntry) {

@@ -137,6 +137,7 @@ namespace EditorHelper.Patch {
     public static class ShiftEventCreatedFloorPatch {
         public static void Postfix() {
             if (!Main.Settings.ChangeIndexWhenCreateTile) return;
+            if (!scnEditor.instance.SelectionIsSingle()) return;
             var seqID = scnEditor.instance.selectedFloors[0].seqID;
             foreach (var evnt in scnEditor.instance.events) {
                 if (evnt.eventType is LevelEventType.MoveTrack or LevelEventType.RecolorTrack) {
@@ -161,9 +162,9 @@ namespace EditorHelper.Patch {
     
     [HarmonyPatch(typeof(scnEditor), "DeleteFloor")]
     public static class ShiftEventDeletedFloorPatch {
-        public static void Postfix() {
+        public static void Postfix(int sequenceIndex) {
             if (!Main.Settings.ChangeIndexWhenCreateTile) return;
-            var seqID = scnEditor.instance.selectedFloors[0].seqID;
+            var seqID = sequenceIndex;
             foreach (var evnt in scnEditor.instance.events) {
                 if (evnt.eventType is LevelEventType.MoveTrack or LevelEventType.RecolorTrack) {
                     var tuple = evnt.data["startTile"] as Tuple<int, TileRelativeTo>;

@@ -8,6 +8,7 @@ using HarmonyLib;
 using MoreEditorOptions.Util;
 using SFB;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityModManagerNet;
@@ -61,6 +62,21 @@ namespace EditorHelper.Patch {
 			}
 		}
 
+		public static bool DeleteFloor(this scnEditor instance, int sequenceIndex, bool remakePath = true) =>
+			instance.invoke<bool>("DeleteFloor")(sequenceIndex, remakePath);
+		public static scrFloor PreviousFloor(this scnEditor instance, scrFloor floor) =>
+			instance.invoke<scrFloor>("PreviousFloor")(floor);
+		
+		public static bool FloorPointsBackwards(this scnEditor instance, float floorAngle) =>
+			instance.invoke<bool>("FloorPointsBackwards")(floorAngle);
+		public static bool FloorPointsBackwards(this scnEditor instance, char floorType) =>
+			instance.invoke<bool>("FloorPointsBackwards")(floorType);
+		public static void SelectFloor(this scnEditor instance, scrFloor floorToSelect, bool cameraJump = true) =>
+			instance.invoke<object>("SelectFloor")(floorToSelect, cameraJump);
+		public static void MoveCameraToFloor(this scnEditor instance, scrFloor floor) =>
+			instance.invoke<object>("MoveCameraToFloor")(floor);
+		
+		
 		public static void ResetDirectionButtonsRot(scnEditor instance) {
 			scnEditor.instance.buttonA.transform.parent.parent.rotation = Quaternion.Euler(0f, 0f, 0);
 			instance.ResetListener(instance.buttonD, 'R');
@@ -79,6 +95,7 @@ namespace EditorHelper.Patch {
 			instance.ResetListener(instance.buttonH, 'H');
 			instance.ResetListener(instance.buttonN, 'N');
 			instance.ResetListener(instance.buttonM, 'M');
+			instance.AddSpaceEscape();
 			instance.invoke("UpdateFloorDirectionButtons")(true);
 		}
 		
@@ -100,6 +117,7 @@ namespace EditorHelper.Patch {
 			instance.AddListener(instance.buttonH, 'H');
 			instance.AddListener(instance.buttonN, 'N');
 			instance.AddListener(instance.buttonM, 'M');
+			instance.AddSpaceEscape();
 			instance.invoke("UpdateFloorDirectionButtons")(true);
 		}
 
@@ -110,21 +128,275 @@ namespace EditorHelper.Patch {
 			button.onClick.AddListener(() => instance.CreateFloorWithShiftedCharOrAngle(0f, angle));
 			//UnityModManager.Logger.Log($"{button.name} => {Angle.RotateFloor(angle, CurrentRot)}");
 		}
-		
+
+		public static UnityAction call = () => {
+			UnityModManager.Logger.Log("ForceNotDelete");
+			UpdateRotationPatch.forceNotDelete = true;
+		};
+
+		public static void AddSpaceEscape(this scnEditor instance) {
+			instance.buttonSpace.onClick.RemoveAllListeners();
+			instance.buttonSpace.onClick.AddListener(call);
+			instance.buttonSpace.onClick.AddListener(
+				() => instance.invoke("CreateFloorWithCharOrAngle")(0f,
+					(Angle.RotateFloor(scrLevelMaker.instance.leveldata[instance.selectedFloors[0].seqID], 180)), true,
+					false));
+		}
+
 		public static void ResetListener(this scnEditor instance, Button button, char angle) {
 			button.onClick.RemoveAllListeners();
 			button.onClick.AddListener(() => instance.invoke("CreateFloorWithCharOrAngle")(0f, angle, true, false));
 			//UnityModManager.Logger.Log($"{button.name} => {Angle.RotateFloor(angle, CurrentRot)}");
 		}
 
+		public static bool forceNotDelete {
+			get => _forceNotDelete;
+			set {
+				UnityModManager.Logger.Log($"Force: {value}");
+				_forceNotDelete = value;
+			}
+		}
+		private static bool _forceNotDelete;
+
 		public static void CreateFloor(this scnEditor instance, char floorType, bool pulseFloorButtons = true,
 			bool fullSpin = false) {
-			instance.invoke("CreateFloor")(floorType, pulseFloorButtons, fullSpin);
+			if (!instance.SelectionIsSingle()) {
+				return;
+			}
+
+			scrFloor scrFloor = instance.selectedFloors[0];
+			if (fullSpin && scrFloor.seqID == 0) {
+				return;
+			}
+
+			instance.SaveState(true, false);
+			instance.changingState++;
+			int seqID = scrFloor.seqID;
+			scrFloor x = instance.PreviousFloor(scrFloor);
+			float num = scrLevelMaker.GetAngleFromFloorCharDirection(floorType) % 360f;
+			double num2 = scrFloor.entryangle * 57.295780181884766;
+			float num3 = Mathf.Abs(450f - (float) num2) % 360f;
+			bool flag =
+				scrMisc.ApproximatelyFloor(
+					scrMisc.GetAngleMoved(scrFloor.entryangle, scrFloor.exitangle, !scrFloor.isCCW),
+					6.2831854820251465) || scrMisc.ApproximatelyFloor(scrFloor.entryangle, scrFloor.exitangle);
+			if (!forceNotDelete && instance.FloorPointsBackwards(floorType) && !Input.GetKeyDown(KeyCode.Space) && !Input.GetKeyDown(KeyCode.Tab)) {
+				if (x != null) {
+					int seqID2 = scrFloor.seqID;
+					if (instance.DeleteFloor(seqID2, true)) {
+						instance.SelectFloor(scrLevelMaker.instance.listFloors[seqID2 - 1], true);
+					}
+
+					scrFloor floor = scrLevelMaker.instance.listFloors[seqID2 - 1];
+					instance.MoveCameraToFloor(floor);
+				}
+			} else {
+				forceNotDelete = false;
+				foreach (LevelEvent levelEvent in instance.events) {
+					if (levelEvent.floor > seqID) {
+						levelEvent.floor++;
+						if (levelEvent.eventType == LevelEventType.AddDecoration ||
+						    levelEvent.eventType == LevelEventType.AddText) {
+							instance.set("refreshDecSprites", true);
+						}
+					}
+				}
+
+				instance.InsertCharFloor(seqID, floorType);
+				scrFloor scrFloor2 = scrLevelMaker.instance.listFloors[seqID + 1];
+				instance.SelectFloor(scrFloor2, true);
+				instance.MoveCameraToFloor(scrFloor2);
+				if (pulseFloorButtons) {
+					Button button = null;
+					switch (floorType) {
+						case 'B':
+							button = instance.buttonB;
+							break;
+						case 'C':
+							button = instance.buttonC;
+							break;
+						case 'D':
+							button = instance.buttonS;
+							break;
+						case 'E':
+							button = instance.buttonE;
+							break;
+						case 'H':
+							button = instance.buttonH;
+							break;
+						case 'J':
+							button = instance.buttonJ;
+							break;
+						case 'L':
+							button = instance.buttonA;
+							break;
+						case 'M':
+							button = instance.buttonM;
+							break;
+						case 'N':
+							button = instance.buttonN;
+							break;
+						case 'Q':
+							button = instance.buttonQ;
+							break;
+						case 'R':
+							button = instance.buttonD;
+							break;
+						case 'T':
+							button = instance.buttonT;
+							break;
+						case 'U':
+							button = instance.buttonW;
+							break;
+						case 'V':
+							button = instance.buttonF;
+							break;
+						case 'Y':
+							button = instance.buttonG;
+							break;
+						case 'Z':
+							button = instance.buttonZ;
+							break;
+					}
+
+					if (button != null) {
+						Vector3 endValue = new Vector3(1f, 1f);
+						button.transform.DOKill(false);
+						button.transform.ScaleXY(instance.floorButtonPulseSize);
+						button.transform.DOScale(endValue, instance.floorButtonPulseDuration).SetUpdate(true)
+							.SetEase(Ease.OutQuad);
+					}
+				}
+			}
+
+			instance.changingState--;
 		}
-		
+
 		public static void CreateFloor(this scnEditor instance, float floorAngle, bool pulseFloorButtons = true,
 			bool fullSpin = false) {
-			instance.invoke("CreateFloor")(floorAngle, pulseFloorButtons, fullSpin);
+			if (!instance.SelectionIsSingle()) {
+				return;
+			}
+
+			scrFloor scrFloor = instance.selectedFloors[0];
+			if (fullSpin && scrFloor.seqID == 0) {
+				return;
+			}
+
+			instance.SaveState(true, false);
+			instance.changingState++;
+			int seqID = scrFloor.seqID;
+			scrFloor x = instance.PreviousFloor(scrFloor);
+			float num = floorAngle % 360f;
+			double num2 = scrFloor.entryangle * 57.295780181884766;
+			float num3 = Mathf.Abs(450f - (float) num2) % 360f;
+			bool flag =
+				scrMisc.ApproximatelyFloor(
+					scrMisc.GetAngleMoved(scrFloor.entryangle, scrFloor.exitangle, !scrFloor.isCCW),
+					6.2831854820251465) || scrMisc.ApproximatelyFloor(scrFloor.entryangle, scrFloor.exitangle);
+			if (!forceNotDelete && instance.FloorPointsBackwards(floorAngle) && !Input.GetKeyDown(KeyCode.Space) && !Input.GetKeyDown(KeyCode.Tab)) {
+				if (x != null) {
+					int seqID2 = scrFloor.seqID;
+					if (instance.DeleteFloor(seqID2, true)) {
+						instance.SelectFloor(scrLevelMaker.instance.listFloors[seqID2 - 1], true);
+					}
+
+					scrFloor floor = scrLevelMaker.instance.listFloors[seqID2 - 1];
+					instance.MoveCameraToFloor(floor);
+				}
+			} else {
+				forceNotDelete = false;
+				foreach (LevelEvent levelEvent in instance.events) {
+					if (levelEvent.floor > seqID) {
+						levelEvent.floor++;
+						if (levelEvent.eventType == LevelEventType.AddDecoration ||
+						    levelEvent.eventType == LevelEventType.AddText) {
+							instance.set("refreshDecSprites", true);
+						}
+					}
+				}
+
+				instance.InsertFloatFloor(seqID, floorAngle);
+				scrFloor scrFloor2 = scrLevelMaker.instance.listFloors[seqID + 1];
+				instance.SelectFloor(scrFloor2, true);
+				instance.MoveCameraToFloor(scrFloor2);
+				if (pulseFloorButtons) {
+					Button button = null;
+					if (!0f.Equals(floorAngle)) {
+						if (!90f.Equals(floorAngle)) {
+							if (!180f.Equals(floorAngle)) {
+								if (!270f.Equals(floorAngle)) {
+									if (!45f.Equals(floorAngle)) {
+										if (!135f.Equals(floorAngle)) {
+											if (!225f.Equals(floorAngle)) {
+												if (!315f.Equals(floorAngle)) {
+													if (!285f.Equals(floorAngle)) {
+														if (!60f.Equals(floorAngle)) {
+															if (!255f.Equals(floorAngle)) {
+																if (!300f.Equals(floorAngle)) {
+																	if (!150f.Equals(floorAngle)) {
+																		if (!30f.Equals(floorAngle)) {
+																			if (!330f.Equals(floorAngle)) {
+																				if (210f.Equals(floorAngle)) {
+																					button = instance.buttonN;
+																				}
+																			} else {
+																				button = instance.buttonM;
+																			}
+																		} else {
+																			button = instance.buttonJ;
+																		}
+																	} else {
+																		button = instance.buttonH;
+																	}
+																} else {
+																	button = instance.buttonB;
+																}
+															} else {
+																button = instance.buttonF;
+															}
+														} else {
+															button = instance.buttonT;
+														}
+													} else {
+														button = instance.buttonG;
+													}
+												} else {
+													button = instance.buttonC;
+												}
+											} else {
+												button = instance.buttonZ;
+											}
+										} else {
+											button = instance.buttonQ;
+										}
+									} else {
+										button = instance.buttonE;
+									}
+								} else {
+									button = instance.buttonS;
+								}
+							} else {
+								button = instance.buttonA;
+							}
+						} else {
+							button = instance.buttonW;
+						}
+					} else {
+						button = instance.buttonD;
+					}
+
+					if (button != null) {
+						Vector3 endValue = new Vector3(1f, 1f);
+						button.transform.DOKill(false);
+						button.transform.ScaleXY(instance.floorButtonPulseSize);
+						button.transform.DOScale(endValue, instance.floorButtonPulseDuration).SetUpdate(true)
+							.SetEase(Ease.OutQuad);
+					}
+				}
+			}
+
+			instance.changingState--;
 		}
 
 		public static void CreateFloorWithShiftedCharOrAngle(this scnEditor instance, float angle, char chara,

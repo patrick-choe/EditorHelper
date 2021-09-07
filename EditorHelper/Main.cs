@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using ADOFAI;
+using DG.Tweening;
 using EditorHelper.Patch;
 using EditorHelper.Settings;
 using EditorHelper.Utils;
@@ -30,6 +31,8 @@ namespace EditorHelper {
         private const int NotBigger = 2;
         private const int Bigger = 3;
         private const int Less = 4;
+
+        public const int Width = 150;
         
         private static bool Load(UnityModManager.ModEntry modEntry) {
             var version = AccessTools.Field(typeof(GCNS), "releaseNumber").GetValue(null) as int?;
@@ -105,6 +108,9 @@ namespace EditorHelper {
                 {LangCode.English, "Convert to mesh models"},
             };
 
+            //Settings.levelEvents ??= Json.Serialize(Misc.EncodeLevelEventInfoList(GCS.levelEventsInfo));
+            //GCS.levelEventsInfo = ADOStartup.DecodeLevelEventInfoList(Json.Deserialize(Settings.levelEvents) as List<object>);
+
             return true;
         }
 
@@ -119,6 +125,7 @@ namespace EditorHelper {
                 StopTweaks();
                 ApplyConfig(true);
             }
+
 
             return true;
         }
@@ -148,6 +155,7 @@ namespace EditorHelper {
                 GCS.settingsInfo["MiscSettings"].propertiesInfo.Remove("useLegacyFlash");
                 GCS.settingsInfo["MiscSettings"].propertiesInfo.Remove("convertFloorMesh");
             }
+
         }
         
         private static void StopTweaks() {
@@ -158,12 +166,53 @@ namespace EditorHelper {
             GCS.settingsInfo["MiscSettings"].propertiesInfo.Remove("convertFloorMesh");
         }
 
+        
         private static void OnGUI(UnityModManager.ModEntry modEntry) {
+            GUIEx.Label((LangCode.English, "<b><size=20>Floors</size></b>"), (LangCode.Korean, "<b><size=20>타일</size></b>"));
+            GUIEx.BeginIndent(10);
             GUIEx.Toggle(ref Settings.EnableFloor0Events, (LangCode.English, "Enable Floor 0 Events"), (LangCode.Korean, "첫 타일 이벤트 활성화"));
+            GUIEx.Toggle(ref Settings.HighlightTargetedTiles, (LangCode.English, "Highlight Targeted Tiles"), (LangCode.Korean, "목표 타일 하이라이트"));
+            GUIEx.Toggle(ref Settings.SelectTileWithShortcutKeys, (LangCode.English, "Select Tile With ; + Click, ' + Click"), (LangCode.Korean, "타일을 ; + 클릭, ' + 클릭으로 선택"));
+            GUIEx.Toggle(ref Settings.ChangeIndexWhenToggle, (LangCode.English, "Change Index When Toggle This Tile, First Tile, Last Tile"), (LangCode.Korean, "이 타일, 첫 타일, 마지막 타일 전환 시 선택된 타일 유지"));
+            GUIEx.Toggle(ref Settings.ChangeIndexWhenCreateTile, (LangCode.English, "Change Index When Create/Delete Tile"), (LangCode.Korean, "타일 생성/제거 시 선택된 타일 유지"));
+            GUIEx.Toggle(ref Settings.SmallerDeltaDeg, (LangCode.English, "Enable Smaller Delta Degree (90° -> 15°, Press 'Ctrl + Alt + ,' or 'Ctrl + Alt + .' to use 15°)"), (LangCode.Korean, "더 작은 각도로 타일 회전 (90° -> 15°, 'Ctrl + Alt + ,' 또는 'Ctrl + Alt + .'로 15° 단위 회전)"));
+            GUIEx.Toggle(ref Settings.EnableChangeAngleByDragging, (LangCode.English, "Enable Change Angle By Dragging Tiles"), (LangCode.Korean, "타일을 드래그해서 각도 변경"));
+            if (Settings.EnableChangeAngleByDragging) {
+                GUIEx.BeginIndent();
+                GUILayout.BeginHorizontal();
+                GUIEx.IntField(ref Settings.MeshNumerator, 0, int.MaxValue);
+                GUILayout.Label("/", GUILayout.Width(15));
+                GUIEx.IntField(ref Settings.MeshDenominator, 1, int.MaxValue);
+                GUILayout.Label($"({Settings.MeshDelta})", GUILayout.Width(40));
+                GUIEx.Label((LangCode.English, "Changed Angle Delta"), (LangCode.Korean, "각도 변경 단위"));
+                GUILayout.EndHorizontal();
+                GUIEx.EndIndent();
+            }
+            GUIEx.Toggle(ref Settings.EnableSelectedTileShowAngle, (LangCode.English, "Show Angle of Selected Tiles"), (LangCode.Korean, "선택된 타일의 각도 보기"));
+            GUIEx.Toggle(ref Settings.GraveToSee15Degs, (LangCode.English, "Show 15 degs in editor while pressing ` key"), (LangCode.Korean, "에디터에서 `키를 누르는 동안 15도 단위 각도 표시"));
+            GUIEx.EndIndent();
+            GUILayout.BeginHorizontal(); GUILayout.Space(10); GUILayout.EndHorizontal();
+            
+            GUIEx.Label((LangCode.English, "<b><size=20>Events</size></b>"), (LangCode.Korean, "<b><size=20>이벤트</size></b>"));
+            GUIEx.BeginIndent(10);
             GUIEx.Toggle(ref Settings.RemoveLimits, (LangCode.English, "Remove All Editor Limits"), (LangCode.Korean, "에디터 입력값 제한 비활성화"));
+            GUIEx.EndIndent();
+            GUILayout.BeginHorizontal(); GUILayout.Space(10); GUILayout.EndHorizontal();
+            
+            GUIEx.Label((LangCode.English, "<b><size=20>Miscellaneous</size></b>"), (LangCode.Korean, "<b><size=20>기타</size></b>"));
+            GUIEx.BeginIndent(10);
+            GUIEx.Toggle(ref Settings.MoreEditorSettings, (LangCode.English, "Enable More Editor Settings (Toggle Mesh tiles, etc.)"), (LangCode.Korean, "더 많은 에디터 설정 (자유 각도 토글 등)"));
             GUIEx.Toggle(ref Settings.AutoArtistURL, (LangCode.English, "Enable Auto Paste Artist URL"), (LangCode.Korean, "작곡가 URL 자동 입력"));
             GUIEx.Toggle(ref Settings.EnableBetterArtistCheck, (LangCode.English, "Enable Better Artist Check"), (LangCode.Korean, "더 나은 작곡가 확인"));
-            GUIEx.Toggle(ref Settings.SmallerDeltaDeg, (LangCode.English, "Enable Smaller Delta Degree (90° -> 15°, Press 'Ctrl + Alt + ,' or 'Ctrl + Alt + .' to use 15°)"), (LangCode.Korean, "더 작은 각도로 타일 회전 (90° -> 15°, 'Ctrl + Alt + ,' 또는 'Ctrl + Alt + .'로 15° 단위 회전)"));
+            GUIEx.Toggle(ref Settings.AllowOtherSongTypes, (LangCode.English, "Allow other audio file extension"), (LangCode.Korean, "다른 형식의 오디오 파일 허용"));
+            if (Settings.AllowOtherSongTypes) {
+                GUIEx.BeginIndent();
+                GUIEx.Toggle(ref Settings.AllowWAV, (LangCode.English, "WAV"));
+                GUIEx.Toggle(ref Settings.AllowMP3, (LangCode.English, "MP3"));
+                GUIEx.EndIndent();
+            }
+            GUIEx.Toggle(ref Settings.EnableScreenRot, (LangCode.English, "Enable Rotating Editor Screen (Press 'Alt + ,' or 'Alt + .' to rotate editor screen 15°)"), (LangCode.Korean, "에디터 화면 회전 ('Alt' + , 또는 'Alt' + .)"));
+            GUIEx.EndIndent();
             /*GUIEx.Toggle(ref Settings.EnableBetterBackup, (LangCode.English, "Enable better editor backup in nested directory"), (LangCode.Korean, "레벨이 있는 폴더에서 더 나은 백업"));
             if (Settings.EnableBetterBackup) {
                 GUIEx.BeginIndent();
@@ -172,25 +221,6 @@ namespace EditorHelper {
                 GUIEx.EndIndent();
             }*/
 
-            GUIEx.Toggle(ref Settings.HighlightTargetedTiles, (LangCode.English, "Highlight Targeted Tiles"), (LangCode.Korean, "목표 타일 하이라이트"));
-            GUIEx.Toggle(ref Settings.SelectTileWithShortcutKeys, (LangCode.English, "Select Tile With ; + Click, ' + Click"), (LangCode.Korean, "타일을 ; + 클릭, ' + 클릭으로 선택"));
-            GUIEx.Toggle(ref Settings.ChangeIndexWhenToggle, (LangCode.English, "Change Index When Toggle This Tile, First Tile, Last Tile"), (LangCode.Korean, "이 타일, 첫 타일, 마지막 타일 전환 시 선택된 타일 유지"));
-            GUIEx.Toggle(ref Settings.ChangeIndexWhenCreateTile, (LangCode.English, "Change Index When Create/Delete Tile"), (LangCode.Korean, "타일 생성/제거 시 선택된 타일 유지"));
-            GUIEx.Toggle(ref Settings.MoreEditorSettings, (LangCode.English, "Enable More Editor Settings (Toggle Mesh tiles, etc.)"), (LangCode.Korean, "더 많은 에디터 설정 (자유 각도 토글 등)"));
-            GUIEx.Toggle(ref Settings.EnableScreenRot, (LangCode.English, "Enable Rotating Editor Screen (Press 'Alt + ,' or 'Alt + .' to rotate editor screen 15°)"), (LangCode.Korean, "에디터 화면 회전 ('Alt' + , 또는 'Alt' + .)"));
-            GUIEx.Toggle(ref Settings.EnableSelectedTileShowAngle, (LangCode.English, "Show Angle of Selected Tiles"), (LangCode.Korean, "선택된 타일의 각도 보기"));
-            GUIEx.Toggle(ref Settings.EnableChangeAngleByDragging, (LangCode.English, "Enable Change Angle By Dragging"), (LangCode.Korean, "드래그해서 각도 변경"));
-            if (Settings.EnableChangeAngleByDragging) {
-                GUIEx.BeginIndent();
-                GUILayout.BeginHorizontal();
-                GUIEx.IntField(ref Settings.MeshNumerator, 0, int.MaxValue, GUILayout.Width(60));
-                GUILayout.Label("/", GUILayout.Width(15));
-                GUIEx.IntField(ref Settings.MeshDenominator, 1, int.MaxValue, GUILayout.Width(60));
-                GUILayout.Label($"({Settings.MeshDelta})", GUILayout.Width(40));
-                GUIEx.Label((LangCode.English, "Changed Angle Delta"), (LangCode.Korean, "각도 변경 단위"));
-                GUILayout.EndHorizontal();
-                GUIEx.EndIndent();
-            }
             /*
             if (Settings.HighlightTargetedTiles && !highlightEnabled) {
                 highlightEnabled = true;

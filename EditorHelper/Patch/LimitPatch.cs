@@ -326,5 +326,9 @@ namespace EditorHelper.Patch {
 				}
 			}
 		}
+
+		private static void Postfix() {
+			scnEditor.instance.AddSpaceEscape();
+		}
 	}
 }

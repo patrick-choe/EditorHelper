@@ -35,10 +35,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\FloorMeshConverter.cs" />
+    <Compile Include="Components\LevelEventsPanel.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Patch\ArtistPatch.cs" />
+    <Compile Include="Patch\ChangePropertyPatch.cs" />
     <Compile Include="Patch\DeltaDegPatch.cs" />
+    <Compile Include="Patch\FloorDeletePatch.cs" />
     <Compile Include="Patch\GraveKey15DegPatch.cs" />
+    <Compile Include="Patch\OtherExtensionPatch.cs" />
     <Compile Include="Patch\TargetTilesPatch.cs" />
     <Compile Include="Patch\LimitPatch.cs" />
     <Compile Include="Patch\Floor0Patch.cs" />
@@ -120,6 +124,9 @@
     </Reference>
     <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice - 복사본\A Dance of Fire and Ice_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.VideoModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice - 복사본\A Dance of Fire and Ice_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityModManager, Version=0.23.4.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityModManager\UnityModManager.dll</HintPath>

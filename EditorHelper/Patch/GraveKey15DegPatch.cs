@@ -1,4 +1,5 @@
-﻿using ADOFAI;
+﻿using System;
+using ADOFAI;
 using HarmonyLib;
 using MoreEditorOptions.Util;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace EditorHelper.Patch {
     public static class GraveKey15DegPatch {
         // ReSharper disable once InconsistentNaming
         public static void Postfix() {
+            if (!Main.Settings.GraveToSee15Degs) return;
             if (scnEditor.instance.SelectionIsSingle()) {
                 if (Input.GetKey(KeyCode.BackQuote)) {
                     scnEditor.instance.floorButtonExtraCanvas.gameObject.SetActive(true);
