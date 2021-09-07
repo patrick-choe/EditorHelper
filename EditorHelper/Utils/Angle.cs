@@ -58,7 +58,7 @@ namespace EditorHelper.Utils {
             float angleDiff = (float) diff.NormalizeAngle(true);
             return angleDiff;
         }
-
+        
         public static float NormalizeAngle(this float rot, bool zeroTo360 = false) {
             return (float) ((double) rot).NormalizeAngle(zeroTo360);
         }

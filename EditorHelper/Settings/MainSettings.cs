@@ -9,6 +9,7 @@ namespace EditorHelper.Settings {
         public bool EnableFloor0Events = true;
         public bool RemoveLimits = true;
         public bool AutoArtistURL = true;
+        public bool EnableBetterArtistCheck = true;
         public bool SmallerDeltaDeg = true;
         public bool EnableBetterBackup = true;
         public int MaximumBackups = 25;

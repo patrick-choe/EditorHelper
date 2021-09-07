@@ -162,6 +162,7 @@ namespace EditorHelper {
             GUIEx.Toggle(ref Settings.EnableFloor0Events, (LangCode.English, "Enable Floor 0 Events"), (LangCode.Korean, "첫 타일 이벤트 활성화"));
             GUIEx.Toggle(ref Settings.RemoveLimits, (LangCode.English, "Remove All Editor Limits"), (LangCode.Korean, "에디터 입력값 제한 비활성화"));
             GUIEx.Toggle(ref Settings.AutoArtistURL, (LangCode.English, "Enable Auto Paste Artist URL"), (LangCode.Korean, "작곡가 URL 자동 입력"));
+            GUIEx.Toggle(ref Settings.EnableBetterArtistCheck, (LangCode.English, "Enable Better Artist Check"), (LangCode.Korean, "더 나은 작곡가 확인"));
             GUIEx.Toggle(ref Settings.SmallerDeltaDeg, (LangCode.English, "Enable Smaller Delta Degree (90° -> 15°, Press 'Ctrl + Alt + ,' or 'Ctrl + Alt + .' to use 15°)"), (LangCode.Korean, "더 작은 각도로 타일 회전 (90° -> 15°, 'Ctrl + Alt + ,' 또는 'Ctrl + Alt + .'로 15° 단위 회전)"));
             /*GUIEx.Toggle(ref Settings.EnableBetterBackup, (LangCode.English, "Enable better editor backup in nested directory"), (LangCode.Korean, "레벨이 있는 폴더에서 더 나은 백업"));
             if (Settings.EnableBetterBackup) {

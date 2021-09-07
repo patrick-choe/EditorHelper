@@ -190,28 +190,28 @@ namespace EditorHelper.Patch {
 						num = 315;
 						break;
 					case FloorDirectionButtonType.Y:
-						num = 60;
+						num = Input.GetKey(KeyCode.BackQuote) ? 75 : 60;
 						break;
 					case FloorDirectionButtonType.V:
-						num = 240;
+						num = Input.GetKey(KeyCode.BackQuote) ? 255 : 240;
 						break;
 					case FloorDirectionButtonType.T:
-						num = 120;
+						num = Input.GetKey(KeyCode.BackQuote) ? 105 : 120;
 						break;
 					case FloorDirectionButtonType.B:
-						num = 300;
+						num = Input.GetKey(KeyCode.BackQuote) ? 285 : 300;
 						break;
 					case FloorDirectionButtonType.H:
-						num = 150;
+						num = Input.GetKey(KeyCode.BackQuote) ? 165 : 150;
 						break;
 					case FloorDirectionButtonType.J:
-						num = 30;
+						num = Input.GetKey(KeyCode.BackQuote) ? 15 : 30;
 						break;
 					case FloorDirectionButtonType.N:
-						num = 210;
+						num = Input.GetKey(KeyCode.BackQuote) ? 75 : 210;
 						break;
 					case FloorDirectionButtonType.M:
-						num = 330;
+						num = Input.GetKey(KeyCode.BackQuote) ? 345 : 330;
 						break;
 					case FloorDirectionButtonType.Space:
 						flag = true;
@@ -237,43 +237,9 @@ namespace EditorHelper.Patch {
 	[HarmonyPatch(typeof(scnEditor), "SwitchToEditMode")]
 	public static class ResetPatch {
 		public static void Postfix() {
-			UnityModManager.Logger.Log("왜-이럴-까요");
-			UnityModManager.Logger.Log("왜-이럴-까요");
-			UnityModManager.Logger.Log("왜-이럴-까요");
-			UnityModManager.Logger.Log("왜-이럴-까요");
-			UnityModManager.Logger.Log("왜-이럴-까요");
-			UnityModManager.Logger.Log("왜-이럴-까요");
-			UnityModManager.Logger.Log("왜-이럴-까요");
-			UnityModManager.Logger.Log("왜-이럴-까요");
-			UnityModManager.Logger.Log("왜-이럴-까요");
-			UnityModManager.Logger.Log("왜-이럴-까요");
-			UnityModManager.Logger.Log("왜-이럴-까요");
-			UnityModManager.Logger.Log("왜-이럴-까요");
-			UnityModManager.Logger.Log("왜-이럴-까요");
 			UpdateRotationPatch.UpdateDirectionButtonsRot(scnEditor.instance);
 		}
 	}
-/*
-    [HarmonyPatch(typeof(scrController), "Awake_Rewind")]
-    internal static class AwakeRewindPatch {
-        private static void Prefix() {
-            if (Main.Settings.EnableScreenRot) {
-                UpdateRotationPatch.CurrentRot = 0f;
-            }
-        }
-    }
-
-    [HarmonyPatch(typeof(Input), "mousePosition", MethodType.Getter)]
-    internal static class PositionPatch {
-        private static void Postfix(ref Vector3 __result) {
-            if (!Main.Settings.EnableScreenRot || UpdateRotationPatch.CurrentRot == 0f) {
-                return;
-            }
-
-            
-        }
-    }*/
-
 
 	[HarmonyPatch(typeof(scnEditor), "Update")]
 	internal static class CorrectRotationPatch {

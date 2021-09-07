@@ -63,7 +63,7 @@ namespace EditorHelper.Patch {
                             LetterPress = gameObject2.GetComponent<scrLetterPress>();
                             gameObject2.transform.eulerAngles = Vector3.zero;
                         }
-                        LetterPress.letterText.text = $"{angle.NormalizeAngle(true)}";
+                        LetterPress.letterText.text = $"{((prev.floatDirection + angle) * (obj.isCCW ? -1 : 1)).NormalizeAngle(true)}";
                         prev.UpdateAngleTo(angle, 0, 180);
                         obj.UpdateAngleTo(180, -angle * 2, -angle * 2, true);
                         return;
