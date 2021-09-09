@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Security.Policy;
 using ADOFAI;
 using DG.Tweening;
+using EditorHelper.Components;
 using EditorHelper.Patch;
 using EditorHelper.Settings;
 using EditorHelper.Utils;
@@ -12,6 +15,7 @@ using GDMiniJSON;
 using HarmonyLib;
 using SA.GoogleDoc;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityModManagerNet;
 using PropertyInfo = ADOFAI.PropertyInfo;
 
@@ -65,6 +69,8 @@ namespace EditorHelper {
             }
 
             if (version == null) return false;
+            
+            Assets.Load();
             switch (mode) {
                 case Exact:
                     if (version != target) return false;
@@ -107,7 +113,18 @@ namespace EditorHelper {
                 {LangCode.Korean, "자유 각도로 변환"},
                 {LangCode.English, "Convert to mesh models"},
             };
+            
+            EventBundleManager.Load();
 
+            /*
+            var toggle = RDC.data.prefab_controlToggle;
+            var dropdown = toggle.transform.Find("Dropdown").GetComponent<Dropdown>();
+            var label = dropdown.captionText;
+            var inputSelector = label.gameObject.AddComponent<InputSelector>();
+            inputSelector.Dropdown = dropdown;
+            inputSelector.textComponent = label;
+            */
+            //RDC.data.prefab_controlToggle = Assets.ControlTogglePrefab;
             //Settings.levelEvents ??= Json.Serialize(Misc.EncodeLevelEventInfoList(GCS.levelEventsInfo));
             //GCS.levelEventsInfo = ADOStartup.DecodeLevelEventInfoList(Json.Deserialize(Settings.levelEvents) as List<object>);
 
@@ -176,7 +193,7 @@ namespace EditorHelper {
             GUIEx.Toggle(ref Settings.ChangeIndexWhenToggle, (LangCode.English, "Change Index When Toggle This Tile, First Tile, Last Tile"), (LangCode.Korean, "이 타일, 첫 타일, 마지막 타일 전환 시 선택된 타일 유지"));
             GUIEx.Toggle(ref Settings.ChangeIndexWhenCreateTile, (LangCode.English, "Change Index When Create/Delete Tile"), (LangCode.Korean, "타일 생성/제거 시 선택된 타일 유지"));
             GUIEx.Toggle(ref Settings.SmallerDeltaDeg, (LangCode.English, "Enable Smaller Delta Degree (90° -> 15°, Press 'Ctrl + Alt + ,' or 'Ctrl + Alt + .' to use 15°)"), (LangCode.Korean, "더 작은 각도로 타일 회전 (90° -> 15°, 'Ctrl + Alt + ,' 또는 'Ctrl + Alt + .'로 15° 단위 회전)"));
-            GUIEx.Toggle(ref Settings.EnableChangeAngleByDragging, (LangCode.English, "Enable Change Angle By Dragging Tiles"), (LangCode.Korean, "타일을 드래그해서 각도 변경"));
+            GUIEx.Toggle(ref Settings.EnableChangeAngleByDragging, (LangCode.English, "Enable Change Angle By Dragging Tile"), (LangCode.Korean, "타일을 드래그해서 각도 변경"));
             if (Settings.EnableChangeAngleByDragging) {
                 GUIEx.BeginIndent();
                 GUILayout.BeginHorizontal();
@@ -196,6 +213,7 @@ namespace EditorHelper {
             GUIEx.Label((LangCode.English, "<b><size=20>Events</size></b>"), (LangCode.Korean, "<b><size=20>이벤트</size></b>"));
             GUIEx.BeginIndent(10);
             GUIEx.Toggle(ref Settings.RemoveLimits, (LangCode.English, "Remove All Editor Limits"), (LangCode.Korean, "에디터 입력값 제한 비활성화"));
+            GUIEx.Toggle(ref Settings.EnumInputField, (LangCode.English, "Direct Text Input in Selections"), (LangCode.Korean, "셀렉터에 직접 값 입력"));
             GUIEx.EndIndent();
             GUILayout.BeginHorizontal(); GUILayout.Space(10); GUILayout.EndHorizontal();
             
@@ -211,8 +229,25 @@ namespace EditorHelper {
                 GUIEx.Toggle(ref Settings.AllowMP3, (LangCode.English, "MP3"));
                 GUIEx.EndIndent();
             }
+            GUIEx.Toggle(ref Settings.DetectBpmOnLoadSong, (LangCode.English, "Detect BPM on Load Song"), (LangCode.Korean, "곡을 로드할 때 BPM 측정"));
+            GUIEx.Toggle(ref Settings.DetectOffsetOnLoadSong, (LangCode.English, "Detect Offset on Load Song"), (LangCode.Korean, "곡을 로드할 때 오프셋 측정"));
             GUIEx.Toggle(ref Settings.EnableScreenRot, (LangCode.English, "Enable Rotating Editor Screen (Press 'Alt + ,' or 'Alt + .' to rotate editor screen 15°)"), (LangCode.Korean, "에디터 화면 회전 ('Alt' + , 또는 'Alt' + .)"));
             GUIEx.EndIndent();
+            
+            GUIEx.Label((LangCode.English, "<b><size=20>Keymap</size></b>"), (LangCode.Korean, "<b><size=20>키 설정</size></b>"));
+            GUIEx.BeginIndent(10);
+            GUIEx.KeyMap(ref Settings.MoveEventDown, (LangCode.English, "Move to Downer Event"), (LangCode.Korean, "아래에 있는 이벤트로 이동"));
+            GUIEx.KeyMap(ref Settings.MoveEventUp, (LangCode.English, "Move to Upper Event"), (LangCode.Korean, "위에 있는 이벤트로 이동"));
+            GUIEx.KeyMap(ref Settings.MoveEventRight, (LangCode.English, "Move to Right Event"), (LangCode.Korean, "오른쪽에 있는 이벤트로 이동"));
+            GUIEx.KeyMap(ref Settings.MoveEventLeft, (LangCode.English, "Move to Left Event"), (LangCode.Korean, "왼쪽에 있는 이벤트로 이동"));
+            GUIEx.KeyMap(ref Settings.DeleteEvent, (LangCode.English, "Delete Event"), (LangCode.Korean, "이벤트 삭제"));
+            GUIEx.KeyMap(ref Settings.ChangeTileAngle, (LangCode.English, "Change Angle by Dragging Tile"), (LangCode.Korean, "타일을 드래그해서 각도 변경"));
+            GUIEx.KeyMap(ref Settings.RotateScreenCW, (LangCode.English, "Rotate Editor Screen Clockwise"), (LangCode.Korean, "시계 방향으로 에디터 화면 회전"));
+            GUIEx.KeyMap(ref Settings.RotateScreenCCW, (LangCode.English, "Rotate Editor Screen Counter Clockwise"), (LangCode.Korean, "반시계 방향으로 에디터 화면 회전"));
+            GUIEx.KeyMap(ref Settings.OpenEditorHelperPanel, (LangCode.English, "Open EditorHelper Panel in Editor"), (LangCode.Korean, "에디터에서 EditorHelper 패널 열기"));
+            GUIEx.EndIndent();
+            GUILayout.BeginHorizontal(); GUILayout.Space(10); GUILayout.EndHorizontal();
+
             /*GUIEx.Toggle(ref Settings.EnableBetterBackup, (LangCode.English, "Enable better editor backup in nested directory"), (LangCode.Korean, "레벨이 있는 폴더에서 더 나은 백업"));
             if (Settings.EnableBetterBackup) {
                 GUIEx.BeginIndent();

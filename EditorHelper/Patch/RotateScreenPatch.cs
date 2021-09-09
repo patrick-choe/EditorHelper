@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ADOFAI;
 using DG.Tweening;
+using EditorHelper.Components;
 using EditorHelper.Utils;
 using HarmonyLib;
 using MoreEditorOptions.Util;
@@ -38,26 +39,14 @@ namespace EditorHelper.Patch {
 			if (selectedObj != null && selectedObj.GetComponent<InputField>() != null) {
 				return;
 			}
-
-			if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ||
-			    Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.RightCommand)) {
-				return;
-			}
-
-			if (!Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt)) {
-				return;
-			}
-
-			if (Input.GetKeyDown(KeyCode.Comma)) {
+			
+			if (Main.Settings.RotateScreenCW.Check) {
 				scrCamera.instance.transform.rotation = Quaternion.Euler(0f, 0f, CurrentRot - 15f);
+				UpdateDirectionButtonsRot(__instance);
 			}
 
-			if (Input.GetKeyDown(KeyCode.Period)) {
-
+			if (Main.Settings.RotateScreenCCW.Check) {
 				scrCamera.instance.transform.rotation = Quaternion.Euler(0f, 0f, CurrentRot + 15f);
-			}
-
-			if (Input.GetKeyDown(KeyCode.Period) || Input.GetKeyDown(KeyCode.Comma)) {
 				UpdateDirectionButtonsRot(__instance);
 			}
 		}
@@ -522,32 +511,48 @@ namespace EditorHelper.Patch {
 		public static Quaternion CurrentAngle => Quaternion.AngleAxis(UpdateRotationPatch.CurrentRot, Vector3.forward);
 
 		private static Vector3 _lastPos = Vector3.zero;
+		private static Vector3 _lastPos2 = Vector3.zero;
 
-		public static void Prefix() {
+		public static bool Prefix(scnEditor __instance) {
 			if (scrController.instance.paused && Input.GetMouseButtonDown(0)) {
 				_lastPos = GetMousePositionWithAngle();
 			}
+			
+			if (Input.GetMouseButtonUp(0) && EditorHelperPanel.IsDragging || (Input.mouseScrollDelta.y != 0 || Input.GetMouseButtonDown(0)) && EditorHelperPanel.Contains) {
+				var vector6 = _lastPos2;
+				Camera.current.transform.position = new Vector3(vector6.x, vector6.y, -10f);
+				return false;
+			} else {
+				_lastPos2 = Camera.current.transform.position;
+			}
+
+			return true;
 		}
 
 		public static void Postfix(scnEditor __instance) {
 			if (scrController.instance.paused) {
-				if (!Input.GetMouseButtonDown(0) && Input.GetMouseButton(0) && 
-				    (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
-					var vector6 = __instance.get<Vector3>("cameraPositionAtDragStart");
+				if (!Input.GetMouseButtonDown(0) && Input.GetMouseButton(0) && Main.Settings.ChangeTileAngle.Check) {
+					var vector6 = _lastPos2;
 					Camera.current.transform.position = new Vector3(vector6.x, vector6.y, -10f);
 					return;
 				}
 				if (!Input.GetMouseButtonDown(0) && 
 				    Input.GetMouseButton(0) &&
 				    !__instance.get<bool>("cancelDrag")) {
-					Vector3 vector5 = (GetMousePositionWithAngle() - _lastPos) /
-					                  (float) Screen.height *
-					                  Camera.current.orthographicSize * 2f;
-					Vector3 b5 = new Vector3(vector5.x, vector5.y);
-					if (__instance.get<object>("draggedEvIndicator") != null ||
-					    __instance.get<bool>("isDraggingTiles")) goto Altdrag;
+					Vector3 vector6;
+					Vector3 b5 = Vector3.zero;
+					if (EditorHelperPanel.IsDragging) {
+						vector6 = __instance.get<Vector3>("cameraPositionAtDragStart");
+					} else {
+						Vector3 vector5 = (GetMousePositionWithAngle() - _lastPos) /
+						                  (float) Screen.height *
+						                  Camera.current.orthographicSize * 2f;
+						b5 = new Vector3(vector5.x, vector5.y);
+						if (__instance.get<object>("draggedEvIndicator") != null ||
+						    __instance.get<bool>("isDraggingTiles")) goto Altdrag;
 
-					var vector6 = __instance.get<Vector3>("cameraPositionAtDragStart") - b5;
+						vector6 = __instance.get<Vector3>("cameraPositionAtDragStart") - b5;
+					}
 					Camera.current.transform.position =
 						new Vector3(vector6.x, vector6.y, -10f);
 					
@@ -578,15 +583,8 @@ namespace EditorHelper.Patch {
 							}
 						} catch (KeyNotFoundException) { }
 					}
-					return;
 				}
 			}
-			
-			bool flag = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-			bool flag2 = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.RightCommand);
-			bool key = Input.GetKey(KeyCode.BackQuote);
-			bool flag3 = flag || flag2;
-			bool flag4 = Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
 		}
 	}
 }

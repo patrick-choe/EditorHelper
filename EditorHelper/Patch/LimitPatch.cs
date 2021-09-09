@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ADOFAI;
+using EditorHelper.Components;
 using EditorHelper.Utils;
 using GDMiniJSON;
 using HarmonyLib;
@@ -216,6 +217,8 @@ namespace EditorHelper.Patch {
 	[HarmonyPatch(typeof(scnEditor), "Start")]
 	internal static class StartPatch {
 		private static void Prefix() {
+			new GameObject().AddComponent<EditorHelperPanel>();
+			
 			if (!Main.Settings.RemoveLimits || Main.FirstLoaded) {
 				return;
 			}

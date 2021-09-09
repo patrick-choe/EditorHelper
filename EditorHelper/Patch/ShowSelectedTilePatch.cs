@@ -30,8 +30,7 @@ namespace EditorHelper.Patch {
 
             public static void Postfix() {
                 if (!scnEditor.instance.SelectionIsSingle()) return;
-                if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) &&
-                    Input.GetMouseButton(0)) {
+                if (!CustomLevel.instance.levelData.isOldLevel && Main.Settings.ChangeTileAngle.Check && Input.GetMouseButton(0)) {
                     if (scnEditor.instance.selectedFloors.Count == 1) {
                         var obj = scnEditor.instance.selectedFloors[0];
                         if (obj == null || obj.seqID == 0) return;
