@@ -20,16 +20,16 @@ namespace EditorHelper.Patch {
             __instance.buttonsToggle.propertyInfo = __instance.propertyInfo;
             __instance.buttonsToggle.propertiesPanel = __instance.propertiesPanel;
             __instance.inputField.Setup(addListener);
-            List<string> list = new List<string>();
+            var list = new List<string>();
             foreach (object obj in Enum.GetValues(typeof(TileRelativeTo))) {
                 list.Add(((TileRelativeTo) obj).ToString());
             }
 
-            List<Button> list2 = new List<Button>();
+            var list2 = new List<Button>();
             list2.Add(__instance.buttonThisTile);
             list2.Add(__instance.buttonFirstTile);
             list2.Add(__instance.buttonLastTile);
-            Dictionary<string, Button> dictionary = new Dictionary<string, Button>();
+            var dictionary = new Dictionary<string, Button>();
 
             if (Main.Settings.ChangeIndexWhenToggle) {
                 __instance.buttonFirstTile.onClick.AddListener(() => {
@@ -71,7 +71,7 @@ namespace EditorHelper.Patch {
 
                 for (int i = 0; i < 3; i++) {
                     string enumVal = list[i];
-                    Button button = list2[i];
+                    var button = list2[i];
                     dictionary.Add(enumVal, button);
                     button.GetComponentInChildren<Text>().text = RDString.Get("enum.TileRelativeTo." + list[i]);
                     button.GetComponent<Button>().onClick.AddListener(delegate() {

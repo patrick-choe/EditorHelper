@@ -217,8 +217,6 @@ namespace EditorHelper.Patch {
 	[HarmonyPatch(typeof(scnEditor), "Start")]
 	internal static class StartPatch {
 		private static void Prefix() {
-			new GameObject().AddComponent<EditorHelperPanel>();
-			
 			if (!Main.Settings.RemoveLimits || Main.FirstLoaded) {
 				return;
 			}

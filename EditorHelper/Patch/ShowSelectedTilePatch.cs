@@ -32,6 +32,7 @@ namespace EditorHelper.Patch {
                 if (!scnEditor.instance.SelectionIsSingle()) return;
                 if (!CustomLevel.instance.levelData.isOldLevel && Main.Settings.ChangeTileAngle.Check && Input.GetMouseButton(0)) {
                     if (scnEditor.instance.selectedFloors.Count == 1) {
+                        CorrectRotationPatch.LastPos2 = Camera.current.transform.position;
                         var obj = scnEditor.instance.selectedFloors[0];
                         if (obj == null || obj.seqID == 0) return;
                         Floor = obj;
@@ -56,7 +57,7 @@ namespace EditorHelper.Patch {
                         obj.transform.eulerAngles = new Vector3(0, 0, angle);
                         Pressing = true;
                         if (LetterPress == null) {
-                            GameObject gameObject2 =
+                            var gameObject2 =
                                 UnityEngine.Object.Instantiate<GameObject>(scnEditor.instance.prefab_editorNum, obj.transform);
                             gameObject2.GetComponent<scrLetterPress>().letterText.text = $"{angle}";
                             LetterPress = gameObject2.GetComponent<scrLetterPress>();
@@ -101,10 +102,10 @@ namespace EditorHelper.Patch {
                 }
 
                 if (UpdateFloorAnglePatch.Pressing) return;
-                foreach (scrFloor scrFloor in scnEditor.instance.selectedFloors) {
+                foreach (var scrFloor in scnEditor.instance.selectedFloors) {
                     try {
                         if (scrFloor.seqID >= scrLevelMaker.instance.listFloors.Count - 1 || scrFloor.seqID == 0) {
-                            GameObject gameObject2 =
+                            var gameObject2 =
                                 UnityEngine.Object.Instantiate<GameObject>(scnEditor.instance.prefab_editorNum,
                                     scrFloor.transform);
                             gameObject2.GetComponent<scrLetterPress>().letterText.text = "180";

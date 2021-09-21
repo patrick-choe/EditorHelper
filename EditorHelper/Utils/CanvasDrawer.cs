@@ -1,12 +1,10 @@
 ﻿using UnityEngine;
 
-namespace EditorHelper.Utils
-{
+namespace EditorHelper.Utils {
     /// <summary>
     /// .
     /// </summary>
-    public static class CanvasDrawer
-    {
+    public static class CanvasDrawer {
         /// <summary>
         /// Make Color to Texture2D.
         /// </summary>
@@ -14,11 +12,10 @@ namespace EditorHelper.Utils
         /// <param name="height"></param>
         /// <param name="col"></param>
         /// <returns></returns>
-        public static Texture2D MakeTexture(int width, int height, Color col)
-        {
-            Color[] pix = new Color[width * height];
+        public static Texture2D MakeTexture(int width, int height, Color col) {
+            var pix = new Color[width * height];
             for (int i = 0; i < pix.Length; ++i) pix[i] = col;
-            Texture2D result = new Texture2D(width, height);
+            var result = new Texture2D(width, height);
             result.SetPixels(pix);
             result.Apply();
             return result;
@@ -35,19 +32,16 @@ namespace EditorHelper.Utils
         /// <param name="borderColor"></param>
         /// <returns></returns>
         public static Texture2D MakeRoundRectangle(int resolutionmultiplier, int width, int height, int borderThickness,
-            int borderRadius, Color borderColor)
-        {
+            int borderRadius, Color borderColor) {
 
             width = width * resolutionmultiplier;
             height = height * resolutionmultiplier;
 
-            Texture2D texture = new Texture2D(width, height);
-            Color[] color = new Color[width * height];
+            var texture = new Texture2D(width, height);
+            var color = new Color[width * height];
 
-            for (int x = 0; x < texture.width; x++)
-            {
-                for (int y = 0; y < texture.height; y++)
-                {
+            for (int x = 0; x < texture.width; x++) {
+                for (int y = 0; y < texture.height; y++) {
                     color[x + width * y] = ColorBorder(x, y, width, height, borderThickness, borderRadius, borderColor);
                 }
             }
@@ -69,27 +63,23 @@ namespace EditorHelper.Utils
         /// <param name="borderColor"></param>
         /// <returns></returns>
         private static Color ColorBorder(int x, int y, int width, int height, int borderThickness, int borderRadius,
-            Color borderColor)
-        {
-            Rect internalRectangle = new Rect((borderThickness + borderRadius), (borderThickness + borderRadius),
+            Color borderColor) {
+            var internalRectangle = new Rect((borderThickness + borderRadius), (borderThickness + borderRadius),
                 width - 2 * (borderThickness + borderRadius), height - 2 * (borderThickness + borderRadius));
 
-            Vector2 point = new Vector2(x, y);
+            var point = new Vector2(x, y);
             if (internalRectangle.Contains(point)) return borderColor;
 
-            Vector2 origin = Vector2.zero;
+            var origin = Vector2.zero;
 
-            if (x < borderThickness + borderRadius)
-            {
+            if (x < borderThickness + borderRadius) {
                 if (y < borderRadius + borderThickness)
                     origin = new Vector2(borderRadius + borderThickness, borderRadius + borderThickness);
                 else if (y > height - (borderRadius + borderThickness))
                     origin = new Vector2(borderRadius + borderThickness, height - (borderRadius + borderThickness));
                 else
                     origin = new Vector2(borderRadius + borderThickness, y);
-            }
-            else if (x > width - (borderRadius + borderThickness))
-            {
+            } else if (x > width - (borderRadius + borderThickness)) {
                 if (y < borderRadius + borderThickness)
                     origin = new Vector2(width - (borderRadius + borderThickness), borderRadius + borderThickness);
                 else if (y > height - (borderRadius + borderThickness))
@@ -97,25 +87,19 @@ namespace EditorHelper.Utils
                         height - (borderRadius + borderThickness));
                 else
                     origin = new Vector2(width - (borderRadius + borderThickness), y);
-            }
-            else
-            {
+            } else {
                 if (y < borderRadius + borderThickness)
                     origin = new Vector2(x, borderRadius + borderThickness);
                 else if (y > height - (borderRadius + borderThickness))
                     origin = new Vector2(x, height - (borderRadius + borderThickness));
             }
 
-            if (!origin.Equals(Vector2.zero))
-            {
+            if (!origin.Equals(Vector2.zero)) {
                 float distance = Vector2.Distance(point, origin);
 
-                if (distance > borderRadius + borderThickness + 1)
-                {
+                if (distance > borderRadius + borderThickness + 1) {
                     return Color.clear;
-                }
-                else if (distance > borderRadius + 1)
-                {
+                } else if (distance > borderRadius + 1) {
                     return borderColor;
                 }
             }

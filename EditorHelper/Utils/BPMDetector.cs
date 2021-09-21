@@ -46,10 +46,10 @@ namespace NAudioBPM {
 
             int partSize = sampleRate / 2;
             int parts = data.Length / channels / partSize;
-            Peak[] peaks = new Peak[parts];
+            var peaks = new Peak[parts];
 
             for (int i = 0; i < parts; ++i) {
-                Peak max = new Peak {
+                var max = new Peak {
                     Position = -1,
                     Volume = 0.0F
                 };
@@ -95,10 +95,10 @@ namespace NAudioBPM {
             // The interval that is seen the most should have the BPM that corresponds
             // to the track itself.
 
-            List<BPMGroup> groups = new List<BPMGroup>();
+            var groups = new List<BPMGroup>();
 
             for (int index = 0; index < peaks.Length; ++index) {
-                Peak peak = peaks[index];
+                var peak = peaks[index];
                 for (int i = 1; index + i < peaks.Length && i < 10; ++i) {
                     float tempo = 60.0F * sampleRate / (peaks[index + i].Position - peak.Position);
                     while (tempo < 90.0F) {
@@ -109,7 +109,7 @@ namespace NAudioBPM {
                         tempo /= 2.0F;
                     }
 
-                    BPMGroup group = new BPMGroup {
+                    var group = new BPMGroup {
                         Count = 1,
                         Tempo = (short) Math.Round(tempo)
                     };
@@ -160,7 +160,7 @@ namespace NAudioBPM {
 
                     length = (int) (length / channels) * channels;
 
-                    ISampleProvider sampleReader = reader.ToSampleProvider();
+                    var sampleReader = reader.ToSampleProvider();
                     float[] samples = new float[length];
                     sampleReader.Read(samples, start, length);
 
@@ -170,20 +170,20 @@ namespace NAudioBPM {
                     for (int ch = 0; ch < channels; ++ch) {
                         // First a lowpass to remove most of the song.
 
-                        BiQuadFilter lowpass = BiQuadFilter.LowPassFilter(sampleRate, 150.0F, 1.0F);
+                        var lowpass = BiQuadFilter.LowPassFilter(sampleRate, 150.0F, 1.0F);
 
                         // Now a highpass to remove the bassline.
 
-                        BiQuadFilter highpass = BiQuadFilter.HighPassFilter(sampleRate, 100.0F, 1.0F);
+                        var highpass = BiQuadFilter.HighPassFilter(sampleRate, 100.0F, 1.0F);
 
                         for (int i = ch; i < length; i += channels) {
                             samples[i] = highpass.Transform(lowpass.Transform(samples[i]));
                         }
                     }
 
-                    Peak[] peaks = getPeaks(samples);
+                    var peaks = getPeaks(samples);
 
-                    BPMGroup[] allGroups = getIntervals(peaks);
+                    var allGroups = getIntervals(peaks);
 
                     Array.Sort(allGroups, (x, y) => y.Count.CompareTo(x.Count));
 
@@ -225,7 +225,7 @@ namespace NAudioBPM {
 
                 length = (int) (length / channels) * channels;
 
-                ISampleProvider sampleReader = reader.ToSampleProvider();
+                var sampleReader = reader.ToSampleProvider();
                 float[] samples = new float[length];
                 sampleReader.Read(samples, start, length);
 
@@ -235,20 +235,20 @@ namespace NAudioBPM {
                 for (int ch = 0; ch < channels; ++ch) {
                     // First a lowpass to remove most of the song.
 
-                    BiQuadFilter lowpass = BiQuadFilter.LowPassFilter(sampleRate, 150.0F, 1.0F);
+                    var lowpass = BiQuadFilter.LowPassFilter(sampleRate, 150.0F, 1.0F);
 
                     // Now a highpass to remove the bassline.
 
-                    BiQuadFilter highpass = BiQuadFilter.HighPassFilter(sampleRate, 100.0F, 1.0F);
+                    var highpass = BiQuadFilter.HighPassFilter(sampleRate, 100.0F, 1.0F);
 
                     for (int i = ch; i < length; i += channels) {
                         samples[i] = highpass.Transform(lowpass.Transform(samples[i]));
                     }
                 }
 
-                Peak[] peaks = getPeaks(samples);
+                var peaks = getPeaks(samples);
 
-                BPMGroup[] allGroups = getIntervals(peaks);
+                var allGroups = getIntervals(peaks);
 
                 Array.Sort(allGroups, (x, y) => y.Count.CompareTo(x.Count));
 

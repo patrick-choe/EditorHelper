@@ -69,7 +69,7 @@ namespace EditorHelper.Utils {
 
         public static void UpdateAngleTo(this scrFloor floor, float angle, float offsetEnter = 0,  float offsetExit = 0,  bool reset = false, bool resetExit = true,
             bool rotate = true, bool setUTurnIfAnglesMatch = false) {
-            FloorMeshRenderer floorMeshRenderer = floor.floorRenderer as FloorMeshRenderer;
+            var floorMeshRenderer = floor.floorRenderer as FloorMeshRenderer;
             if (floorMeshRenderer != null) {
                 float num = (1.5707964f - (float) floor.entryangle) % 6.2831855f;
                 if (reset) num = 0;
@@ -82,7 +82,7 @@ namespace EditorHelper.Utils {
                 if (setUTurnIfAnglesMatch) {
                     double num3 = Math.Abs(scrMisc.GetAngleMoved((double) num, (double) num2, !floor.isCCW));
                     floor.noChange = (num3 <= 9.999999974752427E-07 || num3 >= 6.28318452835083);
-                    FloorMesh floorMesh = floorMeshRenderer.floorMesh;
+                    var floorMesh = floorMeshRenderer.floorMesh;
                     if (floor.noChange) {
                         floorMeshRenderer.SetLength(floorMesh.length - 0.25f);
                         floorMeshRenderer.SetUturnOrMidspin(true);

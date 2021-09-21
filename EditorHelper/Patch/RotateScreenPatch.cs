@@ -153,7 +153,7 @@ namespace EditorHelper.Patch {
 				return;
 			}
 
-			scrFloor scrFloor = instance.selectedFloors[0];
+			var scrFloor = instance.selectedFloors[0];
 			if (fullSpin && scrFloor.seqID == 0) {
 				return;
 			}
@@ -161,7 +161,7 @@ namespace EditorHelper.Patch {
 			instance.SaveState(true, false);
 			instance.changingState++;
 			int seqID = scrFloor.seqID;
-			scrFloor x = instance.PreviousFloor(scrFloor);
+			var x = instance.PreviousFloor(scrFloor);
 			float num = scrLevelMaker.GetAngleFromFloorCharDirection(floorType) % 360f;
 			double num2 = scrFloor.entryangle * 57.295780181884766;
 			float num3 = Mathf.Abs(450f - (float) num2) % 360f;
@@ -176,12 +176,12 @@ namespace EditorHelper.Patch {
 						instance.SelectFloor(scrLevelMaker.instance.listFloors[seqID2 - 1], true);
 					}
 
-					scrFloor floor = scrLevelMaker.instance.listFloors[seqID2 - 1];
+					var floor = scrLevelMaker.instance.listFloors[seqID2 - 1];
 					instance.MoveCameraToFloor(floor);
 				}
 			} else {
 				forceNotDelete = false;
-				foreach (LevelEvent levelEvent in instance.events) {
+				foreach (var levelEvent in instance.events) {
 					if (levelEvent.floor > seqID) {
 						levelEvent.floor++;
 						if (levelEvent.eventType == LevelEventType.AddDecoration ||
@@ -192,7 +192,7 @@ namespace EditorHelper.Patch {
 				}
 
 				instance.InsertCharFloor(seqID, floorType);
-				scrFloor scrFloor2 = scrLevelMaker.instance.listFloors[seqID + 1];
+				var scrFloor2 = scrLevelMaker.instance.listFloors[seqID + 1];
 				instance.SelectFloor(scrFloor2, true);
 				instance.MoveCameraToFloor(scrFloor2);
 				if (pulseFloorButtons) {
@@ -249,7 +249,7 @@ namespace EditorHelper.Patch {
 					}
 
 					if (button != null) {
-						Vector3 endValue = new Vector3(1f, 1f);
+						var endValue = new Vector3(1f, 1f);
 						button.transform.DOKill(false);
 						button.transform.ScaleXY(instance.floorButtonPulseSize);
 						button.transform.DOScale(endValue, instance.floorButtonPulseDuration).SetUpdate(true)
@@ -267,7 +267,7 @@ namespace EditorHelper.Patch {
 				return;
 			}
 
-			scrFloor scrFloor = instance.selectedFloors[0];
+			var scrFloor = instance.selectedFloors[0];
 			if (fullSpin && scrFloor.seqID == 0) {
 				return;
 			}
@@ -275,7 +275,7 @@ namespace EditorHelper.Patch {
 			instance.SaveState(true, false);
 			instance.changingState++;
 			int seqID = scrFloor.seqID;
-			scrFloor x = instance.PreviousFloor(scrFloor);
+			var x = instance.PreviousFloor(scrFloor);
 			float num = floorAngle % 360f;
 			double num2 = scrFloor.entryangle * 57.295780181884766;
 			float num3 = Mathf.Abs(450f - (float) num2) % 360f;
@@ -290,12 +290,12 @@ namespace EditorHelper.Patch {
 						instance.SelectFloor(scrLevelMaker.instance.listFloors[seqID2 - 1], true);
 					}
 
-					scrFloor floor = scrLevelMaker.instance.listFloors[seqID2 - 1];
+					var floor = scrLevelMaker.instance.listFloors[seqID2 - 1];
 					instance.MoveCameraToFloor(floor);
 				}
 			} else {
 				forceNotDelete = false;
-				foreach (LevelEvent levelEvent in instance.events) {
+				foreach (var levelEvent in instance.events) {
 					if (levelEvent.floor > seqID) {
 						levelEvent.floor++;
 						if (levelEvent.eventType == LevelEventType.AddDecoration ||
@@ -306,7 +306,7 @@ namespace EditorHelper.Patch {
 				}
 
 				instance.InsertFloatFloor(seqID, floorAngle);
-				scrFloor scrFloor2 = scrLevelMaker.instance.listFloors[seqID + 1];
+				var scrFloor2 = scrLevelMaker.instance.listFloors[seqID + 1];
 				instance.SelectFloor(scrFloor2, true);
 				instance.MoveCameraToFloor(scrFloor2);
 				if (pulseFloorButtons) {
@@ -376,7 +376,7 @@ namespace EditorHelper.Patch {
 					}
 
 					if (button != null) {
-						Vector3 endValue = new Vector3(1f, 1f);
+						var endValue = new Vector3(1f, 1f);
 						button.transform.DOKill(false);
 						button.transform.ScaleXY(instance.floorButtonPulseSize);
 						button.transform.DOScale(endValue, instance.floorButtonPulseDuration).SetUpdate(true)
@@ -498,7 +498,17 @@ namespace EditorHelper.Patch {
 	[HarmonyPatch(typeof(scnEditor), "SwitchToEditMode")]
 	public static class ResetPatch {
 		public static void Postfix() {
+			Camera.current.transform.eulerAngles = new Vector3(0, 0, PlayPatch.Rotation);
 			UpdateRotationPatch.UpdateDirectionButtonsRot(scnEditor.instance);
+		}
+	}
+
+	
+	[HarmonyPatch(typeof(scnEditor), "Play")]
+	public static class PlayPatch {
+		public static float Rotation;
+		public static void Prefix() {
+			Rotation = Camera.current.transform.eulerAngles.z;
 		}
 	}
 
@@ -511,19 +521,22 @@ namespace EditorHelper.Patch {
 		public static Quaternion CurrentAngle => Quaternion.AngleAxis(UpdateRotationPatch.CurrentRot, Vector3.forward);
 
 		private static Vector3 _lastPos = Vector3.zero;
-		private static Vector3 _lastPos2 = Vector3.zero;
+		public static Vector3 LastPos2 = Vector3.zero;
 
 		public static bool Prefix(scnEditor __instance) {
 			if (scrController.instance.paused && Input.GetMouseButtonDown(0)) {
 				_lastPos = GetMousePositionWithAngle();
+				__instance.set("cameraPositionAtDragStart", LastPos2);
 			}
-			
+
+
+			if (!EditorHelperPanel.ShowGui) return true;
 			if (Input.GetMouseButtonUp(0) && EditorHelperPanel.IsDragging || (Input.mouseScrollDelta.y != 0 || Input.GetMouseButtonDown(0)) && EditorHelperPanel.Contains) {
-				var vector6 = _lastPos2;
+				var vector6 = LastPos2;
 				Camera.current.transform.position = new Vector3(vector6.x, vector6.y, -10f);
 				return false;
 			} else {
-				_lastPos2 = Camera.current.transform.position;
+				LastPos2 = Camera.current.transform.position;
 			}
 
 			return true;
@@ -532,7 +545,7 @@ namespace EditorHelper.Patch {
 		public static void Postfix(scnEditor __instance) {
 			if (scrController.instance.paused) {
 				if (!Input.GetMouseButtonDown(0) && Input.GetMouseButton(0) && Main.Settings.ChangeTileAngle.Check) {
-					var vector6 = _lastPos2;
+					var vector6 = LastPos2;
 					Camera.current.transform.position = new Vector3(vector6.x, vector6.y, -10f);
 					return;
 				}
@@ -540,13 +553,13 @@ namespace EditorHelper.Patch {
 				    Input.GetMouseButton(0) &&
 				    !__instance.get<bool>("cancelDrag")) {
 					Vector3 vector6;
-					Vector3 b5 = Vector3.zero;
+					var b5 = Vector3.zero;
 					if (EditorHelperPanel.IsDragging) {
 						vector6 = __instance.get<Vector3>("cameraPositionAtDragStart");
 					} else {
-						Vector3 vector5 = (GetMousePositionWithAngle() - _lastPos) /
-						                  (float) Screen.height *
-						                  Camera.current.orthographicSize * 2f;
+						var vector5 = (GetMousePositionWithAngle() - _lastPos) /
+						              (float) Screen.height *
+						              Camera.current.orthographicSize * 2f;
 						b5 = new Vector3(vector5.x, vector5.y);
 						if (__instance.get<object>("draggedEvIndicator") != null ||
 						    __instance.get<bool>("isDraggingTiles")) goto Altdrag;
@@ -561,7 +574,7 @@ namespace EditorHelper.Patch {
 					{
 						try {
 							if (__instance.SelectionIsSingle()) {
-								Vector3 vector7 =
+								var vector7 =
 									__instance.get<Dictionary<scrFloor, Vector3>>("floorPositionsAtDragStart")[
 										__instance.selectedFloors[0]] + b5;
 								__instance.selectedFloors[0].transform.position = new Vector3(vector7.x, vector7.y,
@@ -569,10 +582,10 @@ namespace EditorHelper.Patch {
 								return;
 							}
 
-							using (List<scrFloor>.Enumerator enumerator2 = __instance.selectedFloors.GetEnumerator()) {
+							using (var enumerator2 = __instance.selectedFloors.GetEnumerator()) {
 								while (enumerator2.MoveNext()) {
-									scrFloor scrFloor3 = enumerator2.Current;
-									Vector3 vector8 =
+									var scrFloor3 = enumerator2.Current;
+									var vector8 =
 										__instance.get<Dictionary<scrFloor, Vector3>>("floorPositionsAtDragStart")[
 											scrFloor3] + b5;
 									scrFloor3.transform.position = new Vector3(vector8.x, vector8.y,

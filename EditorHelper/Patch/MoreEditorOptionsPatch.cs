@@ -31,7 +31,7 @@ namespace EditorHelper.Patch {
                 bool checkIfEnabled = true) {
                 foreach (string text in levelEvent.data.Keys) {
                     if (__instance.properties.ContainsKey(text)) {
-                        PropertyControl control = __instance.properties[text].control;
+                        var control = __instance.properties[text].control;
                         if (!(control == null) && control.propertyInfo.type != PropertyType.Export) {
                             if (control.propertyInfo.type == PropertyType.Vector2) {
                                 control.text = ((Vector2) levelEvent[text]).ToString("f6");
@@ -95,11 +95,11 @@ namespace EditorHelper.Patch {
                     }
                 }
 
-                LevelEvent selectedEvent = __instance.propertiesPanel.inspectorPanel.selectedEvent;
+                var selectedEvent = __instance.propertiesPanel.inspectorPanel.selectedEvent;
                 __instance.selected = var;
-                Type enumType = __instance.propertyInfo.enumType;
+                var enumType = __instance.propertyInfo.enumType;
                 if (__instance.propertyInfo.type == PropertyType.Tile) {
-                    Tuple<int, TileRelativeTo> tuple =
+                    var tuple =
                         selectedEvent[__instance.propertyInfo.name] as Tuple<int, TileRelativeTo>;
                     selectedEvent[__instance.propertyInfo.name] =
                         new Tuple<int, TileRelativeTo>(tuple.Item1, (TileRelativeTo) Enum.Parse(enumType, var));

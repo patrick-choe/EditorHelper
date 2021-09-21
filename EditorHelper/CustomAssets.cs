@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using EditorHelper.Components;
 using EditorHelper.Utils;
 using UnityEngine;
 using UnityModManagerNet;
@@ -15,11 +16,14 @@ namespace EditorHelper {
             public string Name;
             public string Creator;
             public string BaseURL;
-            public string summary;
-            public string description;
+            public string Summary;
+            public string Description;
+            public string LicenseKR;
+            public string LicenseEN;
             public Texture2D Logo;
             public Texture2D SmallLogo;
             public List<string> TextureList;
+            public Dictionary<string, bool> TextureToDownload;
 
             public static string CombineUrl(string url1, string url2)
             {
@@ -30,18 +34,31 @@ namespace EditorHelper {
             public CustomAssetData(Dictionary<string, object> data) {
                 Name = (string) data["name"];
                 Creator = (string) data["author"];
-                summary = (string) data["summary"];
-                description = (string) data["description"];
+                Summary = (string) data["summary"];
+                LicenseKR = (string) data["license_kr"];
+                LicenseEN = (string) data["license_en"];
+                Description = (string) data["description"];
                 BaseURL = CombineUrl(CustomAssetsUrl, Name);
                 TextureList = ((List<object>) data["contents"]).Select(o => (string) o).ToList();
+                TextureToDownload = new Dictionary<string, bool>();
+                foreach (var texture in TextureList) {
+                    TextureToDownload.Add(texture, true);
+                }
+                
                 try {
                     using var webclient = new WebClient();
                     var logoData = webclient.DownloadData(CombineUrl(BaseURL, "_logo.png"));
-                    var tex = new Texture2D(2, 2, TextureFormat.ARGB32, false);
-                    tex.LoadImage(logoData);
-                    Logo = tex;
-                    SmallLogo = tex;
-                    new TextureScale().Bilinear(SmallLogo, 64, tex.height * 64 / tex.width);
+                    Logo = new Texture2D(2, 2, TextureFormat.ARGB32, false);
+                    Logo.LoadImage(logoData);
+                    SmallLogo = new Texture2D(2, 2, TextureFormat.ARGB32, false);
+                    SmallLogo.LoadImage(logoData);
+                    const int size = 64;
+                    if (SmallLogo.width <= SmallLogo.height) {
+                        new TextureScale().Bilinear(SmallLogo, SmallLogo.width * size / SmallLogo.height, size);
+                    } else {
+                        new TextureScale().Bilinear(SmallLogo, size, SmallLogo.height * size / SmallLogo.width);
+                    }
+                    new TextureScale().Bilinear(Logo, EditorHelperPanel.panelSizeX - 35, Logo.height * (EditorHelperPanel.panelSizeX - 35) / Logo.width);
                 } catch (Exception e) {
                     UnityModManager.Logger.Log($"Error loading logo: {e}");
                     Logo = null;
@@ -49,19 +66,44 @@ namespace EditorHelper {
                 }
             }
 
-            public void Import(string path) {
+            public static int count = -1;
+            public static int total = -1;
+
+            public IEnumerator Import(string path) {
                 if (!Directory.Exists(path)) {
                     Directory.CreateDirectory(path);
                 }
 
-                using var webclient = new WebClient();
-                foreach (var texture in TextureList) {
+                var toDownload = TextureToDownload.Where(pair => pair.Value).Select(pair => pair.Key).ToArray();
+                count = 0;
+                total = toDownload.Length;
+                foreach (var texture in toDownload) {
+                    using var webclient = new WebClient();
+                    yield return null;
                     var url = CombineUrl(BaseURL, texture);
                     UnityModManager.Logger.Log(url);
                     var texturePath = Path.Combine(path, texture);
                     if (!Directory.Exists(Path.GetDirectoryName(texturePath))) Directory.CreateDirectory(Path.GetDirectoryName(texturePath)!);
-                    webclient.DownloadFile(url, texturePath);
+                    webclient.DownloadFileCompleted += (sender, args) => {
+                        count += 1;
+                        if (count == total) {
+                            count = -1;
+                            total = -1;
+                        }
+                    };
+                    webclient.DownloadFileAsync(new Uri(url), texturePath);
                 }
+                
+                if (count == total) {
+                    count = -1;
+                    total = -1;
+                }
+            }
+            
+            public IEnumerator ReImport(string path) {
+                Directory.Delete(path, true);
+                Directory.CreateDirectory(path);
+                yield return Import(path);
             }
         }
         
@@ -79,17 +121,18 @@ namespace EditorHelper {
                 using var webclient = new WebClient();
                 static IEnumerator DownloadStringCallback(object sender, DownloadStringCompletedEventArgs e) {
                     var data = e.Result;
-                    UnityModManager.Logger.Log($"Loaded assets data: \n{data}");
-                    var assets = (List<object>) GDMiniJSON.Json.Deserialize(data);
-                    yield return null;
-                    CustomAssetDatas = new List<CustomAssetData>();
-                    foreach (Dictionary<string, object> asset in assets) {
-                        CustomAssetDatas.Add(new CustomAssetData(asset));
-                        yield return null;
-                    }
+                    yield return JsonCo.Deserialize(data, o => {
+                        var assets = (List<object>) o;
+                        CustomAssetDatas = new List<CustomAssetData>();
+                        foreach (Dictionary<string, object> asset in assets) {
+                            CustomAssetDatas.Add(new CustomAssetData(asset));
+                        }
 
-                    Inited = true;
-                };
+                        Inited = true;
+                        return null;
+                    });
+                }
+
                 webclient.DownloadStringCompleted += (sender, e) =>
                     scnEditor.instance.StartCoroutine(DownloadStringCallback(sender, e));
                 webclient.DownloadStringAsync(new Uri("https://raw.githubusercontent.com/papertoy1127/EditorHelper_CustomAssets/master/packs.json"));

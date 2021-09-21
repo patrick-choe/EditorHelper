@@ -15,6 +15,7 @@ using GDMiniJSON;
 using HarmonyLib;
 using SA.GoogleDoc;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityModManagerNet;
 using PropertyInfo = ADOFAI.PropertyInfo;
@@ -40,8 +41,10 @@ namespace EditorHelper {
         
         private static bool Load(UnityModManager.ModEntry modEntry) {
             var version = AccessTools.Field(typeof(GCNS), "releaseNumber").GetValue(null) as int?;
-            var editorHelperDir = Path.Combine(Directory.GetCurrentDirectory(), "Mods", "EditorHelper");
-            var target = 76;
+            var editorHelperDir = modEntry.Path;
+            UnityModManager.Logger.Log("Dir: " + editorHelperDir);
+            editorHelperDir = Path.Combine(Directory.GetCurrentDirectory(), "Mods", "EditorHelper");
+                                          var target = 76;
             var mode = Exact;
             if (File.Exists(Path.Combine(editorHelperDir, "Version.txt"))) {
                 var value = File.ReadAllText(Path.Combine(editorHelperDir, "Version.txt"));
@@ -115,6 +118,9 @@ namespace EditorHelper {
             };
             
             EventBundleManager.Load();
+            SceneManager.sceneLoaded += (scene, scenemode) => {
+                if (scene.name == "scnEditor") ShowHelperPanel();
+            };
 
             /*
             var toggle = RDC.data.prefab_controlToggle;
@@ -145,6 +151,11 @@ namespace EditorHelper {
 
 
             return true;
+        }
+
+        public static void ShowHelperPanel() {
+            if (IsEnabled && !GCS.standaloneLevelMode)
+                new GameObject().AddComponent<EditorHelperPanel>();
         }
 
         private static void StartTweaks() {

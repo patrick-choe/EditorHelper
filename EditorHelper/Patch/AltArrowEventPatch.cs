@@ -88,7 +88,7 @@ namespace EditorHelper.Patch {
 			if (Main.Settings.MoveEventRight.Check) {
 				InspectorTab current = null;
 				foreach (var obj in scnEditor.instance.levelEventsPanel.tabs) {
-					InspectorTab component = ((RectTransform) obj).gameObject.GetComponent<InspectorTab>();
+					var component = ((RectTransform) obj).gameObject.GetComponent<InspectorTab>();
 					if (component.levelEventType == Inspectors.EventType) {
 						current = component;
 						break;
@@ -103,7 +103,7 @@ namespace EditorHelper.Patch {
 			if (Main.Settings.MoveEventLeft.Check) {
 				InspectorTab current = null;
 				foreach (var obj in scnEditor.instance.levelEventsPanel.tabs) {
-					InspectorTab component = ((RectTransform) obj).gameObject.GetComponent<InspectorTab>();
+					var component = ((RectTransform) obj).gameObject.GetComponent<InspectorTab>();
 					if (component.levelEventType == Inspectors.EventType) {
 						current = component;
 						break;

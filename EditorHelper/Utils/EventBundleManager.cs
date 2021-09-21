@@ -58,7 +58,7 @@ namespace EditorHelper.Utils {
             }
         }
     }
-    
+
     public static class EventBundleManager {
 
         public static List<EventBundle> Datas = new List<EventBundle>();
@@ -78,7 +78,7 @@ namespace EditorHelper.Utils {
 
         public static void ApplyBundle(this scnEditor instance, int floor, EventBundle data) {
             LevelEvent first = null;
-            foreach (LevelEvent levelevent in data.LevelEvents.Select(evnt =>
+            foreach (var levelevent in data.LevelEvents.Select(evnt =>
                 new LevelEvent((Dictionary<string, object>) Json.Deserialize($"{{{evnt}}}")))) {
                 if (first == null) first = levelevent;
                 levelevent.floor = floor;
@@ -92,16 +92,15 @@ namespace EditorHelper.Utils {
             var eventType = first.eventType;
             var sequenceID = floor;
             scnEditor.instance.levelEventsPanel.selectedEventType = eventType;
-            int count = scnEditor.instance.events.FindAll((LevelEvent x) => x.eventType == eventType && x.floor == sequenceID).Count;
-            if (count == 1)
-            {
+            int count = scnEditor.instance.events
+                .FindAll((LevelEvent x) => x.eventType == eventType && x.floor == sequenceID).Count;
+            if (count == 1) {
                 scnEditor.instance.DecideInspectorTabsAtSelected();
                 scnEditor.instance.levelEventsPanel.ShowPanel(eventType, 0);
-            }
-            else
-            {
+            } else {
                 scnEditor.instance.levelEventsPanel.ShowPanel(eventType, count - 1);
             }
+
             scnEditor.instance.ApplyEventsToFloors();
             scnEditor.instance.ShowEventIndicators(scnEditor.instance.selectedFloors[0]);
             scnEditor.instance.ApplyEventsToFloors();

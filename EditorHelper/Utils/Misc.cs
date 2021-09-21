@@ -24,43 +24,43 @@ namespace EditorHelper.Utils {
 					propDict["min"] = prop.float_min;
 					propDict["max"] = prop.float_max;
 					break;
-						
+
 				case PropertyType.Bool:
 					propDict["default"] = prop.value_default;
 					break;
-						
+
 				case PropertyType.Int:
 					propDict["default"] = prop.value_default;
 					propDict["min"] = prop.int_min;
 					propDict["max"] = prop.int_max;
 					break;
-										
+
 				case PropertyType.Color:
 					propDict["default"] = prop.value_default;
 					propDict["usesAlpha"] = prop.color_usesAlpha;
 					break;
-														
+
 				case PropertyType.File:
 					propDict["default"] = prop.value_default;
 					break;
-										
+
 				case PropertyType.String:
 					propDict["default"] = prop.value_default;
 					propDict["minLength"] = prop.string_minLength;
 					propDict["maxLength"] = prop.string_maxLength;
 					propDict["needsUnicode"] = prop.string_needsUnicode;
 					break;
-														
+
 				case PropertyType.LongString:
 					propDict["type"] = "Text";
 					propDict["default"] = prop.value_default;
 					break;
-				
+
 				case PropertyType.Enum:
 					propDict["type"] = $"Enum:{prop.enumType.Name}";
 					propDict["default"] = prop.value_default.ToString();
 					break;
-				
+
 				case PropertyType.Vector2:
 					var defVec = (Vector2) prop.value_default;
 					propDict["default"] = new List<object> {defVec.x, defVec.y};
@@ -74,7 +74,7 @@ namespace EditorHelper.Utils {
 					propDict["min"] = prop.int_min;
 					propDict["max"] = prop.int_max;
 					break;
-				
+
 				case PropertyType.Rating:
 					propDict["default"] = prop.value_default;
 					break;
@@ -82,14 +82,15 @@ namespace EditorHelper.Utils {
 
 			return propDict;
 		}
+
 		public static List<object> EncodeLevelEventInfoList(Dictionary<string, LevelEventInfo> eventInfos) {
 			var result = new List<object>();
-			foreach ((_, LevelEventInfo info) in eventInfos) {
+			foreach ((_, var info) in eventInfos) {
 				var dict = new Dictionary<string, object>();
 				dict["name"] = info.name;
 				dict["executionTime"] = info.executionTime.ToString();
 				var props = new List<object>();
-				foreach ((_, PropertyInfo prop) in info.propertiesInfo) {
+				foreach ((_, var prop) in info.propertiesInfo) {
 					props.Add(prop.Encode());
 				}
 
@@ -126,5 +127,24 @@ namespace EditorHelper.Utils {
 
 		internal static bool IsFinite(this double d) =>
 			(BitConverter.DoubleToInt64Bits(d) & long.MaxValue) < 9218868437227405312L;
+
+		public static Texture2D DuplicateTexture(Texture2D source) {
+			RenderTexture renderTex = RenderTexture.GetTemporary(
+				source.width,
+				source.height,
+				0,
+				RenderTextureFormat.Default,
+				RenderTextureReadWrite.Linear);
+
+			Graphics.Blit(source, renderTex);
+			RenderTexture previous = RenderTexture.active;
+			RenderTexture.active = renderTex;
+			Texture2D readableText = new Texture2D(source.width, source.height);
+			readableText.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
+			readableText.Apply();
+			RenderTexture.active = previous;
+			RenderTexture.ReleaseTemporary(renderTex);
+			return readableText;
+		}
 	}
 }

@@ -16,15 +16,16 @@ namespace EditorHelper.Patch {
                     scnEditor.instance.floorButtonExtraCanvas.gameObject.SetActive(true);
                     scnEditor.instance.floorButtonPrimaryCanvas.gameObject.SetActive(true);
 
+                    var angle = Camera.current.transform.eulerAngles.z;
                     var editor = scnEditor.instance;
-                    editor.buttonT.transform.eulerAngles = new Vector3(0, 0, 75);
-                    editor.buttonJ.transform.eulerAngles = new Vector3(0, 0, 15);
-                    editor.buttonM.transform.eulerAngles = new Vector3(0, 0, -15);
-                    editor.buttonB.transform.eulerAngles = new Vector3(0, 0, -75);
-                    editor.buttonF.transform.eulerAngles = new Vector3(0, 0, -105);
-                    editor.buttonN.transform.eulerAngles = new Vector3(0, 0, -165);
-                    editor.buttonH.transform.eulerAngles = new Vector3(0, 0, 165);
-                    editor.buttonG.transform.eulerAngles = new Vector3(0, 0, 105);
+                    editor.buttonT.transform.eulerAngles = new Vector3(0, 0, 75 + angle);
+                    editor.buttonJ.transform.eulerAngles = new Vector3(0, 0, 15 + angle);
+                    editor.buttonM.transform.eulerAngles = new Vector3(0, 0, -15 + angle);
+                    editor.buttonB.transform.eulerAngles = new Vector3(0, 0, -75 + angle);
+                    editor.buttonF.transform.eulerAngles = new Vector3(0, 0, -105 + angle);
+                    editor.buttonN.transform.eulerAngles = new Vector3(0, 0, -165 + angle);
+                    editor.buttonH.transform.eulerAngles = new Vector3(0, 0, 165 + angle);
+                    editor.buttonG.transform.eulerAngles = new Vector3(0, 0, 105 + angle);
                     editor.AddListener(editor.buttonT, 'o');
                     editor.AddListener(editor.buttonJ, 'p');
                     editor.AddListener(editor.buttonM, 'A');
@@ -43,22 +44,24 @@ namespace EditorHelper.Patch {
                     editor.buttonE.gameObject.SetActive(true);
                     editor.buttonZ.gameObject.SetActive(true);
                     editor.buttonC.gameObject.SetActive(true);
-                    editor.buttonQ.transform.localPosition = new Vector3(-20, 20);
-                    editor.buttonE.transform.localPosition = new Vector3(20, 20);
-                    editor.buttonZ.transform.localPosition = new Vector3(-20, -20);
-                    editor.buttonC.transform.localPosition = new Vector3(20, -20);
+                    editor.buttonQ.transform.localPosition = Quaternion.AngleAxis(angle, new Vector3(-1, 1)) * new Vector3(-20, 20);
+                    editor.buttonE.transform.localPosition = Quaternion.AngleAxis(angle, new Vector3(1, 1)) * new Vector3(20, 20);
+                    editor.buttonZ.transform.localPosition = Quaternion.AngleAxis(angle, new Vector3(-1, -1)) * new Vector3(-20, -20);
+                    editor.buttonC.transform.localPosition = Quaternion.AngleAxis(angle, new Vector3(1, -1)) * new Vector3(20, -20);
                 }
 
                 if (Input.GetKeyUp(KeyCode.BackQuote)) {
+                    var angle = Camera.current.transform.eulerAngles.z;
+                    var quart = Quaternion.AngleAxis(angle, Vector3.up);
                     var editor = scnEditor.instance;
-                    editor.buttonT.transform.eulerAngles = new Vector3(0, 0, 60);
-                    editor.buttonJ.transform.eulerAngles = new Vector3(0, 0, 30);
-                    editor.buttonM.transform.eulerAngles = new Vector3(0, 0, -30);
-                    editor.buttonB.transform.eulerAngles = new Vector3(0, 0, -60);
-                    editor.buttonF.transform.eulerAngles = new Vector3(0, 0, -120);
-                    editor.buttonN.transform.eulerAngles = new Vector3(0, 0, -150);
-                    editor.buttonH.transform.eulerAngles = new Vector3(0, 0, 150);
-                    editor.buttonG.transform.eulerAngles = new Vector3(0, 0, 120);
+                    editor.buttonT.transform.eulerAngles = new Vector3(0, 0, 60 + angle);
+                    editor.buttonJ.transform.eulerAngles = new Vector3(0, 0, 30 + angle);
+                    editor.buttonM.transform.eulerAngles = new Vector3(0, 0, -30 + angle);
+                    editor.buttonB.transform.eulerAngles = new Vector3(0, 0, -60 + angle);
+                    editor.buttonF.transform.eulerAngles = new Vector3(0, 0, -120 + angle);
+                    editor.buttonN.transform.eulerAngles = new Vector3(0, 0, -150 + angle);
+                    editor.buttonH.transform.eulerAngles = new Vector3(0, 0, 150 + angle);
+                    editor.buttonG.transform.eulerAngles = new Vector3(0, 0, 120 + angle);
                     
                     editor.AddListener(editor.buttonT, 'T');
                     editor.AddListener(editor.buttonJ, 'J');

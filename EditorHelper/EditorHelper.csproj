@@ -37,13 +37,14 @@
     <Compile Include="Assets.cs" />
     <Compile Include="Components\EditorHelperPanel.cs" />
     <Compile Include="Components\FloorMeshConverter.cs" />
-    <Compile Include="Components\InputSelector.cs" />
     <Compile Include="Components\LevelEventsPanel.cs" />
+    <Compile Include="Components\StaticScrollPosition.cs" />
     <Compile Include="CustomAssets.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Patch\ArtistPatch.cs" />
     <Compile Include="Patch\ChangePropertyPatch.cs" />
     <Compile Include="Patch\DeltaDegPatch.cs" />
+    <Compile Include="Patch\EaseIconPatch.cs" />
     <Compile Include="Patch\FloorDeletePatch.cs" />
     <Compile Include="Patch\GraveKey15DegPatch.cs" />
     <Compile Include="Patch\OtherExtensionPatch.cs" />
@@ -61,10 +62,12 @@
     <Compile Include="Utils\BPMDetector.cs" />
     <Compile Include="Utils\CanvasDrawer.cs" />
     <Compile Include="Utils\GUIEx.cs" />
+    <Compile Include="Utils\JsonCo.cs" />
     <Compile Include="Utils\PatchRDString.cs" />
     <Compile Include="Utils\ReflectionExtension.cs" />
     <Compile Include="Utils\Misc.cs" />
     <Compile Include="Utils\EventBundleManager.cs" />
+    <Compile Include="Utils\Similarity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -175,9 +178,7 @@
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice - 복사본\A Dance of Fire and Ice_Data\Managed\System.Windows.Forms.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
@@ -233,4 +234,10 @@
     <Target Name="AfterBuild">
     </Target>
     -->
+
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="bin/Debug/EditorHelper.dll" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\Mods\EditorHelper" />
+    <Exec Command="taskkill /f /im &quot;A Dance*&quot; || exit 0" />
+    <Exec Command="explorer steam://rungameid/977950 || exit 0" />
+  </Target>
 </Project>
