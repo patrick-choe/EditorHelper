@@ -17,15 +17,17 @@ using UnityModManagerNet;
 namespace EditorHelper.Patch {
 	[HarmonyPatch(typeof(scnEditor), "CreateFloorWithCharOrAngle")]
 	public static class CreateFloorPatch {
-		public static bool Prefix(scnEditor __instance, float angle, char chara, bool pulseFloorButtons, bool fullSpin) {
+		public static bool Prefix(scnEditor __instance, float angle, char chara, bool pulseFloorButtons,
+			bool fullSpin) {
 			__instance.CreateFloorWithShiftedCharOrAngle(angle, chara, pulseFloorButtons, fullSpin);
 			return false;
 		}
 	}
-	
+
 	[HarmonyPatch(typeof(scnEditor), "Update")]
 	internal static class UpdateRotationPatch {
 		internal static float CurrentRot => Camera.current.transform.eulerAngles.z;
+
 		private static void Prefix(scnEditor __instance, ref bool ___refreshBgSprites, ref bool ___refreshDecSprites) {
 			if (!Main.Settings.EnableScreenRot ||
 			    !scrController.instance.paused ||
@@ -39,7 +41,7 @@ namespace EditorHelper.Patch {
 			if (selectedObj != null && selectedObj.GetComponent<InputField>() != null) {
 				return;
 			}
-			
+
 			if (Main.Settings.RotateScreenCW.Check) {
 				scrCamera.instance.transform.rotation = Quaternion.Euler(0f, 0f, CurrentRot - 15f);
 				UpdateDirectionButtonsRot(__instance);
@@ -53,19 +55,23 @@ namespace EditorHelper.Patch {
 
 		public static bool DeleteFloor(this scnEditor instance, int sequenceIndex, bool remakePath = true) =>
 			instance.invoke<bool>("DeleteFloor")(sequenceIndex, remakePath);
+
 		public static scrFloor PreviousFloor(this scnEditor instance, scrFloor floor) =>
 			instance.invoke<scrFloor>("PreviousFloor")(floor);
-		
+
 		public static bool FloorPointsBackwards(this scnEditor instance, float floorAngle) =>
 			instance.invoke<bool>("FloorPointsBackwards")(floorAngle);
+
 		public static bool FloorPointsBackwards(this scnEditor instance, char floorType) =>
 			instance.invoke<bool>("FloorPointsBackwards")(floorType);
+
 		public static void SelectFloor(this scnEditor instance, scrFloor floorToSelect, bool cameraJump = true) =>
 			instance.invoke<object>("SelectFloor")(floorToSelect, cameraJump);
+
 		public static void MoveCameraToFloor(this scnEditor instance, scrFloor floor) =>
 			instance.invoke<object>("MoveCameraToFloor")(floor);
-		
-		
+
+
 		public static void ResetDirectionButtonsRot(scnEditor instance) {
 			scnEditor.instance.buttonA.transform.parent.parent.rotation = Quaternion.Euler(0f, 0f, 0);
 			instance.ResetListener(instance.buttonD, 'R');
@@ -87,7 +93,7 @@ namespace EditorHelper.Patch {
 			instance.AddSpaceEscape();
 			instance.invoke("UpdateFloorDirectionButtons")(true);
 		}
-		
+
 		public static void UpdateDirectionButtonsRot(scnEditor instance) {
 			scnEditor.instance.buttonA.transform.parent.parent.rotation = Quaternion.Euler(0f, 0f, CurrentRot);
 			instance.AddListener(instance.buttonD, 'R');
@@ -145,6 +151,7 @@ namespace EditorHelper.Patch {
 				_forceNotDelete = value;
 			}
 		}
+
 		private static bool _forceNotDelete;
 
 		public static void CreateFloor(this scnEditor instance, char floorType, bool pulseFloorButtons = true,
@@ -169,7 +176,8 @@ namespace EditorHelper.Patch {
 				scrMisc.ApproximatelyFloor(
 					scrMisc.GetAngleMoved(scrFloor.entryangle, scrFloor.exitangle, !scrFloor.isCCW),
 					6.2831854820251465) || scrMisc.ApproximatelyFloor(scrFloor.entryangle, scrFloor.exitangle);
-			if (!forceNotDelete && instance.FloorPointsBackwards(floorType) && !Input.GetKeyDown(KeyCode.Space) && !Input.GetKeyDown(KeyCode.Tab)) {
+			if (!forceNotDelete && instance.FloorPointsBackwards(floorType) && !Input.GetKeyDown(KeyCode.Space) &&
+			    !Input.GetKeyDown(KeyCode.Tab)) {
 				if (x != null) {
 					int seqID2 = scrFloor.seqID;
 					if (instance.DeleteFloor(seqID2, true)) {
@@ -283,7 +291,8 @@ namespace EditorHelper.Patch {
 				scrMisc.ApproximatelyFloor(
 					scrMisc.GetAngleMoved(scrFloor.entryangle, scrFloor.exitangle, !scrFloor.isCCW),
 					6.2831854820251465) || scrMisc.ApproximatelyFloor(scrFloor.entryangle, scrFloor.exitangle);
-			if (!forceNotDelete && instance.FloorPointsBackwards(floorAngle) && !Input.GetKeyDown(KeyCode.Space) && !Input.GetKeyDown(KeyCode.Tab)) {
+			if (!forceNotDelete && instance.FloorPointsBackwards(floorAngle) && !Input.GetKeyDown(KeyCode.Space) &&
+			    !Input.GetKeyDown(KeyCode.Tab)) {
 				if (x != null) {
 					int seqID2 = scrFloor.seqID;
 					if (instance.DeleteFloor(seqID2, true)) {
@@ -392,107 +401,108 @@ namespace EditorHelper.Patch {
 			bool pulseFloorButtons = true, bool fullSpin = false) {
 			if (!Input.GetKeyDown(KeyCode.Space))
 				chara = Angle.RotateFloor(chara, CurrentRot);
-			if (scnEditor.instance.levelData.isOldLevel && chara != '?')
-			{
+			if (scnEditor.instance.levelData.isOldLevel && chara != '?') {
 				instance.CreateFloor(chara, pulseFloorButtons, fullSpin);
 				return;
 			}
 
-			float angleFromFloorCharDirectionWithCheck = scrLevelMaker.GetAngleFromFloorCharDirectionWithCheck(chara, out bool flag);
-			if (flag)
-			{
+			float angleFromFloorCharDirectionWithCheck =
+				scrLevelMaker.GetAngleFromFloorCharDirectionWithCheck(chara, out bool flag);
+			if (flag) {
 				instance.CreateFloor(angleFromFloorCharDirectionWithCheck, true, false);
 				return;
 			}
+
 			instance.CreateFloor(angle, pulseFloorButtons, fullSpin);
-			
+
 		}
 
 		public static void ReplaceFloorWithShiftedCharOrAngle(this scnEditor instance, float angle, char chara,
 			bool pulseFloorButtons = true, bool fullSpin = false) {
 			instance.invoke("DeleteFloor")(instance.selectedFloors[0].seqID + 1, true);
-			instance.invoke("CreateFloorWithCharOrAngle")(angle, Angle.RotateFloor(chara, CurrentRot), pulseFloorButtons,
+			instance.invoke("CreateFloorWithCharOrAngle")(angle, Angle.RotateFloor(chara, CurrentRot),
+				pulseFloorButtons,
 				fullSpin);
 		}
 	}
-	
+
 	[HarmonyPatch(typeof(scnEditor), "UpdateDirectionButton")]
-		public static class UpdateDirectionPatch {
-			public static bool Prefix(scnEditor __instance, FloorDirectionButton btn, float oppositeAngle) {
-				if (btn == null) {
-					return false;
-				}
-
-				int num = 0;
-				bool flag = false;
-				switch (btn.btnType) {
-					case FloorDirectionButtonType.D:
-						num = 0;
-						break;
-					case FloorDirectionButtonType.W:
-						num = 90;
-						break;
-					case FloorDirectionButtonType.A:
-						num = 180;
-						break;
-					case FloorDirectionButtonType.S:
-						num = 270;
-						break;
-					case FloorDirectionButtonType.E:
-						num = 45;
-						break;
-					case FloorDirectionButtonType.Q:
-						num = 135;
-						break;
-					case FloorDirectionButtonType.Z:
-						num = 225;
-						break;
-					case FloorDirectionButtonType.C:
-						num = 315;
-						break;
-					case FloorDirectionButtonType.Y:
-						num = Input.GetKey(KeyCode.BackQuote) ? 75 : 60;
-						break;
-					case FloorDirectionButtonType.V:
-						num = Input.GetKey(KeyCode.BackQuote) ? 255 : 240;
-						break;
-					case FloorDirectionButtonType.T:
-						num = Input.GetKey(KeyCode.BackQuote) ? 105 : 120;
-						break;
-					case FloorDirectionButtonType.B:
-						num = Input.GetKey(KeyCode.BackQuote) ? 285 : 300;
-						break;
-					case FloorDirectionButtonType.H:
-						num = Input.GetKey(KeyCode.BackQuote) ? 165 : 150;
-						break;
-					case FloorDirectionButtonType.J:
-						num = Input.GetKey(KeyCode.BackQuote) ? 15 : 30;
-						break;
-					case FloorDirectionButtonType.N:
-						num = Input.GetKey(KeyCode.BackQuote) ? 75 : 210;
-						break;
-					case FloorDirectionButtonType.M:
-						num = Input.GetKey(KeyCode.BackQuote) ? 345 : 330;
-						break;
-					case FloorDirectionButtonType.Space:
-						flag = true;
-						break;
-					case FloorDirectionButtonType.Tab:
-						flag = true;
-						break;
-				}
-
-				num = Mathf.RoundToInt(num + UpdateRotationPatch.CurrentRot).NormalizeAngle();
-				btn.delete = (Mathf.Approximately(oppositeAngle, (float) num) && !flag);
-				btn.gameObject.SetActive(!btn.delete || __instance.selectedFloors[0].seqID != 0);
-				btn.Init();
-				var transform = btn.text.transform;
-				var euler = transform.eulerAngles;
-				transform.eulerAngles = new Vector3(euler.x, euler.y, UpdateRotationPatch.CurrentRot);
-				btn.textShifted.transform.eulerAngles = new Vector3(euler.x, euler.y, UpdateRotationPatch.CurrentRot);
+	public static class UpdateDirectionPatch {
+		public static bool Prefix(scnEditor __instance, FloorDirectionButton btn, float oppositeAngle) {
+			if (btn == null) {
 				return false;
 			}
+
+			int num = 0;
+			bool flag = false;
+			switch (btn.btnType) {
+				case FloorDirectionButtonType.D:
+					num = 0;
+					break;
+				case FloorDirectionButtonType.W:
+					num = 90;
+					break;
+				case FloorDirectionButtonType.A:
+					num = 180;
+					break;
+				case FloorDirectionButtonType.S:
+					num = 270;
+					break;
+				case FloorDirectionButtonType.E:
+					num = 45;
+					break;
+				case FloorDirectionButtonType.Q:
+					num = 135;
+					break;
+				case FloorDirectionButtonType.Z:
+					num = 225;
+					break;
+				case FloorDirectionButtonType.C:
+					num = 315;
+					break;
+				case FloorDirectionButtonType.Y:
+					num = Input.GetKey(KeyCode.BackQuote) ? 75 : 60;
+					break;
+				case FloorDirectionButtonType.V:
+					num = Input.GetKey(KeyCode.BackQuote) ? 255 : 240;
+					break;
+				case FloorDirectionButtonType.T:
+					num = Input.GetKey(KeyCode.BackQuote) ? 105 : 120;
+					break;
+				case FloorDirectionButtonType.B:
+					num = Input.GetKey(KeyCode.BackQuote) ? 285 : 300;
+					break;
+				case FloorDirectionButtonType.H:
+					num = Input.GetKey(KeyCode.BackQuote) ? 165 : 150;
+					break;
+				case FloorDirectionButtonType.J:
+					num = Input.GetKey(KeyCode.BackQuote) ? 15 : 30;
+					break;
+				case FloorDirectionButtonType.N:
+					num = Input.GetKey(KeyCode.BackQuote) ? 75 : 210;
+					break;
+				case FloorDirectionButtonType.M:
+					num = Input.GetKey(KeyCode.BackQuote) ? 345 : 330;
+					break;
+				case FloorDirectionButtonType.Space:
+					flag = true;
+					break;
+				case FloorDirectionButtonType.Tab:
+					flag = true;
+					break;
+			}
+
+			num = Mathf.RoundToInt(num + UpdateRotationPatch.CurrentRot).NormalizeAngle();
+			btn.delete = (Mathf.Approximately(oppositeAngle, (float) num) && !flag);
+			btn.gameObject.SetActive(!btn.delete || __instance.selectedFloors[0].seqID != 0);
+			btn.Init();
+			var transform = btn.text.transform;
+			var euler = transform.eulerAngles;
+			transform.eulerAngles = new Vector3(euler.x, euler.y, UpdateRotationPatch.CurrentRot);
+			btn.textShifted.transform.eulerAngles = new Vector3(euler.x, euler.y, UpdateRotationPatch.CurrentRot);
+			return false;
 		}
+	}
 
 
 	[HarmonyPatch(typeof(scnEditor), "SwitchToEditMode")]
@@ -503,10 +513,11 @@ namespace EditorHelper.Patch {
 		}
 	}
 
-	
+
 	[HarmonyPatch(typeof(scnEditor), "Play")]
 	public static class PlayPatch {
 		public static float Rotation;
+
 		public static void Prefix() {
 			Rotation = Camera.current.transform.eulerAngles.z;
 		}
@@ -531,7 +542,8 @@ namespace EditorHelper.Patch {
 
 
 			if (!EditorHelperPanel.ShowGui) return true;
-			if (Input.GetMouseButtonUp(0) && EditorHelperPanel.IsDragging || (Input.mouseScrollDelta.y != 0 || Input.GetMouseButtonDown(0)) && EditorHelperPanel.Contains) {
+			if (Input.GetMouseButtonUp(0) && EditorHelperPanel.IsDragging ||
+			    (Input.mouseScrollDelta.y != 0 || Input.GetMouseButtonDown(0)) && EditorHelperPanel.Contains) {
 				var vector6 = LastPos2;
 				Camera.current.transform.position = new Vector3(vector6.x, vector6.y, -10f);
 				return false;
@@ -544,12 +556,13 @@ namespace EditorHelper.Patch {
 
 		public static void Postfix(scnEditor __instance) {
 			if (scrController.instance.paused) {
-				if (!Input.GetMouseButtonDown(0) && Input.GetMouseButton(0) && Main.Settings.ChangeTileAngle.Check) {
+				if (!Input.GetMouseButtonDown(0) && Input.GetMouseButton(0) && (Main.Settings.ChangeTileAngle.Check && !scrLevelMaker.instance.isOldLevel)) {
 					var vector6 = LastPos2;
 					Camera.current.transform.position = new Vector3(vector6.x, vector6.y, -10f);
 					return;
 				}
-				if (!Input.GetMouseButtonDown(0) && 
+
+				if (!Input.GetMouseButtonDown(0) &&
 				    Input.GetMouseButton(0) &&
 				    !__instance.get<bool>("cancelDrag")) {
 					Vector3 vector6;
@@ -566,12 +579,13 @@ namespace EditorHelper.Patch {
 
 						vector6 = __instance.get<Vector3>("cameraPositionAtDragStart") - b5;
 					}
+
 					Camera.current.transform.position =
 						new Vector3(vector6.x, vector6.y, -10f);
-					
+
 					Altdrag:
-					if (!__instance.get<bool>("cancelDrag") && __instance.get<EventIndicator>("draggedEvIndicator") == null)
-					{
+					if (!__instance.get<bool>("cancelDrag") &&
+					    __instance.get<EventIndicator>("draggedEvIndicator") == null) {
 						try {
 							if (__instance.SelectionIsSingle()) {
 								var vector7 =

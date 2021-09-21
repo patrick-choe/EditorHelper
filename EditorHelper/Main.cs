@@ -43,8 +43,7 @@ namespace EditorHelper {
             var version = AccessTools.Field(typeof(GCNS), "releaseNumber").GetValue(null) as int?;
             var editorHelperDir = modEntry.Path;
             UnityModManager.Logger.Log("Dir: " + editorHelperDir);
-            editorHelperDir = Path.Combine(Directory.GetCurrentDirectory(), "Mods", "EditorHelper");
-                                          var target = 76;
+            var target = 76;
             var mode = Exact;
             if (File.Exists(Path.Combine(editorHelperDir, "Version.txt"))) {
                 var value = File.ReadAllText(Path.Combine(editorHelperDir, "Version.txt"));
@@ -71,9 +70,9 @@ namespace EditorHelper {
                 }
             }
 
+            UnityModManager.Logger.Log($"Current version: {version}");
             if (version == null) return false;
             
-            Assets.Load();
             switch (mode) {
                 case Exact:
                     if (version != target) return false;
@@ -92,6 +91,7 @@ namespace EditorHelper {
                     break;
             }
             
+            Assets.Load();
             Settings = UnityModManager.ModSettings.Load<MainSettings>(modEntry);
             Settings.moreEditorSettings_prev = Settings.MoreEditorSettings;
 
