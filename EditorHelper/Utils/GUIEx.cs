@@ -8,7 +8,8 @@ using UnityEngine;
 using UnityModManagerNet;
 
 namespace EditorHelper.Utils {
-    public class GUIEx {
+    public static class GUIEx {
+        public static bool DisableAll;
         public static void BeginIndent(int indent = 30) {
             GUILayout.BeginHorizontal();
             GUILayout.Space(indent);
@@ -32,7 +33,8 @@ namespace EditorHelper.Utils {
         }
         
         public static void Toggle(ref bool value, params (LangCode, string)[] labels) {
-            value = GUILayout.Toggle(value, labels == null ? "" : " " + CheckLangCode(labels));
+            if (DisableAll) GUILayout.Toggle(value, labels == null ? "" : " " + CheckLangCode(labels));
+            else value = GUILayout.Toggle(value, labels == null ? "" : " " + CheckLangCode(labels));
             GUILayout.Space(5);
         }
         public static void IntField(ref int value, params (LangCode, string)[] labels) {
@@ -45,7 +47,7 @@ namespace EditorHelper.Utils {
             GUILayout.Space(5);
             if (toCheck == "-") toCheck = "0";
             if (toCheck == "") toCheck = "0";
-            if (int.TryParse(toCheck, out int val)) {
+            if (!DisableAll && int.TryParse(toCheck, out int val)) {
                 value = val;
             }
         }
@@ -55,7 +57,7 @@ namespace EditorHelper.Utils {
             toCheck = GUILayout.TextField(toCheck, GUILayout.Width(width));
             if (toCheck == "-") toCheck = "0";
             if (toCheck == "") toCheck = "0";
-            if (int.TryParse(toCheck, out int val)) {
+            if (!DisableAll && int.TryParse(toCheck, out int val)) {
                 if (val < min || val > max) return;
                 value = val;
             }
@@ -67,23 +69,31 @@ namespace EditorHelper.Utils {
             if (toCheck == "-") toCheck = "0";
             if (toCheck == "") toCheck = "0";
             if (toCheck.EndsWith(".")) toCheck = toCheck + "0";
-            if (int.TryParse(toCheck, out int val)) {
+            if (!DisableAll && int.TryParse(toCheck, out int val)) {
                 if (val < min || val > max) return;
                 value = val;
             }
         }
         
         public static void TextField(ref string value, int width = 100) {
-            value = GUILayout.TextField(value, GUILayout.Width(width));
+            if (DisableAll) GUILayout.TextField(value, GUILayout.Width(width));
+            else value = GUILayout.TextField(value, GUILayout.Width(width));
         }
 
         internal static KeyMap currentKeymap;
         public static void KeyMap(ref KeyMap keyMap, params (LangCode, string)[] labels) {
             GUILayout.Label(CheckLangCode(labels));
             GUILayout.BeginHorizontal();
-            keyMap.NeedsCtrl = GUILayout.Toggle(keyMap.NeedsCtrl, "Ctrl", GUILayout.Width(60));
-            keyMap.NeedsShift = GUILayout.Toggle(keyMap.NeedsShift, "Shift", GUILayout.Width(60));
-            keyMap.NeedsAlt = GUILayout.Toggle(keyMap.NeedsAlt, "Alt", GUILayout.Width(60));
+            if (DisableAll) {
+                GUILayout.Toggle(keyMap.NeedsCtrl, "Ctrl", GUILayout.Width(60));
+                GUILayout.Toggle(keyMap.NeedsShift, "Shift", GUILayout.Width(60));
+                GUILayout.Toggle(keyMap.NeedsAlt, "Alt", GUILayout.Width(60));
+            } else {
+                keyMap.NeedsCtrl = GUILayout.Toggle(keyMap.NeedsCtrl, "Ctrl", GUILayout.Width(60));
+                keyMap.NeedsShift = GUILayout.Toggle(keyMap.NeedsShift, "Shift", GUILayout.Width(60));
+                keyMap.NeedsAlt = GUILayout.Toggle(keyMap.NeedsAlt, "Alt", GUILayout.Width(60));
+            }
+
             var keycode = keyMap.GetKeycodeValue();
             if (keyMap.KeyCode != KeyCode.None) {
                 GUI.skin.textField.alignment = TextAnchor.MiddleCenter;
@@ -93,7 +103,7 @@ namespace EditorHelper.Utils {
                 GUI.skin.textField.richText = false;
                 
                 GUILayout.Space(10);
-                if (currentKeymap == keyMap) {
+                if (!DisableAll && currentKeymap == keyMap) {
                     if (Event.current.isKey && Event.current.type == EventType.KeyDown) {
                         var pressed = Event.current.keyCode;
                         if (pressed != KeyCode.None) {
@@ -103,11 +113,11 @@ namespace EditorHelper.Utils {
                         }
                     }
 
-                    if (GUILayout.Button("End Edit", GUILayout.Width(80))) {
+                    if (!DisableAll && GUILayout.Button("End Edit", GUILayout.Width(80))) {
                         currentKeymap = null;
                     }
                 } else {
-                    if (GUILayout.Button("Edit", GUILayout.Width(80))) {
+                    if (!DisableAll && GUILayout.Button("Edit", GUILayout.Width(80))) {
                         currentKeymap = keyMap;
                     }
                 }
@@ -116,7 +126,7 @@ namespace EditorHelper.Utils {
 
             GUILayout.Space(10);
             var reset = GUILayout.Button(keyMap == keyMap.inital ? "" : "Reset", keyMap == keyMap.inital ? GUIStyle.none : GUI.skin.button, GUILayout.Width(60), GUILayout.Height(16));
-            if (reset && keyMap != keyMap.inital) {
+            if (!DisableAll && reset && keyMap != keyMap.inital) {
                 keyMap.Reset();
                 currentKeymap = null;
             }

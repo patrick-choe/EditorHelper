@@ -37,6 +37,7 @@
     <Compile Include="Assets.cs" />
     <Compile Include="Components\EditorHelperPanel.cs" />
     <Compile Include="Components\FloorMeshConverter.cs" />
+    <Compile Include="Components\HitsoundPlayer.cs" />
     <Compile Include="Components\LevelEventsPanel.cs" />
     <Compile Include="Components\StaticScrollPosition.cs" />
     <Compile Include="CustomAssets.cs" />

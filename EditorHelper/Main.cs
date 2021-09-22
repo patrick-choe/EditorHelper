@@ -38,6 +38,7 @@ namespace EditorHelper {
         private const int Less = 4;
 
         public const int Width = 150;
+        public const int Height = 1200;
         
         private static bool Load(UnityModManager.ModEntry modEntry) {
             var version = AccessTools.Field(typeof(GCNS), "releaseNumber").GetValue(null) as int?;
@@ -194,8 +195,17 @@ namespace EditorHelper {
             GCS.settingsInfo["MiscSettings"].propertiesInfo.Remove("convertFloorMesh");
         }
 
-        
+        public static GUIStyle GrayOverlay;
         private static void OnGUI(UnityModManager.ModEntry modEntry) {
+            if (scnEditor.instance != null && !GCS.standaloneLevelMode) {
+                GUIEx.Label((LangCode.English, "<size=20>Exit editor to change settings.</size>"), (LangCode.Korean, "<size=20>설정은 에디터 외부에서만 바꿀 수 있습니다.</size>"));
+                GUILayout.Space(15);
+                GUIEx.DisableAll = true;
+                if (GrayOverlay == null) {
+                    GrayOverlay = new GUIStyle();
+                    GrayOverlay.normal.background = CanvasDrawer.MakeTexture(1000, Height, new Color(0, 0, 0, 0.6f));
+                }
+            }
             GUIEx.Label((LangCode.English, "<b><size=20>Floors</size></b>"), (LangCode.Korean, "<b><size=20>타일</size></b>"));
             GUIEx.BeginIndent(10);
             GUIEx.Toggle(ref Settings.EnableFloor0Events, (LangCode.English, "Enable Floor 0 Events"), (LangCode.Korean, "첫 타일 이벤트 활성화"));
@@ -258,7 +268,12 @@ namespace EditorHelper {
             GUIEx.KeyMap(ref Settings.OpenEditorHelperPanel, (LangCode.English, "Open EditorHelper Panel in Editor"), (LangCode.Korean, "에디터에서 EditorHelper 패널 열기"));
             GUIEx.EndIndent();
             GUILayout.BeginHorizontal(); GUILayout.Space(10); GUILayout.EndHorizontal();
-
+            if (GUIEx.DisableAll) {
+                GUILayout.Space(-Height);
+                GUILayout.TextArea(string.Empty, GrayOverlay, GUILayout.Height(Height));
+            }
+            
+            GUIEx.DisableAll = false;
             /*GUIEx.Toggle(ref Settings.EnableBetterBackup, (LangCode.English, "Enable better editor backup in nested directory"), (LangCode.Korean, "레벨이 있는 폴더에서 더 나은 백업"));
             if (Settings.EnableBetterBackup) {
                 GUIEx.BeginIndent();
