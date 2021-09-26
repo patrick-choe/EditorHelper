@@ -40,8 +40,8 @@ namespace EditorHelper {
 
         public const int Width = 150;
         public const int Height = 1200;
-        public static int Target = 76;
-        public static int[] CompletelyNonCompatible = {75, 74, 73, 72, 71, 70, 69, 68};
+        public static int Target = 75;
+        public static int[] CompletelyNonCompatible = {82, 81, 80, 79, 78, 77, 76, 74, 73, 72, 71, 70, 69, 68};
         public static int? version = null;
 
         private static bool _forceDisableMode = false;
@@ -260,7 +260,7 @@ namespace EditorHelper {
             GUIEx.Toggle(ref Settings.ChangeIndexWhenToggle, (LangCode.English, "Change Index When Toggle This Tile, First Tile, Last Tile"), (LangCode.Korean, "이 타일, 첫 타일, 마지막 타일 전환 시 선택된 타일 유지"));
             GUIEx.Toggle(ref Settings.ChangeIndexWhenCreateTile, (LangCode.English, "Change Index When Create/Delete Tile"), (LangCode.Korean, "타일 생성/제거 시 선택된 타일 유지"));
             GUIEx.Toggle(ref Settings.SmallerDeltaDeg, (LangCode.English, "Enable Smaller Delta Degree (90° -> 15°, Press 'Ctrl + Alt + ,' or 'Ctrl + Alt + .' to use 15°)"), (LangCode.Korean, "더 작은 각도로 타일 회전 (90° -> 15°, 'Ctrl + Alt + ,' 또는 'Ctrl + Alt + .'로 15° 단위 회전)"));
-            GUIEx.Toggle(ref Settings.EnableChangeAngleByDragging, (LangCode.English, "Enable Change Angle By Dragging Tile"), (LangCode.Korean, "타일을 드래그해서 각도 변경"));
+            /*GUIEx.Toggle(ref Settings.EnableChangeAngleByDragging, (LangCode.English, "Enable Change Angle By Dragging Tile"), (LangCode.Korean, "타일을 드래그해서 각도 변경"));
             if (Settings.EnableChangeAngleByDragging) {
                 GUIEx.BeginIndent();
                 GUILayout.BeginHorizontal();
@@ -271,7 +271,7 @@ namespace EditorHelper {
                 GUIEx.Label((LangCode.English, "Changed Angle Delta"), (LangCode.Korean, "각도 변경 단위"));
                 GUILayout.EndHorizontal();
                 GUIEx.EndIndent();
-            }
+            }*/
             GUIEx.Toggle(ref Settings.EnableSelectedTileShowAngle, (LangCode.English, "Show Angle of Selected Tiles"), (LangCode.Korean, "선택된 타일의 각도 보기"));
             GUIEx.Toggle(ref Settings.GraveToSee15Degs, (LangCode.English, "Show 15 degs in editor while pressing ` key"), (LangCode.Korean, "에디터에서 `키를 누르는 동안 15도 단위 각도 표시"));
             GUIEx.EndIndent();

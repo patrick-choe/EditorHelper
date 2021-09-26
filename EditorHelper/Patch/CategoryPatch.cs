@@ -21,7 +21,7 @@ namespace EditorHelper.Patch {
         SetSpeed,
         Twirl,
         Checkpoint,
-        EditorComment,
+        //EditorComment,
         LevelSettings,
         SongSettings,
         TrackSettings,
