@@ -40,13 +40,32 @@ namespace EditorHelper {
 
         public const int Width = 150;
         public const int Height = 1200;
+        public static int Target = 76;
+        public static int[] CompletelyNonCompatible = {75, 74, 73, 72, 71, 70, 69, 68};
+        public static int? version = null;
+
+        private static bool _forceDisableMode = false;
+
+        public static bool ForceDisableMode {
+            get => _forceDisableMode;
+            set {
+                _forceDisableMode = value;
+                try {
+                    StopTweaks();
+                } catch { }
+
+                try {
+                    ApplyConfig(true);
+                } catch { }
+            }
+        }
         
         private static bool Load(UnityModManager.ModEntry modEntry) {
-            var version = AccessTools.Field(typeof(GCNS), "releaseNumber").GetValue(null) as int?;
+            version = AccessTools.Field(typeof(GCNS), "releaseNumber").GetValue(null) as int?;
             var editorHelperDir = modEntry.Path;
             UnityModManager.Logger.Log("Dir: " + editorHelperDir);
-            var target = 76;
             var mode = Exact;
+            bool unsupported = false;
             if (File.Exists(Path.Combine(editorHelperDir, "Version.txt"))) {
                 var value = File.ReadAllText(Path.Combine(editorHelperDir, "Version.txt"));
                 if (value.StartsWith(">=")) {
@@ -67,30 +86,38 @@ namespace EditorHelper {
                 }
                 
                 if (int.TryParse(value, out var val)) {
-                    target = val;
+                    Target = val;
                     UnityModManager.Logger.Log($"EditorHelper version set to {value}");
                 }
             }
 
             UnityModManager.Logger.Log($"Current version: {version}");
-            if (version == null) return false;
+            if (version == null) unsupported = true;
             
             switch (mode) {
                 case Exact:
-                    if (version != target) return false;
+                    if (version != Target) unsupported = true;
                     break;
                 case NotLess:
-                    if (version < target) return false;
+                    if (version < Target) unsupported = true;
                     break;
                 case NotBigger:
-                    if (version > target) return false;
+                    if (version > Target) unsupported = true;
                     break;
                 case Bigger:
-                    if (version <= target) return false;
+                    if (version <= Target) unsupported = true;
                     break;
                 case Less:
-                    if (version >= target) return false;
+                    if (version >= Target) unsupported = true;
                     break;
+            }
+
+            if (unsupported) {
+                new GameObject().AddComponent<NonCompatibleVersion>().complete =
+                    CompletelyNonCompatible.Contains(version ?? -1);
+                if (CompletelyNonCompatible.Contains(version ?? -1)) {
+                    return true;
+                }
             }
             
             Assets.Load();
@@ -130,13 +157,6 @@ namespace EditorHelper {
             
             EventBundleManager.Load();
 
-            SceneManager.sceneLoaded += (scene, scenemode) => {
-                if (scene.name == "scnNewIntro") {
-                    GCS.levelEventIcons[(LevelEventType) 100] = Assets.EditorHelperIcon;
-                    GCS.levelEventIcons[(LevelEventType) 101] = Assets.EditorHelperIcon;
-                }
-            };
-
             /*
             var toggle = RDC.data.prefab_controlToggle;
             var dropdown = toggle.transform.Find("Dropdown").GetComponent<Dropdown>();
@@ -154,6 +174,18 @@ namespace EditorHelper {
 
         private static bool OnToggle(UnityModManager.ModEntry modEntry, bool value) {
             _mod = modEntry;
+            if (ForceDisableMode) {
+                try {
+                    StopTweaks();
+                } catch { }
+
+                try {
+                    ApplyConfig(true);
+                } catch { }
+
+                return false;
+            }
+            
             IsEnabled = value;
 
             if (value) {

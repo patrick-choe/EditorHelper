@@ -40,6 +40,7 @@
     <Compile Include="Components\FloorMeshConverter.cs" />
     <Compile Include="Components\HitsoundPlayer.cs" />
     <Compile Include="Components\LevelEventsPanel.cs" />
+    <Compile Include="Components\NonCompatibleVersion.cs" />
     <Compile Include="Components\StaticScrollPosition.cs" />
     <Compile Include="CustomAssets.cs" />
     <Compile Include="Main.cs" />

@@ -106,11 +106,7 @@ namespace EditorHelper.Patch {
             __instance.panel = panel;
             __instance.levelEventType = type;
             string name = type.ToString();
-            try {
-	            __instance.icon.sprite = GCS.levelEventIcons[type];
-            } catch {
-	            __instance.icon.sprite = Assets.EditorHelperIcon;
-            }
+            __instance.icon.sprite = GCS.levelEventIcons[type];
             __instance.button.name = name;
             var isEventTab = !type.IsSettingType();
             __instance.set("isEventTab", isEventTab);
@@ -236,6 +232,9 @@ namespace EditorHelper.Patch {
 	        foreach (var key in array) {
 		        GCS.levelEventTypeString.Add((LevelEventType) key, key.ToString());
 	        }
+	        
+	        GCS.levelEventIcons[(LevelEventType) 100] = Assets.EditorHelperIcon;
+	        GCS.levelEventIcons[(LevelEventType) 101] = Assets.EditorHelperIcon;
 
 	        GCS.settingsInfo["EditorHelperEventBundles"] = new LevelEventInfo() {
 		        categories = new List<LevelEventCategory>(),

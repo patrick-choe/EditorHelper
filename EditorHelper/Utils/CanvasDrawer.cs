@@ -50,6 +50,34 @@ namespace EditorHelper.Utils {
             texture.Apply();
             return texture;
         }
+        
+        
+        public static Texture2D MakeRoundBorder(int resolutionmultiplier, int width, int height, int borderThickness,
+            int borderRadius, Color fillcolor, Color borderColor) {
+
+            width = width * resolutionmultiplier;
+            height = height * resolutionmultiplier;
+
+            var texture = new Texture2D(width, height);
+            var color = new Color[width * height];
+
+            for (int x = 0; x < texture.width; x++) {
+                for (int y = 0; y < texture.height; y++) {
+                    color[x + width * y] = ColorBorder(x, y, width, height, borderThickness, borderRadius + 2 * borderThickness, borderColor);
+                }
+            }
+            
+            for (int x = 0; x < texture.width; x++) {
+                for (int y = 0; y < texture.height; y++) {
+                    var result = ColorBorder(x - 2 * borderThickness, y - 2 * borderThickness, width - 4 * borderThickness, height - 4 * borderThickness, borderThickness, borderRadius, borderColor);
+                    if (result != Color.clear) color[x + width * y] = fillcolor;
+                }
+            }
+
+            texture.SetPixels(color);
+            texture.Apply();
+            return texture;
+        }
 
         /// <summary>
         /// Find out what color is used at this position.
