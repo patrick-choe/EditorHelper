@@ -2,11 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using ADOFAI;
 using GDMiniJSON;
+using RDTools;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityModManagerNet;
 using Object = System.Object;
 using PropertyInfo = ADOFAI.PropertyInfo;
@@ -51,11 +54,6 @@ namespace EditorHelper.Utils {
 					propDict["needsUnicode"] = prop.string_needsUnicode;
 					break;
 
-				case PropertyType.LongString:
-					propDict["type"] = "Text";
-					propDict["default"] = prop.value_default;
-					break;
-
 				case PropertyType.Enum:
 					propDict["type"] = $"Enum:{prop.enumType.Name}";
 					propDict["default"] = prop.value_default.ToString();
@@ -76,6 +74,11 @@ namespace EditorHelper.Utils {
 					break;
 
 				case PropertyType.Rating:
+					propDict["default"] = prop.value_default;
+					break;
+				
+				default:
+					propDict["type"] = "Text";
 					propDict["default"] = prop.value_default;
 					break;
 			}
@@ -145,6 +148,24 @@ namespace EditorHelper.Utils {
 			RenderTexture.active = previous;
 			RenderTexture.ReleaseTemporary(renderTex);
 			return readableText;
+		}
+
+		public static IAsyncResult RunAsync(Action task, AsyncCallback callback = null) {
+			return task.BeginInvoke(callback, null);
+		}
+
+		public static IAsyncResult RunAsync(Action task, Action callback) {
+			return task.BeginInvoke(ar => callback?.Invoke(), null);
+		}
+
+		public static IEnumerator RunAsyncCo(Action task, AsyncCallback callback = null) {
+			var asyncResult = task.BeginInvoke(callback, null);
+			yield return new WaitUntil(() => asyncResult.IsCompleted);
+		}
+
+		public static IEnumerator RunAsyncCo(Action task, Action callback) {
+			var asyncResult = task.BeginInvoke(ar => callback?.Invoke(), null);
+			yield return new WaitUntil(() => asyncResult.IsCompleted);
 		}
 	}
 }

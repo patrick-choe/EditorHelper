@@ -6,7 +6,6 @@ using DG.Tweening;
 using EditorHelper.Components;
 using EditorHelper.Utils;
 using HarmonyLib;
-using MoreEditorOptions.Util;
 using SFB;
 using UnityEngine;
 using UnityEngine.Events;
@@ -540,10 +539,10 @@ namespace EditorHelper.Patch {
 				__instance.set("cameraPositionAtDragStart", LastPos2);
 			}
 
-
-			if (!EditorHelperPanel.ShowGui) return true;
-			if (Input.GetMouseButtonUp(0) && EditorHelperPanel.IsDragging ||
-			    (Input.mouseScrollDelta.y != 0 || Input.GetMouseButtonDown(0)) && EditorHelperPanel.Contains) {
+			
+			//if (!EditorHelperPanel.ShowGui) return true;
+			if (/*Input.GetMouseButtonUp(0) && EditorHelperPanel.IsDragging ||
+			    (Input.mouseScrollDelta.y != 0 || Input.GetMouseButtonDown(0)) && EditorHelperPanel.Contains*/false) {
 				var vector6 = LastPos2;
 				Camera.current.transform.position = new Vector3(vector6.x, vector6.y, -10f);
 				return false;
@@ -567,7 +566,7 @@ namespace EditorHelper.Patch {
 				    !__instance.get<bool>("cancelDrag")) {
 					Vector3 vector6;
 					var b5 = Vector3.zero;
-					if (EditorHelperPanel.IsDragging) {
+					if (/*EditorHelperPanel.IsDragging*/false) {
 						vector6 = __instance.get<Vector3>("cameraPositionAtDragStart");
 					} else {
 						var vector5 = (GetMousePositionWithAngle() - _lastPos) /

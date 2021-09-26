@@ -4,7 +4,6 @@ using ADOFAI;
 using DG.Tweening;
 using EditorHelper.Utils;
 using HarmonyLib;
-using MoreEditorOptions.Util;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityModManagerNet;

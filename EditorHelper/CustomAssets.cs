@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using EditorHelper.Components;
 using EditorHelper.Utils;
+using GDMiniJSON;
 using UnityEngine;
 using UnityModManagerNet;
 
@@ -113,28 +115,40 @@ namespace EditorHelper {
         public static Texture2D DefaultLogo = CanvasDrawer.MakeTexture(1, 64, Color.clear);
         public static bool Inited = false;
 
-        public static List<CustomAssetData> CustomAssetDatas { get; private set; } 
+        public static List<CustomAssetData> CustomAssetDatas { get; private set; }
+
+        private static List<object> assets;
+                
+        private delegate void AsyncMethodCaller(object sender, DownloadStringCompletedEventArgs e);
+
+        private static void DownloadStringCallbackAsync(object sender, DownloadStringCompletedEventArgs e) {
+            static void Callback(object sender, DownloadStringCompletedEventArgs e) {
+                var data = e.Result;
+                var o = Json.Deserialize(data);
+                assets = (List<object>) o;
+            }
+            
+            var caller = new AsyncMethodCaller(Callback);
+            caller.BeginInvoke(sender, e, null, null);
+        }
+
+        private static IEnumerator DownloadStringCallback() {
+            yield return new WaitUntil(() => assets != null);
+            CustomAssetDatas = new List<CustomAssetData>();
+            foreach (Dictionary<string, object> asset in assets) {
+                CustomAssetDatas.Add(new CustomAssetData(asset));
+            }   
+
+            Inited = true;
+        }
 
         public static void Load() {
             Inited = false;
             try {
                 using var webclient = new WebClient();
-                static IEnumerator DownloadStringCallback(object sender, DownloadStringCompletedEventArgs e) {
-                    var data = e.Result;
-                    yield return JsonCo.Deserialize(data, o => {
-                        var assets = (List<object>) o;
-                        CustomAssetDatas = new List<CustomAssetData>();
-                        foreach (Dictionary<string, object> asset in assets) {
-                            CustomAssetDatas.Add(new CustomAssetData(asset));
-                        }
 
-                        Inited = true;
-                        return null;
-                    });
-                }
-
-                webclient.DownloadStringCompleted += (sender, e) =>
-                    scnEditor.instance.StartCoroutine(DownloadStringCallback(sender, e));
+                webclient.DownloadStringCompleted += DownloadStringCallbackAsync;
+                webclient.DownloadStringCompleted += (_, _) => scnEditor.instance.StartCoroutine(DownloadStringCallback());
                 webclient.DownloadStringAsync(new Uri("https://raw.githubusercontent.com/papertoy1127/EditorHelper_CustomAssets/master/packs.json"));
                 
             } catch (Exception e) {
@@ -144,3 +158,4 @@ namespace EditorHelper {
         }
     }
 }
+*/

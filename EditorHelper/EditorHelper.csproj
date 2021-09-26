@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="Assets.cs" />
     <Compile Include="Components\EditorHelperPanel.cs" />
+    <Compile Include="Components\EventBundlePage.cs" />
     <Compile Include="Components\FloorMeshConverter.cs" />
     <Compile Include="Components\HitsoundPlayer.cs" />
     <Compile Include="Components\LevelEventsPanel.cs" />
@@ -43,6 +44,7 @@
     <Compile Include="CustomAssets.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Patch\ArtistPatch.cs" />
+    <Compile Include="Patch\CategoryPatch.cs" />
     <Compile Include="Patch\ChangePropertyPatch.cs" />
     <Compile Include="Patch\DeltaDegPatch.cs" />
     <Compile Include="Patch\EaseIconPatch.cs" />
@@ -63,7 +65,6 @@
     <Compile Include="Utils\BPMDetector.cs" />
     <Compile Include="Utils\CanvasDrawer.cs" />
     <Compile Include="Utils\GUIEx.cs" />
-    <Compile Include="Utils\JsonCo.cs" />
     <Compile Include="Utils\PatchRDString.cs" />
     <Compile Include="Utils\ReflectionExtension.cs" />
     <Compile Include="Utils\Misc.cs" />
@@ -215,6 +216,18 @@
     </Reference>
     <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice - 복사본\A Dance of Fire and Ice_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestAudioModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestTextureModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.VideoModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice - 복사본\A Dance of Fire and Ice_Data\Managed\UnityEngine.VideoModule.dll</HintPath>

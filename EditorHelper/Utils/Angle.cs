@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using MoreEditorOptions.Util;
 using UnityEngine;
 
 namespace EditorHelper.Utils {
@@ -81,11 +80,11 @@ namespace EditorHelper.Utils {
                 floorMeshRenderer.SetAngle(num + offsetEnter * Mathf.Deg2Rad, num2 + offsetExit * Mathf.Deg2Rad);
                 if (setUTurnIfAnglesMatch) {
                     double num3 = Math.Abs(scrMisc.GetAngleMoved((double) num, (double) num2, !floor.isCCW));
-                    floor.noChange = (num3 <= 9.999999974752427E-07 || num3 >= 6.28318452835083);
+                    floor.set("noChange", (num3 <= 9.999999974752427E-07 || num3 >= 6.28318452835083));
                     var floorMesh = floorMeshRenderer.floorMesh;
-                    if (floor.noChange) {
-                        floorMeshRenderer.SetLength(floorMesh.length - 0.25f);
-                        floorMeshRenderer.SetUturnOrMidspin(true);
+                    if (floor.get<bool>("noChange")) {
+                        floorMeshRenderer.invoke("SetLength")(floorMesh.length - 0.25f);
+                        floorMeshRenderer.invoke("SetUturnOrMidspin")(true);
                     }
 
                     if (floor.midSpin) {

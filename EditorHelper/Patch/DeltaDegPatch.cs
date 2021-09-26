@@ -2,7 +2,6 @@
 using System.Reflection;
 using EditorHelper.Utils;
 using HarmonyLib;
-using MoreEditorOptions.Util;
 using UnityEngine;
 
 namespace EditorHelper.Patch {

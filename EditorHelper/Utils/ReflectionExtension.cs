@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
-using UnityModManagerNet;
 
-namespace MoreEditorOptions.Util {
+namespace EditorHelper.Utils {
     /// <summary>
     /// Class for getting/setting/invoking using <see cref="System.Reflection"/>.
     /// </summary>

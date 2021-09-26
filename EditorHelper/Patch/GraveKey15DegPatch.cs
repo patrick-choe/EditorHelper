@@ -1,7 +1,7 @@
 ﻿using System;
 using ADOFAI;
+using EditorHelper.Utils;
 using HarmonyLib;
-using MoreEditorOptions.Util;
 using UnityEngine;
 using UnityEngine.UI;
 

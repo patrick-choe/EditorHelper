@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿/*using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -223,8 +223,7 @@ namespace EditorHelper.Components {
                                         EventBundleManager.Datas.Add(
                                             new EventBundle(
                                                 (Dictionary<string, object>) Json.Deserialize(data)));
-                                    } catch { /* ignored */
-                                    }
+                                    } catch { }
 
                                     EventBundleManager.Save();
                                 }
@@ -374,8 +373,8 @@ namespace EditorHelper.Components {
 
                     GUILayout.EndHorizontal();
                     GUILayout.BeginVertical(GUI.skin.textArea);
-                    foreach (var (name, value) in currentData.TextureToDownload.ToArray()) {
-                        currentData.TextureToDownload[name] = GUILayout.Toggle(value, name);
+                    foreach (var (title, value) in currentData.TextureToDownload.ToArray()) {
+                        currentData.TextureToDownload[title] = GUILayout.Toggle(value, title);
                     }
 
                     GUILayout.EndVertical();
@@ -437,4 +436,4 @@ namespace EditorHelper.Components {
             StyleXBtn.fontStyle = FontStyle.Bold;
         }
     }
-}
+}*/

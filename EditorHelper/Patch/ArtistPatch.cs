@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
 using ADOFAI;
+using EditorHelper.Utils;
 using HarmonyLib;
-using MoreEditorOptions.Util;
 using UnityModManagerNet;
 
 namespace EditorHelper.Patch {

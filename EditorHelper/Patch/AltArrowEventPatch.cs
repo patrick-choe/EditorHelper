@@ -2,7 +2,6 @@
 using System.Linq;
 using ADOFAI;
 using HarmonyLib;
-using MoreEditorOptions.Util;
 using UnityEngine;
 using UnityModManagerNet;
 
@@ -14,6 +13,42 @@ namespace EditorHelper.Patch {
 
 	[HarmonyPatch(typeof(scnEditor), "Update")]
 	public class RightClickToGenerate15Patch {
+		public enum LevelEventTypeR75 {
+			None,
+			SetSpeed,
+			Twirl,
+			Checkpoint,
+			LevelSettings,
+			SongSettings,
+			TrackSettings,
+			BackgroundSettings,
+			CameraSettings,
+			MiscSettings,
+			MoveCamera,
+			CustomBackground,
+			ChangeTrack,
+			ColorTrack,
+			AnimateTrack,
+			RecolorTrack,
+			MoveTrack,
+			AddDecoration,
+			AddText,
+			SetText,
+			Flash,
+			SetHitsound,
+			SetFilter,
+			SetPlanetRotation,
+			HallOfMirrors,
+			ShakeScreen,
+			MoveDecorations,
+			PositionTrack,
+			RepeatEvents,
+			Bloom,
+			SetConditionalEvents,
+			ScreenTile,
+			ScreenScroll
+		}
+
 		public static LevelEventType[] EventsOrder = {
 			LevelEventType.EditorComment,
 			LevelEventType.SetSpeed,
@@ -49,7 +84,7 @@ namespace EditorHelper.Patch {
 			LevelEventType.CameraSettings,
 			LevelEventType.MiscSettings,
 		};
-
+		
 		public static bool Prefix(scnEditor __instance) {
 			if (Main.Settings.MoveEventUp.Check) {
 				var order = EventsOrder.Reverse().ToList();

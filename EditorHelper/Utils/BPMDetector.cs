@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using NAudio.Wave;
 using NAudio.Dsp;
 using NAudio.Vorbis;
+using NAudio.Wave;
 
-namespace NAudioBPM {
+namespace EditorHelper.Utils {
     struct BPMGroup {
         public int Count;
         public short Tempo;
@@ -193,6 +191,7 @@ namespace NAudioBPM {
 
                     this.groups = allGroups;
                 }
+
                 return;
             }
 

@@ -15,6 +15,7 @@ using GDMiniJSON;
 using HarmonyLib;
 using SA.GoogleDoc;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityModManagerNet;
@@ -117,10 +118,23 @@ namespace EditorHelper {
                 {LangCode.Korean, "자유 각도로 변환"},
                 {LangCode.English, "Convert to mesh models"},
             };
+            PatchRDString.Translations["editor.EditorHelperEventBundles"] = new Dictionary<LangCode, string> {
+                {LangCode.Korean, "<size=20>EditorHelper 이벤트 번들</size>"},
+                {LangCode.English, "EditorHelper Event Bundles</size>"},
+            };
+            
+            PatchRDString.Translations["editor.EditorHelperAssetPacks"] = new Dictionary<LangCode, string> {
+                {LangCode.Korean, "<size=20>EditorHelper 에셋 팩</size>"},
+                {LangCode.English, "<size=20>EditorHelper Asset Packs</size>"},
+            };
             
             EventBundleManager.Load();
+
             SceneManager.sceneLoaded += (scene, scenemode) => {
-                if (scene.name == "scnEditor") ShowHelperPanel();
+                if (scene.name == "scnNewIntro") {
+                    GCS.levelEventIcons[(LevelEventType) 100] = Assets.EditorHelperIcon;
+                    GCS.levelEventIcons[(LevelEventType) 101] = Assets.EditorHelperIcon;
+                }
             };
 
             /*
@@ -155,8 +169,8 @@ namespace EditorHelper {
         }
 
         public static void ShowHelperPanel() {
-            if (IsEnabled && !GCS.standaloneLevelMode)
-                new GameObject().AddComponent<EditorHelperPanel>();
+            /*if (IsEnabled && !GCS.standaloneLevelMode)
+                new GameObject().AddComponent<EditorHelperPanel>();*/
         }
 
         private static void StartTweaks() {
@@ -203,14 +217,14 @@ namespace EditorHelper {
                 GUIEx.DisableAll = true;
                 if (GrayOverlay == null) {
                     GrayOverlay = new GUIStyle();
-                    GrayOverlay.normal.background = CanvasDrawer.MakeTexture(1000, Height, new Color(0, 0, 0, 0.6f));
+                    GrayOverlay.normal.background = CanvasDrawer.MakeTexture(1000, Height, new Color32(17, 17, 17, 127));
                 }
             }
             GUIEx.Label((LangCode.English, "<b><size=20>Floors</size></b>"), (LangCode.Korean, "<b><size=20>타일</size></b>"));
             GUIEx.BeginIndent(10);
             GUIEx.Toggle(ref Settings.EnableFloor0Events, (LangCode.English, "Enable Floor 0 Events"), (LangCode.Korean, "첫 타일 이벤트 활성화"));
             GUIEx.Toggle(ref Settings.HighlightTargetedTiles, (LangCode.English, "Highlight Targeted Tiles"), (LangCode.Korean, "목표 타일 하이라이트"));
-            GUIEx.Toggle(ref Settings.SelectTileWithShortcutKeys, (LangCode.English, "Select Tile With ; + Click, ' + Click"), (LangCode.Korean, "타일을 ; + 클릭, ' + 클릭으로 선택"));
+            //GUIEx.Toggle(ref Settings.SelectTileWithShortcutKeys, (LangCode.English, "Select Tile With ; + Click, ' + Click"), (LangCode.Korean, "타일을 ; + 클릭, ' + 클릭으로 선택"));
             GUIEx.Toggle(ref Settings.ChangeIndexWhenToggle, (LangCode.English, "Change Index When Toggle This Tile, First Tile, Last Tile"), (LangCode.Korean, "이 타일, 첫 타일, 마지막 타일 전환 시 선택된 타일 유지"));
             GUIEx.Toggle(ref Settings.ChangeIndexWhenCreateTile, (LangCode.English, "Change Index When Create/Delete Tile"), (LangCode.Korean, "타일 생성/제거 시 선택된 타일 유지"));
             GUIEx.Toggle(ref Settings.SmallerDeltaDeg, (LangCode.English, "Enable Smaller Delta Degree (90° -> 15°, Press 'Ctrl + Alt + ,' or 'Ctrl + Alt + .' to use 15°)"), (LangCode.Korean, "더 작은 각도로 타일 회전 (90° -> 15°, 'Ctrl + Alt + ,' 또는 'Ctrl + Alt + .'로 15° 단위 회전)"));
@@ -234,7 +248,7 @@ namespace EditorHelper {
             GUIEx.Label((LangCode.English, "<b><size=20>Events</size></b>"), (LangCode.Korean, "<b><size=20>이벤트</size></b>"));
             GUIEx.BeginIndent(10);
             GUIEx.Toggle(ref Settings.RemoveLimits, (LangCode.English, "Remove All Editor Limits"), (LangCode.Korean, "에디터 입력값 제한 비활성화"));
-            GUIEx.Toggle(ref Settings.EnumInputField, (LangCode.English, "Direct Text Input in Selections"), (LangCode.Korean, "셀렉터에 직접 값 입력"));
+            //GUIEx.Toggle(ref Settings.EnumInputField, (LangCode.English, "Direct Text Input in Selections"), (LangCode.Korean, "셀렉터에 직접 값 입력"));
             GUIEx.EndIndent();
             GUILayout.BeginHorizontal(); GUILayout.Space(10); GUILayout.EndHorizontal();
             
@@ -265,7 +279,7 @@ namespace EditorHelper {
             GUIEx.KeyMap(ref Settings.ChangeTileAngle, (LangCode.English, "Change Angle by Dragging Tile"), (LangCode.Korean, "타일을 드래그해서 각도 변경"));
             GUIEx.KeyMap(ref Settings.RotateScreenCW, (LangCode.English, "Rotate Editor Screen Clockwise"), (LangCode.Korean, "시계 방향으로 에디터 화면 회전"));
             GUIEx.KeyMap(ref Settings.RotateScreenCCW, (LangCode.English, "Rotate Editor Screen Counter Clockwise"), (LangCode.Korean, "반시계 방향으로 에디터 화면 회전"));
-            GUIEx.KeyMap(ref Settings.OpenEditorHelperPanel, (LangCode.English, "Open EditorHelper Panel in Editor"), (LangCode.Korean, "에디터에서 EditorHelper 패널 열기"));
+            //GUIEx.KeyMap(ref Settings.OpenEditorHelperPanel, (LangCode.English, "Open EditorHelper Panel in Editor"), (LangCode.Korean, "에디터에서 EditorHelper 패널 열기"));
             GUIEx.EndIndent();
             GUILayout.BeginHorizontal(); GUILayout.Space(10); GUILayout.EndHorizontal();
             if (GUIEx.DisableAll) {

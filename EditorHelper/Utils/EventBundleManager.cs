@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using ADOFAI;
 using GDMiniJSON;
-using MoreEditorOptions.Util;
 using UnityModManagerNet;
 
 namespace EditorHelper.Utils {
@@ -28,24 +27,10 @@ namespace EditorHelper.Utils {
         public string Encode() {
             var stringBuilder = new StringBuilder();
             foreach (var evnt in LevelEvents) {
-                stringBuilder.Append(
-                    string.Concat(new string[] {
-                            "        ",
-                            "{ ",
-                            evnt,
-                            "},",
-                            "\n"
-                        }
-                    ));
+                stringBuilder.Append("{" + evnt + "}");
             }
 
-            var result = $@"{{
-    ""name"": ""{Name}"",
-    ""author"": ""{Author}"",
-    ""events"": [
-{stringBuilder}
-    ]
-}}";
+            var result = $@"{{""name"": ""{Name}"", ""author"": ""{Author}"", ""events"": [{stringBuilder}]}}";
             return result;
         }
 
@@ -61,10 +46,11 @@ namespace EditorHelper.Utils {
 
     public static class EventBundleManager {
 
-        public static List<EventBundle> Datas = new List<EventBundle>();
+        public static List<EventBundle> Datas = new();
 
         public static void Save() {
-            Main.Settings.EventBundles = Json.Serialize(Datas.Select(data => data.Encode()).ToList());
+            var encoded = string.Join(", ", Datas.Select(data => data.Encode()).ToArray());
+            Main.Settings.EventBundles = $"[{encoded}]";
         }
 
         public static void Load() {
@@ -72,6 +58,8 @@ namespace EditorHelper.Utils {
                 Datas = ((List<object>) Json.Deserialize(Main.Settings.EventBundles))
                     .Select(o => new EventBundle((Dictionary<string, object>) o)).ToList();
             } catch {
+                UnityModManager.Logger.Log("Loading Eventbundles Failed!");
+                UnityModManager.Logger.Log($"Data: {Main.Settings.EventBundles}");
                 Datas = new List<EventBundle>();
             }
         }

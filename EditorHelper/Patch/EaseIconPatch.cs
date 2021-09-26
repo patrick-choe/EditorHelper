@@ -5,12 +5,12 @@ using ADOFAI;
 using EditorHelper.Components;
 using EditorHelper.Utils;
 using HarmonyLib;
-using MoreEditorOptions.Util;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityModManagerNet;
 
 namespace EditorHelper.Patch {
+
     [HarmonyPatch(typeof(PropertyControl_Toggle), "EnumSetup")]
     public static class EaseIconPatch {
         public static void Postfix(PropertyControl_Toggle __instance, string enumTypeString) {
@@ -63,7 +63,6 @@ namespace EditorHelper.Patch {
                 foreach (var name in Enum.GetNames(typeof(TrackStyle))) {
                     var option = __instance.dropdown.options[(int) Enum.Parse(typeof(TrackStyle), name)];
                     options.Add(new Dropdown.OptionData(option.text, Assets.Bundle.LoadAsset<Sprite>("Tile" + name)));
-                    UnityModManager.Logger.Log("Tile" + name);
                 }
 
                 __instance.dropdown.ClearOptions();
@@ -105,7 +104,6 @@ namespace EditorHelper.Patch {
                 foreach (var name in Enum.GetNames(typeof(TrackStyle))) {
                     var option = __instance.dropdown.options[(int) Enum.Parse(typeof(TrackStyle), name)];
                     options.Add(new Dropdown.OptionData(option.text, Assets.Bundle.LoadAsset<Sprite>("Tile" + name)));
-                    UnityModManager.Logger.Log("Tile" + name);
                 }
 
                 var itemTemplate = __instance.dropdown.transform

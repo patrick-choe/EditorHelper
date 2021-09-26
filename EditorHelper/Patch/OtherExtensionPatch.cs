@@ -2,10 +2,9 @@
 using System.Collections;
 using System.IO;
 using ADOFAI;
+using EditorHelper.Utils;
 using HarmonyLib;
-using MoreEditorOptions.Util;
 using NAudio.Wave;
-using NAudioBPM;
 using RDTools;
 using UnityEngine;
 using UnityEngine.Video;
@@ -51,6 +50,7 @@ namespace EditorHelper.Patch {
 						return false;
 					}
 				}
+
 				return true;
 			}
 
@@ -60,45 +60,51 @@ namespace EditorHelper.Patch {
 		public static void DetectBpmAndOffset(string path) {
 			if (Main.Settings.DetectOffsetOnLoadSong)
 				scnEditor.instance.StartCoroutine(DetectOffsetCo(path, null));
-			if (Main.Settings.DetectBpmOnLoadSong)
-				DetectBpm(path);
+			if (Main.Settings.DetectBpmOnLoadSong || Main.Settings.DetectOffsetOnLoadSong)
+				scnEditor.instance.StartCoroutine(DetectBpmCo(path));
 		}
 
-		public static void DetectBpm(string path) {
-			var detect = new BPMDetector(path);
+		public static IEnumerator DetectBpmCo(string path) {
+			BPMDetector detect = null;
+			var asyncResult = Misc.RunAsync(() => {
+				detect = new BPMDetector(path);
+			});
+			while (!asyncResult.IsCompleted) {
+				scnEditor.instance.settingsPanel.panelsList[0].properties["bpm"].control.text = "Analyzing...";
+				yield return null;
+			}
 			scnEditor.instance.levelData.songSettings["bpm"] = (float) detect.Groups[0].Tempo;
+			scnEditor.instance.UpdateSongAndLevelSettings();
 		}
-		
+
 		public static IEnumerator DetectOffsetCo(string path, PropertyControl_Text controlText) {
 			UnityModManager.Logger.Log("Detecting offset");
 			string filename = Path.GetFileName(path);
 			int num = 0;
 			yield return AudioManager.Instance.FindOrLoadAudioClipExternal(path, false, 0f);
 			UnityModManager.Logger.Log("Loaded clip");
-			var clip = AudioManager.Instance.audioLib[filename + "*external"];
-			float[] array = new float[clip.samples];
-			var yieldDuration = array.Length / 60;
-			clip.GetData(array, 0);
-			for (int i = 0; i < array.Length; i += clip.channels)
-			{
-				if (array[i] != 0f)
-				{
-					float num3 = (float)i;
-					float num4 = (float)clip.channels;
-					float num5 = (float)clip.frequency;
-					num = (int)Convert.ToInt16(num3 / num4 / num5 * 1000f);
+			AudioClip audioClip = AudioManager.Instance.audioLib[filename + "*external"];
+			float[] array = new float[audioClip.samples];
+			int num2 = array.Length / 60;
+			audioClip.GetData(array, 0);
+			int length = array.Length;
+			int channels = audioClip.channels;
+			int frequency = audioClip.frequency;
+			var asyncResult = Misc.RunAsync(() => {
+				for (int i = 0; i < length; i += channels) {
+					if (array[i] == 0f) continue;
+					num = Convert.ToInt16((float) i / channels / frequency * 1000f);
 					break;
 				}
+			});
+			yield return new WaitUntil(() => asyncResult.IsCompleted);
 
-				if (i % yieldDuration == 0) yield return null;
-			}
-			
 			UnityModManager.Logger.Log($"Offset: {num}");
-			scnEditor.instance.levelData.songSettings["offset"] = (int) num;
+			scnEditor.instance.levelData.songSettings["offset"] = num;
 			if (controlText != null) {
 				controlText.text = num.ToString();
 			}
-			
+
 			scnEditor.instance.UpdateSongAndLevelSettings();
 		}
 	}
