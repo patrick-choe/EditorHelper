@@ -1,0 +1,58 @@
+ManifestFileVersion: 0
+CRC: 2421199715
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 7aa6bc7168cf61d7f3d0c8d9340a065a
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9e6ad29cbd2df8fbe1a15315db0e51ab
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Resources/InCubic.png
+- Assets/Resources/TileNeonLight.png
+- Assets/Resources/OutSine.png
+- Assets/Resources/TileNeon.png
+- Assets/Resources/InOutElastic.png
+- Assets/Resources/InFlash.png
+- Assets/Resources/InBack.png
+- Assets/Resources/InCirc.png
+- Assets/Resources/Linear.png
+- Assets/Resources/Flash.png
+- Assets/Resources/InOutSine.png
+- Assets/Resources/OutBounce.png
+- Assets/Resources/OutQuad.png
+- Assets/Resources/OutCirc.png
+- Assets/Resources/TileStandard.png
+- Assets/Resources/OutBack.png
+- Assets/Resources/OutQuint.png
+- Assets/Resources/InQuint.png
+- Assets/Resources/InOutExpo.png
+- Assets/Resources/OutCubic.png
+- Assets/Resources/TileBasic.png
+- Assets/Resources/TileGems.png
+- Assets/Resources/InOutQuad.png
+- Assets/Resources/InOutQuint.png
+- Assets/Resources/InBounce.png
+- Assets/Resources/InOutBack.png
+- Assets/Resources/InQuad.png
+- Assets/Resources/InOutFlash.png
+- Assets/Resources/EditorHelperIcon.png
+- Assets/Resources/InOutCirc.png
+- Assets/Resources/InOutQuart.png
+- Assets/Resources/InQuart.png
+- Assets/Resources/InSine.png
+- Assets/Resources/InExpo.png
+- Assets/Resources/OutExpo.png
+- Assets/Resources/OutQuart.png
+- Assets/Resources/InOutCubic.png
+- Assets/Resources/InElastic.png
+- Assets/Resources/OutFlash.png
+- Assets/Resources/InOutBounce.png
+- Assets/Resources/OutElastic.png
+Dependencies: []
