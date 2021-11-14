@@ -84,12 +84,12 @@ namespace EditorHelper.Utils {
                     var floorMesh = floorMeshRenderer.floorMesh;
                     if (floor.get<bool>("noChange")) {
                         floorMeshRenderer.SetLength(floorMesh.get<float>("length") - 0.25f);
-                        floorMeshRenderer.SetUturnOrMidspin(true);
+                        //floorMeshRenderer.SetUturnOrMidspin(true);
                     }
 
                     if (floor.midSpin) {
                         floorMesh.set("curvaturePoints", 3);
-                        floorMeshRenderer.shadowMesh.set("curvaturePoints", 3);
+                        //floorMeshRenderer.shadowMesh.set("curvaturePoints", 3);
                         return;
                     }
                 }

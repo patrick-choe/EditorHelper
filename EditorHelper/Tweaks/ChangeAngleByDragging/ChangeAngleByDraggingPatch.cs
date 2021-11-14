@@ -47,7 +47,7 @@ namespace EditorHelper.Tweaks.ChangeAngleByDragging {
                             angle = Vector2.Angle(new Vector2(1.5f, 0), pos - changePos);
                         else
                             angle = 180 + Vector2.Angle(new Vector2(1.5f, 0), changePos - pos);
-                        float delta = (float) Setting.DeltaDeg;
+                        float delta = (float) Setting.MeshDelta;
                         if (delta != 0)
                             angle = Mathf.Round(angle / delta) * delta.NormalizeAngle(true);
                         else

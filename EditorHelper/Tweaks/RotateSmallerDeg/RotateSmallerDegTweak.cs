@@ -17,10 +17,10 @@ namespace EditorHelper.Tweaks.RotateSmallerDeg {
         public override void OnDisable() {
             UnpatchTweak();
             if (GCS.settingsInfo == null) return;
-            if (GCS.settingsInfo["MiscSettings"].propertiesInfo.ContainsKey("useLegacyFlash"))
-                GCS.settingsInfo["MiscSettings"].propertiesInfo.Remove("useLegacyFlash");
-            if (GCS.settingsInfo["MiscSettings"].propertiesInfo.ContainsKey("useLegacyTiles"))
-                GCS.settingsInfo["MiscSettings"].propertiesInfo.Remove("useLegacyTiles");
+            if (GCS.settingsInfo["MiscSettings"].propertiesInfo.ContainsKey("EH:useLegacyFlash"))
+                GCS.settingsInfo["MiscSettings"].propertiesInfo.Remove("EH:useLegacyFlash");
+            if (GCS.settingsInfo["MiscSettings"].propertiesInfo.ContainsKey("EH:useLegacyTiles"))
+                GCS.settingsInfo["MiscSettings"].propertiesInfo.Remove("EH:useLegacyTiles");
         }
         
         [TweakFunction("RotateCCW", Require.SelectionIsSingle | Require.SelectionIsMultiple)]

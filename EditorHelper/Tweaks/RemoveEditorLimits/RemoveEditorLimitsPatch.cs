@@ -18,11 +18,11 @@ namespace EditorHelper.Tweaks.RemoveEditorLimits {
                 var infos = new[] {GCS.levelEventsInfo, GCS.settingsInfo};
                 foreach (var info in infos.SelectMany(info => info.Values)) {
                     #if DEBUG
-                    info.pro = false;
+                    //info.pro = false;
                     #endif
                     foreach (var propertyInfo in info.propertiesInfo.Values) {
                         #if DEBUG
-                        propertyInfo.pro = false;
+                        //propertyInfo.pro = false;
                         #endif
                         switch (propertyInfo.type) {
                             case PropertyType.Color:
@@ -202,28 +202,6 @@ namespace EditorHelper.Tweaks.RemoveEditorLimits {
                         return;
                     }
                 }
-            }
-        }
-        [TweakPatchId(nameof(PropertyControl_File), "ProcessFile")]
-        public static class AllowMp3Patch {
-            public static bool Prefix(PropertyControl_File __instance, string? newFilename, FileType fileType) {
-                if (!TweakManager.Setting<RemoveEditorLimitsTweak, RemoveEditorLimitsSetting>()!.AllowMp3) return true;
-                if (!string.IsNullOrEmpty(newFilename) && string.IsNullOrEmpty(__instance.levelPath) ||
-                    newFilename == null || __instance.get<string>("filename") == newFilename) {
-                    return true;
-                }
-
-                if (fileType == FileType.Audio) {
-                    LevelEvent selectedEvent = __instance.propertiesPanel.inspectorPanel.selectedEvent;
-                    __instance.set("filename", newFilename);
-                    __instance.ToggleOthersEnabled();
-                    selectedEvent[__instance.propertyInfo.name] = newFilename;
-                    __instance.inputField.text = newFilename;
-                    __instance.editor.UpdateSongAndLevelSettings();
-                    return false;
-                }
-
-                return true;
             }
         }
     }

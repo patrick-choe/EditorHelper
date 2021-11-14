@@ -145,7 +145,7 @@
         <Compile Include="Core\Alerts\IncompatibleVersion.cs" />
         <Compile Include="Core\Alerts\PatchNote_1_6_0_beta_1.cs" />
         <Compile Include="Core\Alerts\PatchNote_2_0_alpha_1.cs" />
-        <Compile Include="Core\Alerts\PatchNote_2_0_alpha_2.cs" />
+        <Compile Include="Core\Alerts\PatchNote_2_0_alpha_2_3.cs" />
         <Compile Include="Core\Alerts\UnusableVersion.cs" />
         <Compile Include="Core\Components\EditorHelperPanel.cs" />
         <Compile Include="Core\Components\EventBundlePage.cs" />

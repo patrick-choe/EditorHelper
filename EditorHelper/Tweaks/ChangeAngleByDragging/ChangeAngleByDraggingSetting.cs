@@ -12,7 +12,7 @@ namespace EditorHelper.Tweaks.ChangeAngleByDragging {
         
         [Label(LangCode.English, "Tile rotation delta degree")]
         [Label(LangCode.Korean, "타일 회전 각도")]
-        [Draw(0, 360)] public Fraction DeltaDeg = 15;
+        [Draw(0, 360)] public Fraction MeshDelta = new(15, 4);
         
         public void OnGUI() {
             this.Draw();

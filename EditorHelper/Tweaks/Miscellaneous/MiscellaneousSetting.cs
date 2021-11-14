@@ -15,6 +15,10 @@ namespace EditorHelper.Tweaks.Miscellaneous {
         [Label(LangCode.Korean, "에디터에서 ~키를 누르는 동안 15도 단위 각도 표시")]
         [Draw] public bool GraveToSee15Degs = true;
         
+        [Label(LangCode.English, "Detect BPM on song load")]
+        [Label(LangCode.Korean, "곡을 로드할 때 BPM 측정")]
+        [Draw] public bool DetectBpm = true;
+        
         public void OnGUI() {
             this.Draw();
         }

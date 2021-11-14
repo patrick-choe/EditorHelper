@@ -4,6 +4,7 @@ using DG.Tweening;
 using EditorHelper.Core.Patch;
 using EditorHelper.Utils;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using UnityModManagerNet;
 
@@ -43,7 +44,7 @@ namespace EditorHelper.Tweaks.HighlightTargetedTiles {
                 __instance.buttonFirstTile.onClick.AddListener(() => UpdateSelectedEvent(scnEditor.instance.levelEventsPanel.selectedEvent));
                 __instance.buttonThisTile.onClick.AddListener(() => UpdateSelectedEvent(scnEditor.instance.levelEventsPanel.selectedEvent));
                 __instance.buttonLastTile.onClick.AddListener(() => UpdateSelectedEvent(scnEditor.instance.levelEventsPanel.selectedEvent));
-                __instance.inputField.onEndEdit.AddListener(_ => UpdateSelectedEvent(scnEditor.instance.levelEventsPanel.selectedEvent));
+                __instance.inputField.get<UnityEvent<string>>("onEndEdit")!.AddListener(_ => UpdateSelectedEvent(scnEditor.instance.levelEventsPanel.selectedEvent));
                 
             }
         }

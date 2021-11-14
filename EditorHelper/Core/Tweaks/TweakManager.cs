@@ -211,9 +211,7 @@ namespace EditorHelper.Core.Tweaks {
         }
         
         public static bool Registered<T>() where T : Tweak, new() => Registered(typeof(T));
-        public static bool Registered(Type type) {
-            return RegisteredTweaks.Contains(type);
-        }
+        public static bool Registered(Type type) => RegisteredTweaks.Contains(type);
 
         public static string GetID<T>() where T : Tweak, new() => GetID(typeof(T))!;
         public static string? GetID(Type type) {

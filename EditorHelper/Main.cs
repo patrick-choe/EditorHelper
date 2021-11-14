@@ -36,14 +36,14 @@ namespace EditorHelper {
         private const int NotBigger = 2;
         private const int Bigger = 3;
         private const int Less = 4;
-        public static int Target = 77;
+        public static int Target = 78;
         
         public static readonly int[] CompletelyIncompatible = {76, 75, 74, 73, 72, 71, 70, 69, 68};
         
         private static bool Load(UnityModManager.ModEntry modEntry) { 
             var editorHelperDir = modEntry.Path;
             UnityModManager.Logger.Log("Dir: " + editorHelperDir);
-            var mode = Exact;
+            var mode = NotBigger;
             bool unsupported = false;
             if (File.Exists(Path.Combine(editorHelperDir, "Version.txt"))) {
                 var value = File.ReadAllText(Path.Combine(editorHelperDir, "Version.txt"));
@@ -122,8 +122,8 @@ namespace EditorHelper {
                 if (!Settings.PatchNote_2_0_alpha_1) {
                     Alert.Show<PatchNote_2_0_alpha_1>();
                 }
-                if (!Settings.PatchNote_2_0_alpha_2) {
-                    Alert.Show<PatchNote_2_0_alpha_2>();
+                if (!Settings.PatchNote_2_0_alpha_2_3) {
+                    Alert.Show<PatchNote_2_0_alpha_2_3>();
                 }
             }
             
