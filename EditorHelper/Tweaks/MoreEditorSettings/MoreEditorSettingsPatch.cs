@@ -381,11 +381,19 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
         [TweakPatchId(nameof(LevelEvent), "Decode")]
         public static class DecodePatch2 {
             public static void Postfix(LevelEvent __instance) {
-                var components = (__instance.data.GetValueSafe("components") as Dictionary<string, object>);
-                var lockToCamera = components?["scrLockToCamera"] as Dictionary<string, object>;
-                __instance.data["EH:lockToCameraPos"] = lockToCamera?.GetValueSafe("lockPos") as bool? ?? true ? "Enabled" : "Disabled";
-                __instance.data["EH:lockToCameraRot"] = lockToCamera?.GetValueSafe("lockRot") as bool? ?? false ? "Enabled" : "Disabled";
-                __instance.data["EH:lockToCameraScale"] = lockToCamera?.GetValueSafe("lockScale") as bool? ?? true ? "Enabled" : "Disabled";
+                throw new Exception();
+                string? compText = (__instance.data.GetValueSafe("components") as string)?.Apply(comp => "{" + comp + "}");
+                var components = Json.Deserialize(compText) as Dictionary<string, object>;
+                if (components?.GetValueSafe("scrLockToCamera") is Dictionary<string, object> lockToCamera) {
+                    __instance.data["EH:lockToCameraPos"] = lockToCamera.GetValueSafe("lockPos") as bool? ?? true ? "Enabled" : "Disabled";
+                    __instance.data["EH:lockToCameraRot"] = lockToCamera.GetValueSafe("lockRot") as bool? ?? false ? "Enabled" : "Disabled";
+                    __instance.data["EH:lockToCameraScale"] = lockToCamera.GetValueSafe("lockScale") as bool? ?? true ? "Enabled" : "Disabled";
+                } else {
+                    __instance.data["EH:lockToCameraPos"] = "Disabled";
+                    __instance.data["EH:lockToCameraRot"] = "Disabled";
+                    __instance.data["EH:lockToCameraScale"] = "Disabled";
+                }
+
                 __instance.data["EH:disableIfMinimumVFX"] = components?.ContainsKey("scrDisableIfMinimumVFX") ?? false ? "Enabled" : "Disabled";
             }
         }

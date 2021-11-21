@@ -12,11 +12,15 @@ using EditorHelper.Tweaks.RemoveEditorLimits;
 using EditorHelper.Tweaks.RotateScreen;
 using EditorHelper.Utils;
 using HarmonyLib;
+using JetBrains.Annotations;
+using RDTools;
+using SFB;
 using UnityEngine;
+using PropertyInfo = System.Reflection.PropertyInfo;
 
 namespace EditorHelper {
-    public class Patch {
-	    [TweakPatchId(nameof(scnEditor), "Update")]
+	public class Patch {
+		[TweakPatchId(nameof(scnEditor), "Update")]
 		internal static class CorrectRotationPatch {
 			public static Vector3 GetMousePositionWithAngle() {
 				return RotateScreenPatch.CurrentAngle * Input.mousePosition;
@@ -31,7 +35,7 @@ namespace EditorHelper {
 					_lastPos = GetMousePositionWithAngle();
 					__instance.set("cameraPositionAtDragStart", LastPos2);
 				}
-				
+
 				LastPos2 = Camera.current.transform.position;
 
 				return true;
@@ -92,8 +96,8 @@ namespace EditorHelper {
 					} catch (NullReferenceException) { }
 				}
 			}
-		}		
-		
+		}
+
 		[TweakPatchId(nameof(scnEditor), "CreateFloorWithCharOrAngle")]
 		public static class CreateFloorPatch {
 			public static bool Prefix(scnEditor __instance, float angle, char chara, bool pulseFloorButtons,
@@ -102,7 +106,7 @@ namespace EditorHelper {
 				return false;
 			}
 		}
-		
+
 		[TweakPatchId(nameof(PropertyControl_File), "ProcessFile")]
 		public static class AllowMp3Patch {
 			public static bool Prefix(PropertyControl_File __instance, string? newFilename, FileType fileType) {
@@ -115,11 +119,13 @@ namespace EditorHelper {
 					LevelEvent selectedEvent = __instance.propertiesPanel.inspectorPanel.selectedEvent;
 					__instance.set("filename", newFilename);
 					__instance.ToggleOthersEnabled();
-					if (Path.GetExtension(newFilename).Replace(".", string.Empty) == "mp3" && !TweakManager.Setting<RemoveEditorLimitsTweak, RemoveEditorLimitsSetting>()!.AllowMp3) {
+					if (Path.GetExtension(newFilename).Replace(".", string.Empty) == "mp3" &&
+					    !TweakManager.Setting<RemoveEditorLimitsTweak, RemoveEditorLimitsSetting>()!.AllowMp3) {
 						scnEditor.instance.songToConvert = newFilename;
 						scnEditor.instance.ShowPopup(true, scnEditor.PopupType.OggEncode);
 						return false;
 					}
+
 					selectedEvent[__instance.propertyInfo.name] = newFilename;
 					__instance.inputField.text = newFilename;
 					__instance.editor.UpdateSongAndLevelSettings();
@@ -133,8 +139,8 @@ namespace EditorHelper {
 
 				return true;
 			}
-			
-			
+
+
 			public static void DetectBpm(string path) {
 				scnEditor.instance.StartCoroutine(DetectBpmCo(path));
 			}
@@ -151,6 +157,7 @@ namespace EditorHelper {
 				scnEditor.instance.UpdateSongAndLevelSettings();
 			}
 		}
+
 		/*
 		[TweakPatchId(nameof(FloorMeshRenderer), "SetLength")]
 		public static class LengthPatch {
@@ -176,15 +183,29 @@ namespace EditorHelper {
 				__result = 1f;
 			}
 		}*/
+		[TweakPatchId(nameof(RDBaseDll), "printes")]
+		public static class LogPatch {
+			public static bool Prefix(object o) {
+				Debug.Log(o);
+				return false;
+			}
+		}
 
+		[TweakPatchId(nameof(RDBaseDll), "printesw")]
+		public static class LogWarningPatch {
+			public static bool Prefix(object o) {
+				Debug.LogWarning(o);
+				return false;
+			}
+		}
+		
 		[Init]
 		public static void Init() {
 			Main.Harmony.TweakPatch(typeof(CorrectRotationPatch));
 			Main.Harmony.TweakPatch(typeof(CreateFloorPatch));
 			Main.Harmony.TweakPatch(typeof(AllowMp3Patch));
-			//Main.Harmony.TweakPatch(typeof(LengthPatch));
-			//Main.Harmony.TweakPatch(typeof(LengthPatch2));
-			//Main.Harmony.TweakPatch(typeof(RadiusPatch));
+			Main.Harmony.TweakPatch(typeof(LogPatch));
+			Main.Harmony.TweakPatch(typeof(LogWarningPatch));
 		}
-    }
+	}
 }

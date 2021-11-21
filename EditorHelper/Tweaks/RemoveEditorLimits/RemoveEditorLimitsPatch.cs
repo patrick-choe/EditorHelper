@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using ADOFAI;
 using EditorHelper.Core.Patch;
 using EditorHelper.Core.Tweaks;
 using EditorHelper.Utils;
-using RDTools;
 using UnityEngine;
 
 namespace EditorHelper.Tweaks.RemoveEditorLimits {
@@ -18,11 +16,11 @@ namespace EditorHelper.Tweaks.RemoveEditorLimits {
                 var infos = new[] {GCS.levelEventsInfo, GCS.settingsInfo};
                 foreach (var info in infos.SelectMany(info => info.Values)) {
                     #if DEBUG
-                    //info.pro = false;
+                    info.pro = false;
                     #endif
                     foreach (var propertyInfo in info.propertiesInfo.Values) {
                         #if DEBUG
-                        //propertyInfo.pro = false;
+                        propertyInfo.pro = false;
                         #endif
                         switch (propertyInfo.type) {
                             case PropertyType.Color:

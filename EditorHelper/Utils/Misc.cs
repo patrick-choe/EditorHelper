@@ -352,5 +352,18 @@ namespace EditorHelper.Utils {
 			DebugUtils.Log($"({tile}, {orig}) => {absolute} => ({change}, {to})");
 			return new Tuple<int, TileRelativeTo>(change, to);
 		}
+
+		public static void Let<T>(this T obj, Action<T> action) {
+			action(obj);
+		}
+		
+		public static T Apply<T>(this T obj, Func<T, T> action) {
+			return action(obj);
+		}
+
+		public static T NotNull<T>(this T? obj) {
+			if (obj == null) throw new NullReferenceException();
+			return obj;
+		}
 	}
 }
