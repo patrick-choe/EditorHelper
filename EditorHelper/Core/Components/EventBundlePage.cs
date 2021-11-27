@@ -1,10 +1,7 @@
-﻿/*
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Windows.Forms;
 using EditorHelper.Utils;
 using GDMiniJSON;
@@ -22,18 +19,18 @@ namespace EditorHelper.Components {
             Creating
         }
 
-        public Text selectionLabel;
-        public Button saveButton;
-        public Button loadButton;
-        public GameObject nameObj;
-        public Text nameLabel;
-        public InputField bundleName;
-        public GameObject creatorObj;
-        public Text creatorLabel;
-        public InputField bundleCreator;
-        public Button saveBundleButton;
-        public Button cancelSaveButton;
-        public RectTransform bundles;
+        public Text selectionLabel = null!;
+        public Button saveButton = null!;
+        public Button loadButton = null!;
+        public GameObject nameObj = null!;
+        public Text nameLabel = null!;
+        public InputField bundleName = null!;
+        public GameObject creatorObj = null!;
+        public Text creatorLabel = null!;
+        public InputField bundleCreator = null!;
+        public Button saveBundleButton = null!;
+        public Button cancelSaveButton = null!;
+        public RectTransform bundles = null!;
 
         private Status _status;
         private int seqId;
@@ -80,7 +77,7 @@ namespace EditorHelper.Components {
             nameLabel.transform.SetParent(nameObj.transform, false);
             nameLabel.font = Assets.SettingFont;
             nameLabel.color = Color.white;
-            nameLabel.GetOrAddComponent<RectTransform>().sizeDelta = new Vector2(300, 25);
+            nameLabel.GetOrAddComponent<RectTransform>().sizeDelta = new Vector2(300, 30);
             nameLabel.fontSize = 19;
             nameLabel.alignment = TextAnchor.LowerLeft;
             nameLabel.text = GUIEx.CheckLangCode((LangCode.English, "Name"), (LangCode.Korean, "이름"));
@@ -116,7 +113,7 @@ namespace EditorHelper.Components {
             creatorLabel.transform.SetParent(creatorObj.transform, false);
             creatorLabel.font = Assets.SettingFont;
             creatorLabel.color = Color.white;
-            creatorLabel.GetOrAddComponent<RectTransform>().sizeDelta = new Vector2(300, 25);
+            creatorLabel.GetOrAddComponent<RectTransform>().sizeDelta = new Vector2(300, 30);
             creatorLabel.fontSize = 19;
             creatorLabel.alignment = TextAnchor.LowerLeft;
             creatorLabel.text = GUIEx.CheckLangCode((LangCode.English, "Creator"), (LangCode.Korean, "제작자"));
@@ -188,15 +185,15 @@ namespace EditorHelper.Components {
             loadButton.GetOrAddComponent<RectTransform>().sizeDelta = new Vector2(300, 25);
 
             bundles = new GameObject().GetOrAddComponent<RectTransform>();
+            var s3 = bundles.gameObject.AddComponent<ContentSizeFitter>();
+            s3.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            s3.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             bundles.SetParent(transform, false);
             var l3 = bundles.gameObject.AddComponent<VerticalLayoutGroup>();
             l3.childControlHeight = false;
             l3.childControlWidth = false;
             l3.spacing = 6;
-            l3.childAlignment = TextAnchor.LowerLeft;
-            var s3 = bundles.gameObject.AddComponent<ContentSizeFitter>();
-            s3.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-            s3.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            l3.childAlignment = TextAnchor.UpperLeft;
 
             saveButton.onClick.AddListener(() => _status = Status.Creating);
             cancelSaveButton.onClick.AddListener(() => _status = Status.Main);
@@ -231,6 +228,7 @@ namespace EditorHelper.Components {
                         } catch {
                             scnEditor.instance.ShowNotification(RDString.Get("editor.notification.loadingFailed"));
                         }
+
                         EventBundleManager.Save();
                         UpdateEventBundle();
                     }
@@ -255,24 +253,31 @@ namespace EditorHelper.Components {
                 if (!selectionLabel.gameObject.activeSelf) {
                     selectionLabel.gameObject.SetActive(true);
                 }
+
                 if (saveButton.gameObject.activeSelf) {
                     saveButton.gameObject.SetActive(false);
                 }
+
                 if (nameObj.gameObject.activeSelf) {
                     nameObj.gameObject.SetActive(false);
                 }
+
                 if (creatorObj.gameObject.activeSelf) {
                     creatorObj.gameObject.SetActive(false);
                 }
+
                 if (saveBundleButton.gameObject.activeSelf) {
                     saveBundleButton.gameObject.SetActive(false);
                 }
+
                 if (cancelSaveButton.gameObject.activeSelf) {
                     cancelSaveButton.gameObject.SetActive(false);
                 }
+
                 if (loadButton.gameObject.activeSelf) {
                     loadButton.gameObject.SetActive(false);
                 }
+
                 if (bundles.gameObject.activeSelf) {
                     bundles.gameObject.SetActive(false);
                 }
@@ -280,30 +285,35 @@ namespace EditorHelper.Components {
                 if (selectionLabel.gameObject.activeSelf) {
                     selectionLabel.gameObject.SetActive(false);
                 }
+
                 switch (_status) {
                     case Status.Main:
                         seqId = -1;
                         if (scnEditor.instance.SelectionIsSingle()) {
                             if (!saveButton.gameObject.activeSelf)
                                 saveButton.gameObject.SetActive(true);
-                            if (!loadButton.gameObject.activeSelf) 
+                            if (!loadButton.gameObject.activeSelf)
                                 loadButton.gameObject.SetActive(true);
                         } else {
                             if (saveButton.gameObject.activeSelf)
                                 saveButton.gameObject.SetActive(false);
-                            if (loadButton.gameObject.activeSelf) 
+                            if (loadButton.gameObject.activeSelf)
                                 loadButton.gameObject.SetActive(false);
                         }
+
                         if (nameObj.gameObject.activeSelf) {
                             nameObj.gameObject.SetActive(false);
                         }
+
                         if (creatorObj.gameObject.activeSelf) {
                             creatorObj.gameObject.SetActive(false);
                         }
+
                         if (saveBundleButton.gameObject.activeSelf) {
                             saveBundleButton.interactable = false;
                             saveBundleButton.gameObject.SetActive(false);
                         }
+
                         if (cancelSaveButton.gameObject.activeSelf) {
                             cancelSaveButton.gameObject.SetActive(false);
                         }
@@ -311,38 +321,47 @@ namespace EditorHelper.Components {
                         if (!bundles.gameObject.activeSelf) {
                             bundles.gameObject.SetActive(true);
                         }
+
                         break;
                     case Status.Creating:
                         if (seqId != -1 && seqId != scnEditor.instance.selectedFloors[0].seqID) {
                             _status = Status.Main;
                             break;
                         }
+
                         seqId = scnEditor.instance.selectedFloors[0].seqID;
                         if (saveButton.gameObject.activeSelf) {
                             saveButton.gameObject.SetActive(false);
                         }
+
                         if (!nameObj.gameObject.activeSelf) {
                             nameObj.gameObject.SetActive(true);
                         }
+
                         if (!creatorObj.gameObject.activeSelf) {
                             creatorObj.gameObject.SetActive(true);
                             bundleCreator.text = DiscordController.currentUsername ??
                                                  SteamIntegration.Instance.GetPlayersName() ?? "";
                         }
+
                         if (!saveBundleButton.gameObject.activeSelf) {
                             saveBundleButton.gameObject.SetActive(true);
                         }
+
                         if (!cancelSaveButton.gameObject.activeSelf) {
                             cancelSaveButton.gameObject.SetActive(true);
                         }
+
                         if (loadButton.gameObject.activeSelf) {
                             loadButton.gameObject.SetActive(false);
                         }
+
                         if (bundles.gameObject.activeSelf) {
                             bundles.gameObject.SetActive(false);
                         }
 
-                        saveBundleButton.interactable = !bundleName.text.IsNullOrEmpty() && scnEditor.instance.events.Any(evnt => evnt.floor ==  seqId);
+                        saveBundleButton.interactable = !bundleName.text.IsNullOrEmpty() &&
+                                                        scnEditor.instance.events.Any(evnt => evnt.floor == seqId);
                         break;
                 }
             }
@@ -352,8 +371,8 @@ namespace EditorHelper.Components {
             for (int i = 0; i < bundles.childCount; i++) {
                 Destroy(bundles.GetChild(i).gameObject);
             }
-            
-            UnityModManager.Logger.Log("Destroy complete");
+
+            DebugUtils.Log("Destroy complete");
 
             foreach (var bundle in EventBundleManager.Datas) {
                 var obj = new GameObject();
@@ -385,7 +404,7 @@ namespace EditorHelper.Components {
                         scnEditor.instance.ApplyBundle(floor.seqID, bundle);
                     }
                 });
-                UnityModManager.Logger.Log("applyButton complete");
+                DebugUtils.Log("applyButton complete");
 
                 var exportButton = new GameObject().AddComponent<Button>();
                 exportButton.transform.SetParent(obj.transform, false);
@@ -424,7 +443,7 @@ namespace EditorHelper.Components {
                         File.WriteAllText(dialog.FileName, bundle.Encode());
                     }
                 });
-                UnityModManager.Logger.Log("exportButton complete");
+                DebugUtils.Log("exportButton complete");
 
                 var deleteButton = new GameObject().AddComponent<Button>();
                 deleteButton.transform.SetParent(obj.transform, false);
@@ -459,9 +478,12 @@ namespace EditorHelper.Components {
 
                     StartCoroutine(Coro());
                 });
-                UnityModManager.Logger.Log("deleteButton complete");
+                DebugUtils.Log("deleteButton complete");
             }
+
+            var layout = bundles.GetComponent<VerticalLayoutGroup>();
+            layout.enabled = false;
+            layout.enabled = true;
         }
     }
 }
-*/

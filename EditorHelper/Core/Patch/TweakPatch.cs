@@ -20,15 +20,12 @@ namespace EditorHelper.Core.Patch {
                 return false;
             }
 
-            var classType = patchAttr.info.declaringType;
-
             if ((patchAttr.MinVersion <= Main.ReleaseNum || patchAttr.MinVersion == -1) &&
-                (patchAttr.MaxVersion >= Main.ReleaseNum || patchAttr.MaxVersion == -1) &&
-                classType != null) {
+                (patchAttr.MaxVersion >= Main.ReleaseNum || patchAttr.MaxVersion == -1)) {
                 return true;
             }
-            
-            DebugUtils.Log($"Invalid {patchAttr.MinVersion <= Main.ReleaseNum || patchAttr.MinVersion == -1} && {patchAttr.MaxVersion >= Main.ReleaseNum || patchAttr.MaxVersion == -1} && {classType != null}");
+
+            DebugUtils.Log($"Invalid {patchAttr.MinVersion <= Main.ReleaseNum || patchAttr.MinVersion == -1} && {patchAttr.MaxVersion >= Main.ReleaseNum || patchAttr.MaxVersion == -1}");
 
             return false;
         }
@@ -56,13 +53,6 @@ namespace EditorHelper.Core.Patch {
                 return;
             }
 
-            var declaringType = metadata.info.declaringType;
-
-            if (declaringType == null) {
-                DebugUtils.Log($"Cannot find type");
-                return;
-            }
-            DebugUtils.Log($"Type: {declaringType.FullName}");
             DebugUtils.Log($"Method: {metadata.info.methodName}");
 
             try {
@@ -97,13 +87,6 @@ namespace EditorHelper.Core.Patch {
                 return;
             }
 
-            var declaringType = metadata.info.declaringType;
-
-            if (declaringType == null) {
-                DebugUtils.Log($"Cannot find type");
-                return;
-            }
-            DebugUtils.Log($"Type: {declaringType.FullName}");
             DebugUtils.Log($"Method: {metadata.info.methodName}");
 
             MethodBase? original = metadata.info.method;

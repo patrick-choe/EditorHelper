@@ -13,9 +13,8 @@ namespace EditorHelper.Settings {
         
         public List<(string tweak, (string, XmlObject?)[] value)> TweakSettingsList = new();
 
-        public bool PatchNote_1_6_0_beta_1 = false;
-        public bool PatchNote_2_0_alpha_1 = false;
-        public bool PatchNote_2_0_alpha_2_3 = false;
+        public bool PatchNote_2_0_beta_3 = false;
+        public string EventBundles = string.Empty;
 
         public override void Save(UnityModManager.ModEntry modEntry) {
             EnabledTweaksList = new List<(string, bool)>();

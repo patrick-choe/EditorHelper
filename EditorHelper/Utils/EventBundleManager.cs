@@ -1,6 +1,4 @@
-﻿/*
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ADOFAI;
@@ -23,6 +21,9 @@ namespace EditorHelper.Utils {
         }
 
         public EventBundle(Dictionary<string, object> data) : this() {
+            LevelEvents = null!;
+            Name = null!;
+            Author = null!;
             Decode(data);
         }
 
@@ -67,7 +68,7 @@ namespace EditorHelper.Utils {
         }
 
         public static void ApplyBundle(this scnEditor instance, int floor, EventBundle data) {
-            LevelEvent first = null;
+            LevelEvent? first = null;
             foreach (var eventData in data.LevelEvents) {
                 var levelevent = new LevelEvent((Dictionary<string, object>) Json.Deserialize($"{{{eventData}}}"));
                 if (first == null) first = levelevent;
@@ -83,7 +84,7 @@ namespace EditorHelper.Utils {
 
             }
 
-            var eventType = first.eventType;
+            var eventType = first!.eventType;
             var sequenceID = floor;
             scnEditor.instance.levelEventsPanel.selectedEventType = eventType;
             int count = scnEditor.instance.events
@@ -101,5 +102,3 @@ namespace EditorHelper.Utils {
         }
     }
 }
-
-*/

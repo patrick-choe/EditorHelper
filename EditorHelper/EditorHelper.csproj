@@ -79,6 +79,21 @@
         <Reference Include="RDTools, Version=1.0.7156.29099, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\RDTools.dll</HintPath>
         </Reference>
+        <Reference Include="Sirenix.OdinInspector.Attributes, Version=2.1.9.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Sirenix.OdinInspector.Attributes.dll</HintPath>
+        </Reference>
+        <Reference Include="Sirenix.OdinInspector.CompatibilityLayer, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Sirenix.OdinInspector.CompatibilityLayer.dll</HintPath>
+        </Reference>
+        <Reference Include="Sirenix.Serialization, Version=2.1.9.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Sirenix.Serialization.dll</HintPath>
+        </Reference>
+        <Reference Include="Sirenix.Serialization.Config, Version=2.1.9.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Sirenix.Serialization.Config.dll</HintPath>
+        </Reference>
+        <Reference Include="Sirenix.Utilities, Version=2.1.9.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Sirenix.Utilities.dll</HintPath>
+        </Reference>
         <Reference Include="System" />
         <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
           <HintPath>..\dlls\System.Buffers.dll</HintPath>
@@ -90,6 +105,9 @@
         </Reference>
         <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
           <HintPath>..\dlls\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\System.Windows.Forms.dll</HintPath>
         </Reference>
         <Reference Include="System.Xml" />
         <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -143,16 +161,12 @@
         <Compile Include="Core\Alerts\Alert.cs" />
         <Compile Include="Core\Alerts\HelperUpdate.cs" />
         <Compile Include="Core\Alerts\IncompatibleVersion.cs" />
-        <Compile Include="Core\Alerts\PatchNote_1_6_0_beta_1.cs" />
-        <Compile Include="Core\Alerts\PatchNote_2_0_alpha_1.cs" />
-        <Compile Include="Core\Alerts\PatchNote_2_0_alpha_2_3.cs" />
+        <Compile Include="Core\Alerts\PatchNote.cs" />
         <Compile Include="Core\Alerts\UnusableVersion.cs" />
         <Compile Include="Core\Components\EditorHelperPanel.cs" />
         <Compile Include="Core\Components\EventBundlePage.cs" />
         <Compile Include="Core\Components\FloorMeshConverter.cs" />
         <Compile Include="Core\Components\HitsoundPlayer.cs" />
-        <Compile Include="Core\Components\LevelEventsPanel.cs" />
-        <Compile Include="Core\Components\StaticScrollPosition.cs" />
         <Compile Include="Core\Initializer\Initalizer.cs" />
         <Compile Include="Core\Initializer\InitAttribute.cs" />
         <Compile Include="Core\Initializer\LateInitAttribute.cs" />
@@ -178,6 +192,8 @@
         <Compile Include="Tweaks\ChangeAngleByDragging\ChangeAngleByDraggingPatch.cs" />
         <Compile Include="Tweaks\ChangeAngleByDragging\ChangeAngleByDraggingSetting.cs" />
         <Compile Include="Tweaks\ChangeAngleByDragging\ChangeAngleByDraggingTweak.cs" />
+        <Compile Include="Tweaks\EventBundles\EventBundlesPatch.cs" />
+        <Compile Include="Tweaks\EventBundles\EventBundlesTweak.cs" />
         <Compile Include="Tweaks\HighlightTargetedTiles\HighlightTargetedTilesPatch.cs" />
         <Compile Include="Tweaks\HighlightTargetedTiles\HighlightTargetedTilesTweak.cs" />
         <Compile Include="Tweaks\Miscellaneous\MiscellaneousPatch.cs" />

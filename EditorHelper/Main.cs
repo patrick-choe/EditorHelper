@@ -119,11 +119,8 @@ namespace EditorHelper {
             }
             
             if (!Unusable) {
-                if (!Settings.PatchNote_2_0_alpha_1) {
-                    Alert.Show<PatchNote_2_0_alpha_1>();
-                }
-                if (!Settings.PatchNote_2_0_alpha_2_3) {
-                    Alert.Show<PatchNote_2_0_alpha_2_3>();
+                if (!Settings.PatchNote_2_0_beta_3) {
+                    Alert.Show<PatchNote>();
                 }
             }
             

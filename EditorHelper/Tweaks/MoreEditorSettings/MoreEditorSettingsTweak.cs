@@ -29,12 +29,12 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
                 {LangCode.Korean, "레거시 타일 사용"},
                 {LangCode.English, "Use legacy tiles"},
             };
-            PatchRDString.Translations["editor.EH:EditorHelperEventBundles"] = new Dictionary<LangCode, string> {
+            PatchRDString.Translations["editor.EditorHelperEventBundles"] = new Dictionary<LangCode, string> {
                 {LangCode.Korean, "<size=20>EditorHelper 이벤트 번들</size>"},
                 {LangCode.English, "<size=20>EditorHelper Event Bundles</size>"},
             };
 
-            PatchRDString.Translations["editor.EH:EditorHelperAssetPacks"] = new Dictionary<LangCode, string> {
+            PatchRDString.Translations["editor.EditorHelperAssetPacks"] = new Dictionary<LangCode, string> {
                 {LangCode.Korean, "<size=20>EditorHelper 에셋 팩</size>"},
                 {LangCode.English, "<size=20>EditorHelper Asset Packs</size>"},
             };

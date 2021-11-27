@@ -3,34 +3,28 @@ using SA.GoogleDoc;
 using UnityEngine;
 
 namespace EditorHelper.Core.Alerts {
-    public class PatchNote_1_6_0_beta_1 : Alert {
+    public class PatchNote: Alert {
         protected override (int, int) WindowSize => (960, 540);
         protected override (int, int) TargetRes => (1920, 1080);
 
         private GUIStyle _updateList = null!;
-        
-        public const string PatchNoteKR =
-            @" - R77 지원
-      - 수식 입력 기능 삭제 (공식 지원)
-      - 스크롤 위치 유지 기능 삭제 (공식 지원)
-      - WAV 파일 입력 기능 삭제 (공식 지원)
- - 오프셋 자동 입력 기능 임시 삭제 (버그로 인한)
- - 이벤트 번들 다중 타일에 입력 추가
-";
-        public const string PatchNoteEN =
-            @" - Supports R77
-      - Remove using formulas in input fields (Official support)
-      - Remove static scroll position (Official support)
-      - Remove WAV file support (Official support)
- - Temporary Remove auto-offset (Bug)
- - Apply Event bundle to multiple tile 
-";
+
+        public const string PatchNoteKR = " - r78(2) 대응\n - EventBundle 재추가";
+/*@" - 내부 구조 변경
+ - 각각의 기능을 트윅으로 세분화
+ - 각종 버그 수정
+ - R78 지원";*/
+        public const string PatchNoteEN = " - r78(2) support\n - EventBundle re-added";
+/*@" - Refactored code
+ - Split each functions to tweak
+ - Fixed some bugs
+ - R78 support";*/
 
         public override void Init() {
             AddButton(
                 () => GUIEx.CheckLangCode((LangCode.English, "Close"), (LangCode.Korean, "닫기")),
                 () => {
-                    Main.Settings.PatchNote_1_6_0_beta_1 = true;
+                    Main.Settings.PatchNote_2_0_beta_3 = true;
                     Close();
                 }
             );
@@ -41,7 +35,7 @@ namespace EditorHelper.Core.Alerts {
         }
 
         public override void Content() {
-            GUILayout.Label($"<color=#FFFFFF><size={MatchRes(65)}>EditorHelper 1.6.0 Beta 1</size></color>", SettingTitle);
+            GUILayout.Label($"<color=#FFFFFF><size={MatchRes(65)}>EditorHelper 2.0 Beta 3</size></color>", SettingTitle);
             GUIEx.BeginIndent(20);
             GUILayout.Label($"<color=#FFFFFF><size={MatchRes(22)}>" + GUIEx.CheckLangCode((LangCode.English, PatchNoteEN), (LangCode.Korean, PatchNoteKR)) + "</size></color>", _updateList);
             GUIEx.EndIndent();

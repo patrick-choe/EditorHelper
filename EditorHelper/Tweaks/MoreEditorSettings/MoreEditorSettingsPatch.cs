@@ -361,8 +361,7 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
                 if (settings) {
 			        eventEncode.Length -= 2;
 		        }
-		        __instance.set("eventEncode", eventEncode);
-
+                
 		        __result = eventEncode.ToString();
 		        return false;
 	        }
@@ -381,7 +380,6 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
         [TweakPatchId(nameof(LevelEvent), "Decode")]
         public static class DecodePatch2 {
             public static void Postfix(LevelEvent __instance) {
-                throw new Exception();
                 string? compText = (__instance.data.GetValueSafe("components") as string)?.Apply(comp => "{" + comp + "}");
                 var components = Json.Deserialize(compText) as Dictionary<string, object>;
                 if (components?.GetValueSafe("scrLockToCamera") is Dictionary<string, object> lockToCamera) {
