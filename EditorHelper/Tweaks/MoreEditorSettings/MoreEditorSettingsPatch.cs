@@ -112,14 +112,14 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
                 GCS.settingsInfo["MiscSettings"].propertiesInfo.Add("EH:useLegacyTiles",
                     new PropertyInfo(new Dictionary<string, object> {
                         {"name", "EH:useLegacyTiles"},
-                        {"type", "Enum:Toggle"},
+                        {"type", Main.EnumToggle},
                         {"default", "Disabled"}
                     }, GCS.settingsInfo["MiscSettings"]));
                 
                 GCS.settingsInfo["MiscSettings"].propertiesInfo.Add("EH:useLegacyFlash",
                     new PropertyInfo(new Dictionary<string, object> {
                         {"name", "EH:useLegacyFlash"},
-                        {"type", "Enum:Toggle"},
+                        {"type", Main.EnumToggle},
                         {"default", "Disabled"}
                     }, GCS.settingsInfo["MiscSettings"]));
 
@@ -135,31 +135,31 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
                 if (GCS.levelEventsInfo["AddDecoration"].propertiesInfo.ContainsKey("EH:disableIfMinimumVFX"))
                     GCS.levelEventsInfo["AddDecoration"].propertiesInfo.Remove("EH:disableIfMinimumVFX");
                 
-                GCS.levelEventsInfo["AddDecoration"].propertiesInfo.Add("EH:lockToCameraPos",  
+                GCS.levelEventsInfo["AddDecoration"].propertiesInfo.Add("EH:lockToCameraPos",
                     new PropertyInfo(new Dictionary<string, object> {
                         {"name", "EH:lockToCameraPos"},
-                        {"type", "Enum:Toggle"},
+                        {"type", Main.EnumToggle},
                         {"default", "Disabled"}
                     }, GCS.levelEventsInfo["AddDecoration"]));
 
                 GCS.levelEventsInfo["AddDecoration"].propertiesInfo.Add("EH:lockToCameraRot",  
                     new PropertyInfo(new Dictionary<string, object> {
                         {"name", "EH:lockToCameraRot"},
-                        {"type", "Enum:Toggle"},
+                        {"type", Main.EnumToggle},
                         {"default", "Disabled"}
                     }, GCS.levelEventsInfo["AddDecoration"]));
                 
                 GCS.levelEventsInfo["AddDecoration"].propertiesInfo.Add("EH:lockToCameraScale",  
                     new PropertyInfo(new Dictionary<string, object> {
                         {"name", "EH:lockToCameraScale"},
-                        {"type", "Enum:Toggle"},
+                        {"type", Main.EnumToggle},
                         {"default", "Disabled"}
                     }, GCS.levelEventsInfo["AddDecoration"]));
                 
                 GCS.levelEventsInfo["AddDecoration"].propertiesInfo.Add("EH:disableIfMinimumVFX",  
                     new PropertyInfo(new Dictionary<string, object> {
                         {"name", "EH:disableIfMinimumVFX"},
-                        {"type", "Enum:Toggle"},
+                        {"type", Main.EnumToggle},
                         {"default", "Disabled"}
                     }, GCS.levelEventsInfo["AddDecoration"]));
             }
@@ -284,102 +284,35 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
 
         [TweakPatchId(nameof(LevelEvent), "Encode")]
         public static class EncodePatch {
-	        public static bool Prefix(LevelEvent __instance, bool settings, out string __result) {
-		        var eventEncode = new StringBuilder();
-		        int count = __instance.data.Keys.Count;
-		        if (!settings) {
-			        if (__instance.floor != -1) {
-				        eventEncode.Append(RDEditorUtils.EncodeInt("floor", __instance.floor, false));
-			        }
-
-			        eventEncode.Append(RDEditorUtils.EncodeString("eventType", __instance.eventType.ToString(), count == 0));
-			        if (!__instance.enabled) {
-				        eventEncode.Append(RDEditorUtils.EncodeBool("enabled", __instance.enabled, count == 0));
-			        }
-		        }
-
-		        int num = 0;
-                foreach (string key in __instance.data.Keys.Where(s => !s.StartsWith("EH:"))) {
-                    object obj = __instance.data[key];
-                    bool lastValue = num == count - 1;
-                    if (__instance.info.propertiesInfo.ContainsKey(key)) {
-                        PropertyInfo propertyInfo = __instance.info.propertiesInfo[key];
-                        if (propertyInfo.encode) {
-                            PropertyType type = propertyInfo.type;
-                            switch (type) {
-                                case PropertyType.Bool:
-                                    eventEncode.Append(RDEditorUtils.EncodeBool(key, (bool) __instance.data[key], lastValue));
-                                    break;
-                                    
-                                case PropertyType.Int:
-                                case PropertyType.Rating:
-                                    eventEncode.Append(RDEditorUtils.EncodeInt(key, (int) __instance.data[key], lastValue));
-                                    break;
-                                    
-                                case PropertyType.Float:
-                                    eventEncode.Append(RDEditorUtils.EncodeFloat(key, Convert.ToSingle(__instance.data[key]), lastValue));
-                                    break;
-                                    
-                                case PropertyType.String:
-                                case PropertyType.LongString:
-                                case PropertyType.File:
-                                    eventEncode.Append(RDEditorUtils.EncodeString(key, LevelEvent.EscapeTextForJSON((string) __instance.data[key]), lastValue));
-                                    break;
-                                    
-                                case PropertyType.Color:
-                                    eventEncode.Append(RDEditorUtils.EncodeString(key, (string) __instance.data[key], lastValue));
-                                    break;
-                                    
-                                case PropertyType.Enum:
-                                    eventEncode.Append(RDEditorUtils.EncodeString(key, __instance.data[key].ToString(), lastValue));
-                                    break;
-                                    
-                                case PropertyType.Vector2:
-                                    eventEncode.Append(RDEditorUtils.EncodeVector2(key, (Vector2) __instance.data[key], lastValue));
-                                    break;
-                                    
-                                case PropertyType.Tile:
-                                    eventEncode.Append(RDEditorUtils.EncodeTile(key, __instance.data[key] as Tuple<int, TileRelativeTo>, lastValue));
-                                    break;
-                                    
-                                case PropertyType.Array:
-                                    eventEncode.Append(RDEditorUtils.EncodeModsArray(key, (object[]) __instance.data[key], lastValue));
-                                    break;
-                                    
-                                default:
-                                    Debug.LogWarning($"{key} not parsed! it is type: {type}");
-                                    break;
-                            }
-                            
-                            if (settings) eventEncode.Append("\n");
-                            ++num;
-                        }
-                    }
+            private static Dictionary<string, object> _data = null!;
+	        public static void Prefix(LevelEvent __instance) {
+                _data = new Dictionary<string, object>();
+                foreach (var (key, value) in __instance.data) {
+                    _data[key] = value;
                 }
 
-
-                if (settings) {
-			        eventEncode.Length -= 2;
-		        }
-                
-		        __result = eventEncode.ToString();
-		        return false;
+                foreach (var key in __instance.data.Keys.Where(s => s.StartsWith("EH:")).ToArray()) {
+                    __instance.data.Remove(key);
+                }
 	        }
+
+            public static void Postfix(LevelEvent __instance) {
+                __instance.data = _data;
+            }
         }
 
         [TweakPatchId(nameof(LevelData), "Decode")]
         public static class DecodePatch {
             public static void Postfix(LevelData __instance) {
-                DebugUtils.Log("asdfasdfasdfsasdfdassdfaasd");
                 __instance.miscSettings.data["EH:useLegacyFlash"] = __instance.legacyFlash ? "Enabled" : "Disabled";
                 __instance.miscSettings.data["EH:useLegacyTiles"] = __instance.isOldLevel ? "Enabled" : "Disabled";
-                DebugUtils.Log("asdfasdfasdfsasdfdassdfaasd2");
             }
         }
         
         [TweakPatchId(nameof(LevelEvent), "Decode")]
         public static class DecodePatch2 {
             public static void Postfix(LevelEvent __instance) {
+                if (__instance.eventType is not LevelEventType.AddDecoration) return;
                 string? compText = (__instance.data.GetValueSafe("components") as string)?.Apply(comp => "{" + comp + "}");
                 var components = Json.Deserialize(compText) as Dictionary<string, object>;
                 if (components?.GetValueSafe("scrLockToCamera") is Dictionary<string, object> lockToCamera) {
@@ -393,6 +326,11 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
                 }
 
                 __instance.data["EH:disableIfMinimumVFX"] = components?.ContainsKey("scrDisableIfMinimumVFX") ?? false ? "Enabled" : "Disabled";
+                
+                __instance.disabled["EH:lockToCameraPos"] = false;
+                __instance.disabled["EH:lockToCameraRot"] = false;
+                __instance.disabled["EH:lockToCameraScale"] = false;
+                __instance.disabled["EH:disableIfMinimumVFX"] = false;
             }
         }
     }

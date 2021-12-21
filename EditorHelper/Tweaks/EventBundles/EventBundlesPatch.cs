@@ -150,9 +150,7 @@ namespace EditorHelper.Tweaks.EventBundles {
 						} else {
 							switch ((LevelEventTypeEx) eventType) {
 								case LevelEventTypeEx.EditorHelperEventBundles:
-									levelEvent = typeof(LevelEvent).GetMethods(
-										BindingFlags.CreateInstance).First(i => i.GetParameters().Length == 2).Invoke(null,
-										new object[] {0, (LevelEventType) LevelEventTypeEx.EditorHelperEventBundles}) as LevelEvent;
+									levelEvent = Misc.LevelEvent(0, (LevelEventType) LevelEventTypeEx.EditorHelperEventBundles);
 									break;
 
 							}

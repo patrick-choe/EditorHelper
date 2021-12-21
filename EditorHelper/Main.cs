@@ -30,7 +30,9 @@ namespace EditorHelper {
         public static Harmony Harmony { get; private set; } = null!;
         internal static UnityModManager.ModEntry? _mod;
         internal static MainSettings Settings { get; private set; } = null!;
-        
+
+        public static string EnumToggle => ReleaseNum >= 78 ? "Enum:ToggleBool" : "Enum:Toggle";
+
         private const int Exact = 0;
         private const int NotLess = 1;
         private const int NotBigger = 2;
@@ -119,7 +121,7 @@ namespace EditorHelper {
             }
             
             if (!Unusable) {
-                if (!Settings.PatchNote_2_0_beta_3) {
+                if (!Settings.PatchNote_2_0_beta_6a) {
                     Alert.Show<PatchNote>();
                 }
             }

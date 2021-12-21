@@ -94,7 +94,7 @@ namespace EditorHelper.Tweaks.RemoveEditorLimits {
                 ref bool ___refreshDecSprites) {
                 if (!TweakManager.Setting<RemoveEditorLimitsTweak, RemoveEditorLimitsSetting>()!.EnableFirstFloorEvents) return true;
                 
-                LevelEvent levelEvent = new LevelEvent(floorID, eventType);
+                LevelEvent levelEvent = Misc.LevelEvent(floorID, eventType);
                 LevelEvent selectedEvent = __instance.levelEventsPanel.selectedEvent;
                 if (selectedEvent != null && selectedEvent.data.ContainsKey("angleOffset") &&
                     levelEvent.data.ContainsKey("angleOffset")) {

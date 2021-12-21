@@ -365,5 +365,19 @@ namespace EditorHelper.Utils {
 			if (obj == null) throw new NullReferenceException();
 			return obj;
 		}
+
+		public static LevelEvent LevelEvent(int newFloor, LevelEventType type) {
+			var constructor = typeof(LevelEvent).GetConstructors();
+			var r77 = constructor.FirstOrDefault(i => i.GetParameters().Length == 4);
+			if (r77 != null) {
+				return (LevelEvent) r77.Invoke(new object?[] {newFloor, type, null, null});
+			}
+			return (LevelEvent) constructor.First(i => i.GetParameters().Length == 2).Invoke(new object[] {newFloor, type});
+		}
+
+		public static void UpdateAngleComp(this scrFloor floor) {
+			var updateAngle = typeof(scrFloor).GetMethod("UpdateAngle");
+			updateAngle!.Invoke(floor, updateAngle.GetParameters().Select(parameter => parameter.DefaultValue).ToArray());
+		}
 	}
 }
