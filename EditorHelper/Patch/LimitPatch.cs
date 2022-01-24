@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using ADOFAI;
-using EditorHelper.Components;
 using EditorHelper.Utils;
 using GDMiniJSON;
 using HarmonyLib;
-using org.mariuszgromada.math.mxparser;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -64,7 +64,14 @@ namespace EditorHelper.Patch {
 							if (int.TryParse(__instance.inputField.text, out var intParsed)) {
 								intNum = __instance.propertyInfo.Validate(intParsed);
 							} else {
-								var expr = new Expression(__instance.inputField.text).calculate();
+								double expr;
+								DataTable dataTable = new DataTable();
+								try {
+									expr = RDEditorUtils.DecodeFloat(dataTable.Compute(__instance.inputField.text, ""));
+								} catch {
+									expr = (float) __instance.propertyInfo.value_default;
+								}
+
 								if (expr.IsFinite()) {
 									intNum = __instance.propertyInfo.Validate(Mathf.RoundToInt((float) expr));
 								} else {
@@ -79,7 +86,14 @@ namespace EditorHelper.Patch {
 							if (float.TryParse(__instance.inputField.text, out var floatParsed)) {
 								floatNum = __instance.propertyInfo.Validate(floatParsed);
 							} else {
-								var expr = new Expression(__instance.inputField.text).calculate();
+								double expr;
+								DataTable dataTable = new DataTable();
+								try {
+									expr = RDEditorUtils.DecodeFloat(dataTable.Compute(__instance.inputField.text, ""));
+								} catch {
+									expr = (float) __instance.propertyInfo.value_default;
+								}
+								
 								if (double.IsFinite(expr)) {
 									floatNum = __instance.propertyInfo.Validate((float) expr);
 								} else {
@@ -144,7 +158,14 @@ namespace EditorHelper.Patch {
 				if (float.TryParse(__instance.inputField.text, out var result)) {
 					floatNum = __instance.propertyInfo.Validate(result);
 				} else {
-					var expr = new Expression(__instance.inputField.text).calculate();
+					double expr;
+					DataTable dataTable = new DataTable();
+					try {
+						expr = RDEditorUtils.DecodeFloat(dataTable.Compute(__instance.inputField.text, ""));
+					} catch {
+						expr = (float) __instance.propertyInfo.value_default;
+					}
+
 					if (double.IsFinite(expr)) {
 						floatNum = __instance.propertyInfo.Validate((float) expr);
 					} else {
@@ -165,7 +186,14 @@ namespace EditorHelper.Patch {
 			if (int.TryParse(__instance.inputField.text, out var result1)) {
 				intNum = __instance.propertyInfo.Validate(result1);
 			} else {
-				var expr = new Expression(__instance.inputField.text).calculate();
+				double expr;
+				DataTable dataTable = new DataTable();
+				try {
+					expr = RDEditorUtils.DecodeFloat(dataTable.Compute(__instance.inputField.text, ""));
+				} catch {
+					expr = (float) __instance.propertyInfo.value_default;
+				}
+				
 				if (double.IsFinite(expr)) {
 					intNum = __instance.propertyInfo.Validate(Mathf.RoundToInt((float) expr));
 				} else {
@@ -190,7 +218,14 @@ namespace EditorHelper.Patch {
 			if (float.TryParse(x.text, out var parsedX)) {
 				resultX = parsedX;
 			} else {
-				var expr = new Expression(x.text).calculate();
+				double expr;
+				DataTable dataTable = new DataTable();
+				try {
+					expr = RDEditorUtils.DecodeFloat(dataTable.Compute(x.text, ""));
+				} catch {
+					expr = (float) __instance.propertyInfo.value_default;
+				}
+				
 				if (double.IsFinite(expr)) {
 					resultX = (float) expr;
 				}
@@ -200,7 +235,14 @@ namespace EditorHelper.Patch {
 			if (float.TryParse(y.text, out var parsedY)) {
 				resultY = parsedY;
 			} else {
-				var expr = new Expression(y.text).calculate();
+				double expr;
+				DataTable dataTable = new DataTable();
+				try {
+					expr = RDEditorUtils.DecodeFloat(dataTable.Compute(y.text, ""));
+				} catch {
+					expr = (float) __instance.propertyInfo.value_default;
+				}
+				
 				if (double.IsFinite(expr)) {
 					resultY = (float) expr;
 				}

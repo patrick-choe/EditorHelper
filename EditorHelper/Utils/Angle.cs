@@ -83,13 +83,13 @@ namespace EditorHelper.Utils {
                     floor.set("noChange", (num3 <= 9.999999974752427E-07 || num3 >= 6.28318452835083));
                     var floorMesh = floorMeshRenderer.floorMesh;
                     if (floor.get<bool>("noChange")) {
-                        floorMeshRenderer.invoke("SetLength")(floorMesh.length - 0.25f);
+                        floorMeshRenderer.invoke("SetLength")(floorMesh._length - 0.25f);
                         floorMeshRenderer.invoke("SetUturnOrMidspin")(true);
                     }
 
                     if (floor.midSpin) {
-                        floorMesh.curvaturePoints = 3;
-                        floorMeshRenderer.shadowMesh.curvaturePoints = 3;
+                        floorMesh._curvaturePoints = 3;
+                        //floorMeshRenderer.shadowMesh.curvaturePoints = 3;
                         return;
                     }
                 }

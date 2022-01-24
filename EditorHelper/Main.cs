@@ -40,8 +40,8 @@ namespace EditorHelper {
 
         public const int Width = 150;
         public const int Height = 1200;
-        public static int Target = 75;
-        public static int[] CompletelyNonCompatible = {82, 81, 80, 79, 78, 77, 76, 74, 73, 72, 71, 70, 69, 68};
+        public static int Target = 80;
+        public static int[] CompletelyNonCompatible = {77, 76, 75, 74, 73, 72, 71, 70, 69, 68};
         public static int? version = null;
 
         private static bool _forceDisableMode = false;
@@ -64,7 +64,7 @@ namespace EditorHelper {
             version = AccessTools.Field(typeof(GCNS), "releaseNumber").GetValue(null) as int?;
             var editorHelperDir = modEntry.Path;
             UnityModManager.Logger.Log("Dir: " + editorHelperDir);
-            var mode = Exact;
+            var mode = NotBigger;
             bool unsupported = false;
             if (File.Exists(Path.Combine(editorHelperDir, "Version.txt"))) {
                 var value = File.ReadAllText(Path.Combine(editorHelperDir, "Version.txt"));

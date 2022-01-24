@@ -25,7 +25,7 @@ namespace EditorHelper.Utils {
             return 1 - s1.GetDistance(s2) / (decimal) Math.Max(s1.Length, s2.Length);
         }
         public static double GetInclusion(this string target, string search) {
-            if (search.Length == 0) return target.Length == 0 ? Double.PositiveInfinity : 1;
+            if (search.Length == 0) return target.Length == 0 ? double.PositiveInfinity : 1;
             var distance = GetDistance(search, target);
             var diff = (double) (target.Length - search.Length);
             if (diff == 0) diff = double.Epsilon;

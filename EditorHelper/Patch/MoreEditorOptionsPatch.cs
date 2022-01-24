@@ -14,7 +14,7 @@ namespace EditorHelper.Patch {
                 GCS.settingsInfo["MiscSettings"].propertiesInfo["useLegacyFlash"] =
                     new PropertyInfo(new Dictionary<string, object> {
                         {"name", "useLegacyFlash"},
-                        {"type", "Enum:Toggle"},
+                        {"type", "Enum:ToggleBool"},
                         {"default", "Disabled"}
                     }, GCS.settingsInfo["MiscSettings"]);
                 GCS.settingsInfo["MiscSettings"].propertiesInfo["convertFloorMesh"] =
