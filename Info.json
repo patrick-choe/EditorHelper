@@ -1,8 +1,8 @@
 ﻿{
   "Id": "EditorHelper",
-  "DisplayName": "ADOFAI Editor Helper",
+  "DisplayName": "ADOFAI Editor Helper <i>Legacy</i>",
   "Author": "PatrickKR & PERIOT",
-  "Version": "1.5.0-R75",
+  "Version": "1.6.0-r80",
   "AssemblyName": "EditorHelper.dll",
   "EntryMethod": "EditorHelper.Main.Load"
 }

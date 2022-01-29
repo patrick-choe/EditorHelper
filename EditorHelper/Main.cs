@@ -22,7 +22,7 @@ using UnityModManagerNet;
 using PropertyInfo = ADOFAI.PropertyInfo;
 
 namespace EditorHelper {
-    internal static class Main {
+    public static class Main {
         private static Harmony _harmony;
         private static UnityModManager.ModEntry _mod;
         internal static MainSettings Settings { get; private set; }
@@ -119,8 +119,9 @@ namespace EditorHelper {
                     return true;
                 }
             }
-            
-            Assets.Load();
+
+            var path = Path.Combine(modEntry.Path, "editorhelper");
+            Assets.Load(path);
             Settings = UnityModManager.ModSettings.Load<MainSettings>(modEntry);
             Settings.moreEditorSettings_prev = Settings.MoreEditorSettings;
 

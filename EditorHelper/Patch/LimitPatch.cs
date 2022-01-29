@@ -7,10 +7,12 @@ using ADOFAI;
 using EditorHelper.Utils;
 using GDMiniJSON;
 using HarmonyLib;
+using RDTools;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace EditorHelper.Patch {
+/*	
 	[HarmonyPatch(typeof(RDEditorUtils), "IsValidHexColor", typeof(string), typeof(bool))]
 	internal static class IsValidHexColorPatch {
 		private static bool Prefix(ref bool __result, string s) {
@@ -208,53 +210,45 @@ namespace EditorHelper.Patch {
 
 	[HarmonyPatch(typeof(PropertyControl_Vector2), "Validate")]
 	internal static class ValidateVectorPatch {
-		private static bool Prefix(PropertyControl __instance, ref string __result, InputField x, InputField y,
-			bool returnX) {
+		private static bool Prefix(PropertyControl_Vector2 __instance, ref (string, string) __result, InputField x, InputField y) {
 			if (!Main.Settings.RemoveLimits) {
 				return true;
 			}
 
-			var resultX = 0f;
-			if (float.TryParse(x.text, out var parsedX)) {
-				resultX = parsedX;
+			var lastValue = __instance.get<Vector2>("lastValue");
+			Vector2 vector = new Vector2(lastValue.x, lastValue.y);
+			float x2;
+			float y2;
+			if (float.TryParse(x.text, out x2) && float.TryParse(y.text, out y2)) {
+				vector = new Vector2(x2, y2);
+				vector = __instance.propertyInfo.Validate(vector);
 			} else {
-				double expr;
 				DataTable dataTable = new DataTable();
 				try {
-					expr = RDEditorUtils.DecodeFloat(dataTable.Compute(x.text, ""));
+					object dictValue = dataTable.Compute(x.text, "");
+					vector.x = RDEditorUtils.DecodeFloat(dictValue);
 				} catch {
-					expr = (float) __instance.propertyInfo.value_default;
+					RDBaseDll.printesw("Invalid coordinates (x): " + x.text);
 				}
-				
-				if (double.IsFinite(expr)) {
-					resultX = (float) expr;
+
+				try {
+					object dictValue2 = dataTable.Compute(y.text, "");
+					vector.y = RDEditorUtils.DecodeFloat(dictValue2);
+				} catch {
+					RDBaseDll.printesw("Invalid coordinates (y): " + y.text);
 				}
 			}
 
-			var resultY = 0f;
-			if (float.TryParse(y.text, out var parsedY)) {
-				resultY = parsedY;
-			} else {
-				double expr;
-				DataTable dataTable = new DataTable();
-				try {
-					expr = RDEditorUtils.DecodeFloat(dataTable.Compute(y.text, ""));
-				} catch {
-					expr = (float) __instance.propertyInfo.value_default;
-				}
-				
-				if (double.IsFinite(expr)) {
-					resultY = (float) expr;
-				}
+			if (__instance.propertiesPanel.inspectorPanel.selectedEvent.eventType == LevelEventType.AddDecoration &&
+			    __instance.propertyInfo.name == "tile") {
+				vector.x = (float) Mathf.RoundToInt(vector.x);
+				vector.y = (float) Mathf.RoundToInt(vector.y);
 			}
 
-			var vector2 = __instance.propertyInfo.Validate(new Vector2(resultX, resultY));
-
-			__result = !returnX ? vector2.y.ToString() : vector2.x.ToString();
-
+			__result = (vector.x.ToString("0.######"), vector.y.ToString("0.######"));
 			return false;
 		}
-	}
+	}*/
 
 	[HarmonyPatch(typeof(scnEditor), "Start")]
 	internal static class StartPatch {

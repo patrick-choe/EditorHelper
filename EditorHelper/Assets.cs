@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using ADOFAI;
 using DG.Tweening;
 using EditorHelper.Patch;
@@ -49,10 +51,11 @@ namespace EditorHelper {
             }
         }
         
-        public static string AssetPath => Path.Combine(Directory.GetCurrentDirectory(), "Mods", "EditorHelper", "editorhelper");
-        public static void Load() {
+        public static void Load(string assetPath) {
             const int size = 540;
-            Bundle = AssetBundle.LoadFromFile(AssetPath);
+            Bundle = AssetBundle.LoadFromFile(assetPath);
+
+            Debug.Log($"Loaded bundle {Bundle}");
             Eases = new Dictionary<string, Sprite>();
             foreach (var name in Enum.GetNames(typeof(Ease))) {
                 var orig = Bundle.LoadAsset<Sprite>(name)?.texture;
