@@ -9,6 +9,19 @@ using UnityModManagerNet;
 
 namespace EditorHelper.Core.Patch {
     public static class TweakPatcher {
+        private static HashSet<Type> _patchedTypes = new HashSet<Type>();
+        public static bool IsEnabled(Type type) {
+            return _patchedTypes.Contains(type);
+        }
+        
+        public static void SetEnabled(Type type, bool enabled) {
+            if (enabled) {
+                _patchedTypes.Add(type);
+            } else {
+                _patchedTypes.Remove(type);
+            }
+        }
+
         /// <summary>
         /// Checks whether the patch is valid for current game's version.
         /// </summary>
@@ -41,9 +54,8 @@ namespace EditorHelper.Core.Patch {
             if (metadata == null) {
                 return;
             }
-            DebugUtils.Log($"Id: {metadata.PatchId}");
             
-            if (metadata.IsEnabled) {
+            if (IsEnabled(patchType)) {
                 DebugUtils.Log($"Already patched.");
                 return;
             }
@@ -62,7 +74,7 @@ namespace EditorHelper.Core.Patch {
                 return;
             }
 
-            metadata.IsEnabled = true;
+            SetEnabled(patchType, true);
             DebugUtils.Log($"Patched patch {patchType.FullName}");
         }
 
@@ -70,14 +82,13 @@ namespace EditorHelper.Core.Patch {
         /// Unpatches patch.
         /// </summary>
         public static void TweakUnpatch(this Harmony harmony, Type patchType) {
-            DebugUtils.Log($"Patching patch {patchType.FullName}");
+            DebugUtils.Log($"Unpatching patch {patchType.FullName}");
             var metadata = patchType.GetCustomAttribute<TweakPatchAttribute>();
             if (metadata == null) {
                 return;
             }
-            DebugUtils.Log($"Id: {metadata.PatchId}");
-            
-            if (!metadata.IsEnabled) {
+
+            if (!IsEnabled(patchType)) {
                 DebugUtils.Log($"Already unpatched.");
                 return;
             }
@@ -89,55 +100,29 @@ namespace EditorHelper.Core.Patch {
 
             DebugUtils.Log($"Method: {metadata.info.methodName}");
 
-            MethodBase? original = metadata.info.method;
-            original ??= metadata.info.GetOriginalMethod();
-            foreach (var patch in patchType.GetMethods()) {
-                try {
-                    harmony.CreateProcessor(original).Unpatch(patch);
-                } catch (Exception e) {
-                    DebugUtils.Log(e);
-                    return;
+            var methods = patchType.GetMethods().ToList();
+            bool IDCheck(HarmonyLib.Patch patchInfo) => methods.Contains(patchInfo.PatchMethod);
+            
+            foreach (MethodBase methodBase in Harmony.GetAllPatchedMethods().ToList<MethodBase>()) {
+                MethodBase original = methodBase;
+                int num = original.HasMethodBody() ? 1 : 0;
+                Patches patchInfo1 = Harmony.GetPatchInfo(original);
+                if (num != 0) {
+                    patchInfo1.Postfixes.DoIf<HarmonyLib.Patch>(new Func<HarmonyLib.Patch, bool>(IDCheck),
+                        (Action<HarmonyLib.Patch>) (patchInfo => harmony.Unpatch(original, patchInfo.PatchMethod)));
+                    patchInfo1.Prefixes.DoIf<HarmonyLib.Patch>(new Func<HarmonyLib.Patch, bool>(IDCheck),
+                        (Action<HarmonyLib.Patch>) (patchInfo => harmony.Unpatch(original, patchInfo.PatchMethod)));
                 }
+
+                patchInfo1.Transpilers.DoIf<HarmonyLib.Patch>(new Func<HarmonyLib.Patch, bool>(IDCheck),
+                    (Action<HarmonyLib.Patch>) (patchInfo => harmony.Unpatch(original, patchInfo.PatchMethod)));
+                if (num != 0)
+                    patchInfo1.Finalizers.DoIf<HarmonyLib.Patch>(new Func<HarmonyLib.Patch, bool>(IDCheck),
+                        (Action<HarmonyLib.Patch>) (patchInfo => harmony.Unpatch(original, patchInfo.PatchMethod)));
             }
 
-            metadata.IsEnabled = false;
+            SetEnabled(patchType, false);
             DebugUtils.Log($"Unpatched patch {patchType.FullName}");
-        }
-
-        /// <summary>
-        /// Patches patch.
-        /// <param name="harmony">Harmony class to apply patch.</param>
-        /// <param name="patchId">Harmony class to apply unpatch.</param>
-        /// </summary>
-        public static void TweakPatch(this Harmony harmony, string patchId) {
-            var patchType = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(Misc.GetAllTypes)
-                .FirstOrDefault(t => {
-                    var attr = t.GetCustomAttribute<TweakPatchAttribute>();
-                    if (attr == null) return false;
-                    attr.PatchId ??= attr.info.declaringType?.FullName;
-                    return attr.PatchId == patchId;
-                });
-            if (patchType == null) return;
-            harmony.TweakPatch(patchType);
-            return;
-        }
-
-        /// <summary>
-        /// Unpatches patch.
-        /// </summary>
-        public static void TweakUnpatch(this Harmony harmony, string patchId) {
-            var patchType = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(Misc.GetAllTypes)
-                .FirstOrDefault(t => {
-                    var attr = t.GetCustomAttribute<TweakPatchAttribute>();
-                    if (attr == null) return false;
-                    attr.PatchId ??= attr.info.declaringType?.FullName;
-                    return attr.PatchId == patchId;
-                });
-            if (patchType == null) return;
-            harmony.TweakUnpatch(patchType);
-            return;
         }
 
         public static void PatchTweak<T>() where T : Tweak => PatchTweak(typeof(T));

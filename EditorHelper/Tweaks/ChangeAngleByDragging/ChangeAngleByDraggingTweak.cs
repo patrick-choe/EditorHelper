@@ -3,9 +3,8 @@ using EditorHelper.Core.Tweaks;
 using SA.GoogleDoc;
 
 namespace EditorHelper.Tweaks.ChangeAngleByDragging {
-    [RegisterTweak]
-    [TweakDescription(LangCode.English, "Change Angle By Dragging")]
-    [TweakDescription(LangCode.Korean,  "드래그해서 각도 변경")]
+    [TweakDescription(LangCode.English, "Better Free Angle")]
+    [TweakDescription(LangCode.Korean,  "개선된 자유 각도")]
     public class ChangeAngleByDraggingTweak : Tweak, IPatchClass<ChangeAngleByDraggingPatch>, ISettingClass<ChangeAngleByDraggingSetting> {
         public override void OnEnable() {
             PatchTweak();

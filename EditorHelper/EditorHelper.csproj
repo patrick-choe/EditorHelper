@@ -172,7 +172,6 @@
         <Compile Include="Core\Initializer\LateInitAttribute.cs" />
         <Compile Include="Core\Patch\TweakPatch.cs" />
         <Compile Include="Core\Patch\TweakPatchAttribute.cs" />
-        <Compile Include="Core\Patch\TweakPatchIdAttribute.cs" />
         <Compile Include="Core\TweakFunctions\TweakFunction.cs" />
         <Compile Include="Core\TweakFunctions\TweakFunctionAttribute.cs" />
         <Compile Include="Core\Tweaks\ITweakSetting.cs" />

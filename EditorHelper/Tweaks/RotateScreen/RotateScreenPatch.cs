@@ -22,7 +22,7 @@ namespace EditorHelper.Tweaks.RotateScreen {
 		internal static float CurrentRot => Camera.current.transform.eulerAngles.z;
 		public static Quaternion CurrentAngle => Quaternion.AngleAxis(CurrentRot, Vector3.forward);
 
-		[TweakPatchId(nameof(scnEditor), "Update")]
+		[TweakPatch(nameof(scnEditor), "Update")]
 		internal static class UpdateRotationPatch {
 
 			public static void ResetDirectionButtonsRot(scnEditor instance) {
@@ -72,7 +72,7 @@ namespace EditorHelper.Tweaks.RotateScreen {
 			public static Dictionary<int, Button> Buttons = new();
 		}
 
-		[TweakPatchId(nameof(scnEditor), "UpdateDirectionButton")]
+		[TweakPatch(nameof(scnEditor), "UpdateDirectionButton")]
 		public static class UpdateDirectionPatch {
 			public static bool Prefix(scnEditor __instance, FloorDirectionButton btn, float oppositeAngle) {
 				if (btn == null) {
@@ -151,7 +151,7 @@ namespace EditorHelper.Tweaks.RotateScreen {
 		}
 
 
-		[TweakPatchId(nameof(scnEditor), "SwitchToEditMode")]
+		[TweakPatch(nameof(scnEditor), "SwitchToEditMode")]
 		public static class ResetPatch {
 			public static void Postfix() {
 				Camera.current.transform.eulerAngles = new Vector3(0, 0, PlayPatch.Rotation);
@@ -160,7 +160,7 @@ namespace EditorHelper.Tweaks.RotateScreen {
 		}
 
 
-		[TweakPatchId(nameof(scnEditor), "Play")]
+		[TweakPatch(nameof(scnEditor), "Play")]
 		public static class PlayPatch {
 			public static float Rotation;
 

@@ -6,9 +6,9 @@ using UnityEngine;
 
 namespace EditorHelper.Tweaks.ChangeAngleByDragging {
     public class ChangeAngleByDraggingSetting : ITweakSetting {
-        [Label(LangCode.English, "Change tile angle")]
-        [Label(LangCode.Korean, "타일 각도 변경")]
-        [Draw] public KeyMap ChangeTileAngle = new KeyMap(KeyCode.None, AdditionalKey.Ctrl);
+        [Label(LangCode.English, "Use delta degree")]
+        [Label(LangCode.Korean, "기준 각도 사용")]
+        [Draw] public bool UseDelta = false;
         
         [Label(LangCode.English, "Tile rotation delta degree")]
         [Label(LangCode.Korean, "타일 회전 각도")]

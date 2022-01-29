@@ -12,6 +12,7 @@ namespace EditorHelper.Tweaks.RemoveEditorLimits {
 
         public override void OnDisable() {
             UnpatchTweak();
+            ADOStartup.SetupLevelEventsInfo();
         }
     }
 }

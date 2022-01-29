@@ -14,7 +14,6 @@ namespace EditorHelper.Core.Alerts {
             AddButton(
                 () => GUIEx.CheckLangCode((LangCode.English, "Disable EditorHelper"), (LangCode.Korean, "EditorHelper 비활성화")),
                 () => {
-                    Main._mod!.Active = false;
                     Main.Unusable = true;
                     Close();
                 }

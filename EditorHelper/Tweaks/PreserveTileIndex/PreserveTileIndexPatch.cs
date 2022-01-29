@@ -6,7 +6,7 @@ using HarmonyLib;
 
 namespace EditorHelper.Tweaks.PreserveTileIndex {
     public abstract class PreserveTileIndexPatch {
-        [TweakPatchId(nameof(scnEditor), "InsertFloatFloor")]
+        [TweakPatch(nameof(scnEditor), "InsertFloatFloor")]
         public static class FloatCreatePreserveIndexPatch {
             public static void Prefix(int sequenceID) {
                 if (scnEditor.instance.get<bool>("lockPathEditing")) return;
@@ -22,7 +22,7 @@ namespace EditorHelper.Tweaks.PreserveTileIndex {
             }
         }
         
-        [TweakPatchId(nameof(scnEditor), "InsertCharFloor")]
+        [TweakPatch(nameof(scnEditor), "InsertCharFloor")]
         public static class CharCreatePreserveIndexPatch {
             public static void Prefix(int sequenceID) {
                 if (scnEditor.instance.get<bool>("lockPathEditing")) return;
@@ -38,7 +38,7 @@ namespace EditorHelper.Tweaks.PreserveTileIndex {
             }
         }
         
-        [TweakPatchId(nameof(scnEditor), "DeleteFloor")]
+        [TweakPatch(nameof(scnEditor), "DeleteFloor")]
         public static class DeletePreserveIndexPatch {
             public static void Prefix(int sequenceIndex) {
                 DebugUtils.Log("asdsddsfsdafd");
@@ -55,7 +55,7 @@ namespace EditorHelper.Tweaks.PreserveTileIndex {
             }
         }
 
-        [TweakPatchId(nameof(PropertyControl_Tile), "Setup")]
+        [TweakPatch(nameof(PropertyControl_Tile), "Setup")]
         public static class UpdatePropertiesPatch {
             public static void Prefix(PropertyControl_Tile __instance, bool addListener) {
                 __instance.buttonFirstTile.onClick.AddListener(() => {

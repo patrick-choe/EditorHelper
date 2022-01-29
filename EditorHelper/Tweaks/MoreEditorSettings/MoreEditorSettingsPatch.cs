@@ -13,14 +13,14 @@ using UnityEngine.UI;
 
 namespace EditorHelper.Tweaks.MoreEditorSettings {
     public abstract class MoreEditorSettingsPatch {
-        [TweakPatchId(nameof(PropertyControl_Export), "Awake")]
+        [TweakPatch(nameof(PropertyControl_Export), "Awake")]
         public static class PropertyExportPatch {
             public static void Postfix(PropertyControl_Export __instance) {
                 __instance.gameObject.AddComponent<FloorMeshConverter>().Control = __instance;
             }
         }
 
-        [TweakPatchId(nameof(PropertyControl_Toggle), "SelectVar")]
+        [TweakPatch(nameof(PropertyControl_Toggle), "SelectVar")]
         public static class PropertySetPatch {
             public static void Prefix(PropertyControl_Toggle __instance, ref string var) {
                 var selectedEvent = __instance.propertiesPanel.inspectorPanel.selectedEvent;
@@ -100,7 +100,7 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
             }
         }
 
-        [TweakPatchId(nameof(scnEditor), "Awake")]
+        [TweakPatch(nameof(scnEditor), "Awake")]
         public static class MoreEditorSettingsInit {
             public static void Prefix() {
                 if (GCS.settingsInfo["MiscSettings"].propertiesInfo.ContainsKey("EH:useLegacyFlash"))
@@ -166,7 +166,7 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
         }
 
 
-        [TweakPatchId(nameof(PropertyControl_Toggle), "EnumSetup")]
+        [TweakPatch(nameof(PropertyControl_Toggle), "EnumSetup")]
         public static class EaseIconPatch {
             public static void Postfix(PropertyControl_Toggle __instance, string enumTypeString) {
                 var optionData = __instance.dropdown.options.Find(data => data.text == "Linear");
@@ -282,7 +282,7 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
             }
         }
 
-        [TweakPatchId(nameof(LevelEvent), "Encode")]
+        [TweakPatch(nameof(LevelEvent), "Encode")]
         public static class EncodePatch {
             private static Dictionary<string, object> _data = null!;
 	        public static void Prefix(LevelEvent __instance) {
@@ -301,7 +301,7 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
             }
         }
 
-        [TweakPatchId(nameof(LevelData), "Decode")]
+        [TweakPatch(nameof(LevelData), "Decode")]
         public static class DecodePatch {
             public static void Postfix(LevelData __instance) {
                 __instance.miscSettings.data["EH:useLegacyFlash"] = __instance.legacyFlash ? "Enabled" : "Disabled";
@@ -309,7 +309,7 @@ namespace EditorHelper.Tweaks.MoreEditorSettings {
             }
         }
         
-        [TweakPatchId(nameof(LevelEvent), "Decode")]
+        [TweakPatch(nameof(LevelEvent), "Decode")]
         public static class DecodePatch2 {
             public static void Postfix(LevelEvent __instance) {
                 if (__instance.eventType is not LevelEventType.AddDecoration) return;

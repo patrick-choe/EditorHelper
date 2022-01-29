@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace EditorHelper.Tweaks.RemoveEditorLimits {
     public abstract class RemoveEditorLimitsPatch {
-        [TweakPatchId(nameof(scnEditor), "Awake")]
+        [TweakPatch(nameof(scnEditor), "Awake")]
         public static class RemoveEditorLimitsInit {
             public static void Prefix() {
                 if (!TweakManager.Setting<RemoveEditorLimitsTweak, RemoveEditorLimitsSetting>()!.RemoveInputValueLimit) return;
@@ -47,7 +47,7 @@ namespace EditorHelper.Tweaks.RemoveEditorLimits {
             }
         }
 
-        [TweakPatchId(nameof(scnEditor), "OnSelectedFloorChange")]
+        [TweakPatch(nameof(scnEditor), "OnSelectedFloorChange")]
         public static class FirstTileEventPatch {
             public static bool Prefix(scnEditor __instance) {
                 if (!TweakManager.Setting<RemoveEditorLimitsTweak, RemoveEditorLimitsSetting>()!.EnableFirstFloorEvents) return true;
@@ -65,7 +65,7 @@ namespace EditorHelper.Tweaks.RemoveEditorLimits {
             }
         }
 
-        [TweakPatchId(nameof(scnEditor), "UpdateFloorDirectionButtons")]
+        [TweakPatch(nameof(scnEditor), "UpdateFloorDirectionButtons")]
         public static class UpdateDirBtnPatch {
             private static bool Prefix(scnEditor __instance, bool active) {
                 if (!TweakManager.Setting<RemoveEditorLimitsTweak, RemoveEditorLimitsSetting>()!.EnableFirstFloorEvents) return true;
@@ -88,7 +88,7 @@ namespace EditorHelper.Tweaks.RemoveEditorLimits {
             }
         }
 
-        [TweakPatchId(nameof(scnEditor), "AddEvent")]
+        [TweakPatch(nameof(scnEditor), "AddEvent")]
         internal static class AddEventPatch {
             private static bool Prefix(scnEditor __instance, int floorID, LevelEventType eventType,
                 ref bool ___refreshDecSprites) {
@@ -110,7 +110,7 @@ namespace EditorHelper.Tweaks.RemoveEditorLimits {
             }
         }
 
-        [TweakPatchId(nameof(scnEditor), "AddEventAtSelected")]
+        [TweakPatch(nameof(scnEditor), "AddEventAtSelected")]
         internal static class AddEventAtSelectedPatch {
             private static bool Prefix(scnEditor __instance, LevelEventType eventType) {
                 if (!TweakManager.Setting<RemoveEditorLimitsTweak, RemoveEditorLimitsSetting>()!.EnableFirstFloorEvents) return true;
@@ -179,7 +179,7 @@ namespace EditorHelper.Tweaks.RemoveEditorLimits {
             }
         }
 
-        [TweakPatchId(nameof(scnEditor), "Update")]
+        [TweakPatch(nameof(scnEditor), "Update")]
         public static class UpdateAddEventPatch {
             public static void Postfix(scnEditor __instance) {
                 if (!TweakManager.Setting<RemoveEditorLimitsTweak, RemoveEditorLimitsSetting>()!.EnableFirstFloorEvents) return;

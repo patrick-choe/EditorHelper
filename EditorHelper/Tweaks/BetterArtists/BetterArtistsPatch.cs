@@ -12,7 +12,7 @@ namespace EditorHelper.Tweaks.BetterArtists {
     public abstract class BetterArtistsPatch {
         private static BetterArtistsSetting Setting => TweakManager.Setting<BetterArtistsTweak, BetterArtistsSetting>()!;
         
-        [TweakPatchId(nameof(InspectorPanel), "ToggleArtistPopup")]
+        [TweakPatch(nameof(InspectorPanel), "ToggleArtistPopup")]
         public static class RemoveRichTagFromNamePatch {
             private static readonly string[] Separators = {
                 "&",
@@ -60,7 +60,7 @@ namespace EditorHelper.Tweaks.BetterArtists {
         }
 
 
-        [TweakPatchId(nameof(ArtistUIDisclaimer), "SetData")]
+        [TweakPatch(nameof(ArtistUIDisclaimer), "SetData")]
         public static class SetDataPatch {
             public static int CurrentArtistIndex;
             public static List<string> ArtistsToCheckWithRichTags = new();
@@ -101,7 +101,7 @@ namespace EditorHelper.Tweaks.BetterArtists {
             }
         }
 
-        [TweakPatchId(nameof(ArtistUIDisclaimer), "Cancel")]
+        [TweakPatch(nameof(ArtistUIDisclaimer), "Cancel")]
         public static class InitUrlPatch {
             public static void Postfix() {
                 SetDataPatch.ArtistsToCheck = new List<string>();
@@ -112,7 +112,7 @@ namespace EditorHelper.Tweaks.BetterArtists {
             }
         }
 
-        [TweakPatchId(nameof(ArtistUIDisclaimer), "Confirm")]
+        [TweakPatch(nameof(ArtistUIDisclaimer), "Confirm")]
         internal static class ConfirmPatch {
             private static void Postfix(ADOBase __instance, bool ___onlyChecking, ArtistData? ___currentArtistData) {
                 if (___onlyChecking) return;

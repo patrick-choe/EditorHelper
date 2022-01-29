@@ -1,5 +1,6 @@
 using EditorHelper.Core.Patch;
 using HarmonyLib;
+using UnityModManagerNet;
 
 namespace EditorHelper.Core.Tweaks {
     public abstract class Tweak {
@@ -16,6 +17,7 @@ namespace EditorHelper.Core.Tweaks {
         }
         
         public void UnpatchTweak() {
+            UnityModManager.Logger.Log($"Unpatching {GetType().Name}");
             TweakPatcher.UnpatchTweak(GetType());
         }
 

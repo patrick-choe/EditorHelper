@@ -13,7 +13,7 @@ namespace EditorHelper.Tweaks.BetterArtists {
         [Draw(0, 360)] public bool AutoArtistURL = true;
         
         [Label(LangCode.English, "Better Artists Check")]
-        [Label(LangCode.Korean, "더 나은 작곡가 확인")]
+        [Label(LangCode.Korean, "개선된 작곡가 확인")]
         [Draw] public bool BetterArtistCheck = true;
 
         public void OnGUI() {

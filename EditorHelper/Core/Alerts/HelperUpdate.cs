@@ -35,7 +35,7 @@ namespace EditorHelper.Core.Alerts {
             GUIEx.BeginIndent(20);
             GUILayout.Label($"<color=#FFFFFF><size={MatchRes(22)}>" + @" - 타일 각도 표시
  - 이벤트 번들 (여러 개의 이벤트 저장)
- - 더 나은 아티스트 확인 ('&'로 여러 명의 아티스트 지정, color/size 태그 무시)
+ - 개선된 아티스트 확인 ('&'로 여러 명의 아티스트 지정, color/size 태그 무시)
  - `키를 눌러 15도 단위 표시
  - WAV, MP3 확장자 지원 (MP3는 기본적으로 비활성화)
  - Alt + 화살표 키로 이벤트 사이 움직이기 / Alt + Delete로 현재 이벤트 삭제

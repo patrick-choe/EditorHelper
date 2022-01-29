@@ -58,7 +58,7 @@ namespace EditorHelper.Core.TweakFunctions {
             Main.Harmony.TweakPatch(typeof(RunFuncsPatch));
         }
         
-        [TweakPatchId(nameof(scnEditor), "Update")]
+        [TweakPatch(nameof(scnEditor), "Update")]
         private static class RunFuncsPatch {
             public static bool Prefix() => RunFuncs();
         }

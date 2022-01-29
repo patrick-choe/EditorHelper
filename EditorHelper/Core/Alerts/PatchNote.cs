@@ -9,12 +9,12 @@ namespace EditorHelper.Core.Alerts {
 
         private GUIStyle _updateList = null!;
 
-        public const string PatchNoteKR = " - 복사 불가 버그 수정";
+        public const string PatchNoteKR = " - R80 지원\n - 드래그로 각도 변경 기능 임시 삭제";
 /*@" - 내부 구조 변경
  - 각각의 기능을 트윅으로 세분화
  - 각종 버그 수정
  - R78 지원";*/
-        public const string PatchNoteEN = " - Fix event not copied bug";
+        public const string PatchNoteEN = " - R80 support \n - Temporary removed Change angle by dragging feature";
 /*@" - Refactored code
  - Split each functions to tweak
  - Fixed some bugs
@@ -24,7 +24,7 @@ namespace EditorHelper.Core.Alerts {
             AddButton(
                 () => GUIEx.CheckLangCode((LangCode.English, "Close"), (LangCode.Korean, "닫기")),
                 () => {
-                    Main.Settings.PatchNote_2_0_beta_6a = true;
+                    Main.Settings.PatchNote_2_1_alpha_1 = true;
                     Close();
                 }
             );
@@ -35,7 +35,7 @@ namespace EditorHelper.Core.Alerts {
         }
 
         public override void Content() {
-            GUILayout.Label($"<color=#FFFFFF><size={MatchRes(65)}>EditorHelper 2.0 Beta 6a</size></color>", SettingTitle);
+            GUILayout.Label($"<color=#FFFFFF><size={MatchRes(65)}>EditorHelper 2.1.0.1</size></color>", SettingTitle);
             GUIEx.BeginIndent(20);
             GUILayout.Label($"<color=#FFFFFF><size={MatchRes(22)}>" + GUIEx.CheckLangCode((LangCode.English, PatchNoteEN), (LangCode.Korean, PatchNoteKR)) + "</size></color>", _updateList);
             GUIEx.EndIndent();

@@ -20,7 +20,7 @@ using PropertyInfo = System.Reflection.PropertyInfo;
 
 namespace EditorHelper {
 	public class Patch {
-		[TweakPatchId(nameof(scnEditor), "Update")]
+		[TweakPatch(nameof(scnEditor), "Update")]
 		internal static class CorrectRotationPatch {
 			public static Vector3 GetMousePositionWithAngle() {
 				return RotateScreenPatch.CurrentAngle * Input.mousePosition;
@@ -98,7 +98,7 @@ namespace EditorHelper {
 			}
 		}
 
-		[TweakPatchId(nameof(scnEditor), "CreateFloorWithCharOrAngle")]
+		[TweakPatch(nameof(scnEditor), "CreateFloorWithCharOrAngle")]
 		public static class CreateFloorPatch {
 			public static bool Prefix(scnEditor __instance, float angle, char chara, bool pulseFloorButtons,
 				bool fullSpin) {
@@ -107,7 +107,7 @@ namespace EditorHelper {
 			}
 		}
 
-		[TweakPatchId(nameof(PropertyControl_File), "ProcessFile")]
+		[TweakPatch(nameof(PropertyControl_File), "ProcessFile")]
 		public static class AllowMp3Patch {
 			public static bool Prefix(PropertyControl_File __instance, string? newFilename, FileType fileType) {
 				if (!string.IsNullOrEmpty(newFilename) && string.IsNullOrEmpty(__instance.levelPath) ||
@@ -159,21 +159,21 @@ namespace EditorHelper {
 		}
 
 		/*
-		[TweakPatchId(nameof(FloorMeshRenderer), "SetLength")]
+		[TweakPatch(nameof(FloorMeshRenderer), "SetLength")]
 		public static class LengthPatch {
 			public static void Postfix(FloorMeshRenderer __instance, float length) {
 				__instance.floorMesh._length *= (1f / 1.5f);
 			}
 		}
 		
-		[TweakPatchId(nameof(FloorMeshRenderer), "Awake")]
+		[TweakPatch(nameof(FloorMeshRenderer), "Awake")]
 		public static class LengthPatch2 {
 			public static void Postfix(FloorMeshRenderer __instance, float length) {
 				__instance.floorMesh._length *= (1f / 1.5f);
 			}
 		}
 		
-		[TweakPatchId(nameof(scrController), "startRadius", MethodType.Getter)]
+		[TweakPatch(nameof(scrController), "startRadius", MethodType.Getter)]
 		public static class RadiusPatch {
 			public static void Postfix(out float __result) {
 				if (!scrController.instance.isbigtiles) {
@@ -183,7 +183,7 @@ namespace EditorHelper {
 				__result = 1f;
 			}
 		}*/
-		[TweakPatchId(nameof(RDBaseDll), "printes")]
+		[TweakPatch(nameof(RDBaseDll), "printes")]
 		public static class LogPatch {
 			public static bool Prefix(object o) {
 				Debug.Log(o);
@@ -191,7 +191,7 @@ namespace EditorHelper {
 			}
 		}
 
-		[TweakPatchId(nameof(RDBaseDll), "printesw")]
+		[TweakPatch(nameof(RDBaseDll), "printesw")]
 		public static class LogWarningPatch {
 			public static bool Prefix(object o) {
 				Debug.LogWarning(o);

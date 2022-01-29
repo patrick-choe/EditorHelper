@@ -16,7 +16,7 @@ namespace EditorHelper.Tweaks.Miscellaneous {
         private static MiscellaneousSetting Setting =>
             TweakManager.Setting<MiscellaneousTweak, MiscellaneousSetting>()!;
 
-        [TweakPatchId(nameof(RDColorPickerPopup), "Hide")]
+        [TweakPatch(nameof(RDColorPickerPopup), "Hide")]
         public static class RemoveFFLastPatch {
             public static void Postfix(RDColorPickerPopup __instance) {
                 if (!Setting.RemoveFFOnRGBA) return;
@@ -28,7 +28,7 @@ namespace EditorHelper.Tweaks.Miscellaneous {
             }
         }
 
-        [TweakPatchId(nameof(scnEditor), "UpdateSelectedFloor")]
+        [TweakPatch(nameof(scnEditor), "UpdateSelectedFloor")]
         public static class ShowSelectedTile {
             public static readonly List<scrLetterPress> Texts = new();
 
@@ -64,7 +64,7 @@ namespace EditorHelper.Tweaks.Miscellaneous {
         }
 
 
-        [TweakPatchId(nameof(scnEditor), "Update")]
+        [TweakPatch(nameof(scnEditor), "Update")]
         public static class GraveKey15DegPatch {
             // ReSharper disable once InconsistentNaming
             public static void Postfix() {

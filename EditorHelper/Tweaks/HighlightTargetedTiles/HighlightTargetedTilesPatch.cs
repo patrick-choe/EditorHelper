@@ -11,7 +11,7 @@ using UnityModManagerNet;
 namespace EditorHelper.Tweaks.HighlightTargetedTiles {
     public abstract class HighlightTargetedTilesPatch {
 
-        [TweakPatchId(nameof(scnEditor), "DeselectFloors")]
+        [TweakPatch(nameof(scnEditor), "DeselectFloors")]
         public static class DeselectPatch {
             public static void Postfix() {
                 DOTween.Kill("EHselectedColorEventTween", false);
@@ -19,14 +19,14 @@ namespace EditorHelper.Tweaks.HighlightTargetedTiles {
             }
         }
         
-        [TweakPatchId(nameof(scnEditor), "SelectFloor")]
+        [TweakPatch(nameof(scnEditor), "SelectFloor")]
         public static class SelectPatch {
             public static void Prefix() {
                 DOTween.Kill("EHselectedColorEventTween", true);
             }
         }
 
-        [TweakPatchId(nameof(InspectorPanel), "ShowPanel")]
+        [TweakPatch(nameof(InspectorPanel), "ShowPanel")]
         public static class UpdateCurrentSelectedTiles {
             public static void Postfix(InspectorPanel __instance) {
                 DOTween.Kill("selectedColorTween", false);
@@ -34,7 +34,7 @@ namespace EditorHelper.Tweaks.HighlightTargetedTiles {
             }
         }
 
-        [TweakPatchId(nameof(PropertyControl_Tile), "Setup")]
+        [TweakPatch(nameof(PropertyControl_Tile), "Setup")]
         public static class UpdateOnEventUpdate {
             public static void Postfix(PropertyControl_Tile __instance) {
                 __instance.buttonFirstTile.onClick ??= new Button.ButtonClickedEvent();

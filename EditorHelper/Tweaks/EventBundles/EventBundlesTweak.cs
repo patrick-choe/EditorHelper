@@ -14,16 +14,28 @@ namespace EditorHelper.Tweaks.EventBundles {
     [TweakDescription(LangCode.Korean, "이벤트 번들 사용")]
     public class EventBundlesTweak : Tweak, IPatchClass<EventBundlesPatch> {
         public override void OnEnable() {
+            PatchRDString.Translations["editor.EditorHelperEventBundles"] = new Dictionary<LangCode, string> {
+                {LangCode.Korean, "<size=20>EditorHelper 이벤트 번들</size>"},
+                {LangCode.English, "<size=20>EditorHelper Event Bundles</size>"},
+            };
+
+            PatchRDString.Translations["editor.EditorHelperAssetPacks"] = new Dictionary<LangCode, string> {
+                {LangCode.Korean, "<size=20>EditorHelper 에셋 팩</size>"},
+                {LangCode.English, "<size=20>EditorHelper Asset Packs</size>"},
+            };
+            
             PatchTweak();
         }
 
         public override void OnDisable() {
             UnpatchTweak();
-            if (GCS.settingsInfo == null) return;
-            if (GCS.settingsInfo["MiscSettings"].propertiesInfo.ContainsKey("EH:useLegacyFlash"))
-                GCS.settingsInfo["MiscSettings"].propertiesInfo.Remove("EH:useLegacyFlash");
-            if (GCS.settingsInfo["MiscSettings"].propertiesInfo.ContainsKey("EH:useLegacyTiles"))
-                GCS.settingsInfo["MiscSettings"].propertiesInfo.Remove("EH:useLegacyTiles");
+            if (GCS.levelEventsInfo == null) return;
+            foreach (LevelEventTypeEx key in Enum.GetValues(typeof(LevelEventTypeEx))) {
+                GCS.levelEventsInfo.Remove(key.ToString());
+                if ((int) key >= 200) {
+                    GCS.settingsInfo.Remove(key.ToString());
+                }
+            }
         }
     }
 }

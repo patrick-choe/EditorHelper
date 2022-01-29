@@ -21,7 +21,7 @@ namespace EditorHelper.Tweaks.EventBundles {
 	public class EventBundlesPatch {
 		
 
-        [TweakPatchId(nameof(scnEditor), "Awake")]
+        [TweakPatch(nameof(scnEditor), "Awake")]
         public static class EventBundlesInit {
             public static void Prefix() {
 	            GCS.levelEventIcons[(LevelEventType) LevelEventTypeEx.EditorHelperEventBundles] = Assets.EditorHelperIcon;
@@ -63,7 +63,7 @@ namespace EditorHelper.Tweaks.EventBundles {
 			//LevelEventTypeEx.EditorHelperAssetPacks,
 		};
 
-		[TweakPatchId]
+		[TweakPatch]
 		internal static class ParseEnumEx {
 			public static MethodBase TargetMethod() => AccessTools.Method(typeof(RDUtils), "ParseEnum").MakeGenericMethod(typeof(LevelEventType));
 
@@ -86,7 +86,7 @@ namespace EditorHelper.Tweaks.EventBundles {
 			}
 		}
 
-		[TweakPatchId]
+		[TweakPatch]
 		internal static class ToStringPatch {
 			public static MethodBase TargetMethod() => AccessTools.Method(typeof(Enum), "ToString", new Type[] { });
 
@@ -98,7 +98,7 @@ namespace EditorHelper.Tweaks.EventBundles {
 			}
 		}
 
-		[TweakPatchId(nameof(EditorConstants), "IsSetting")]
+		[TweakPatch(nameof(EditorConstants), "IsSetting")]
 		internal static class InitPatch {
 			public static bool Prefix(LevelEventType type, out bool __result) {
 				__result = SettingTypes.Contains((LevelEventTypeEx) type);
@@ -106,7 +106,7 @@ namespace EditorHelper.Tweaks.EventBundles {
 			}
 		}
 
-		[TweakPatchId(nameof(InspectorPanel), "ShowPanel")]
+		[TweakPatch(nameof(InspectorPanel), "ShowPanel")]
 		public static class ShowPanelPatch {
 			public static bool Prefix(InspectorPanel __instance, LevelEventType eventType, int eventIndex) {
 				__instance.set("showingPanel", true);
@@ -195,7 +195,7 @@ namespace EditorHelper.Tweaks.EventBundles {
 			}
 		}
 
-		[TweakPatchId(nameof(InspectorTab), "SetSelected")]
+		[TweakPatch(nameof(InspectorTab), "SetSelected")]
 		public static class SetSelectedPatch {
 			public static bool Prefix(InspectorTab __instance, bool selected) {
 				if (!selected) {
@@ -238,7 +238,7 @@ namespace EditorHelper.Tweaks.EventBundles {
 			}
 		}
 
-		[TweakPatchId(nameof(PropertiesPanel), "Init")]
+		[TweakPatch(nameof(PropertiesPanel), "Init")]
 		public static class PropertyPatch {
 			public static bool Prefix(PropertiesPanel __instance, InspectorPanel panel, LevelEventInfo levelEventInfo) {
 				__instance.inspectorPanel = panel;

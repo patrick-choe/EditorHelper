@@ -2,33 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using EditorHelper.Utils;
 using HarmonyLib;
 
 namespace EditorHelper.Core.Patch {
 #nullable disable
-
 	/// <summary>
 	/// Replaces <see cref="HarmonyPatch"/> and prevents mod crashing from having no class specified in the game's code.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Delegate,
 		AllowMultiple = false)]
 	public class TweakPatchAttribute : HarmonyPatch {
-		private static Dictionary<string, bool> _enables = new Dictionary<string, bool>();
-		private class TweakPatchInfo {
-			public string PatchId;
-		}
+		private class TweakPatchInfo { }
 
 		private readonly TweakPatchInfo _tweakinfo = new TweakPatchInfo();
 		
-		/// <summary>
-		/// Id of patch, it should <i>not</i> be identical to other patches' id.
-		/// </summary>
-		public string PatchId {
-			get => _tweakinfo.PatchId ??= GetHashCode().ToString();
-			set => _tweakinfo.PatchId = value;
-		}
-
 		/// <summary>
 		/// Minimum ADOFAI's version of this patch working.
 		/// </summary>
@@ -43,27 +30,13 @@ namespace EditorHelper.Core.Patch {
 		/// Assembly to find target method from.
 		/// </summary>
 		public Assembly Assembly { get; init;  }
-
-		/// <summary>
-		/// Whether the patch is patched (enabled).
-		/// </summary>
-		public bool IsEnabled {
-			get {
-				if (!_enables.ContainsKey(PatchId)) _enables[PatchId] = false;
-				return _enables[PatchId];
-			}
-			set => _enables[PatchId] = value;
-		}
-
 #pragma warning disable 1591
-		public TweakPatchAttribute(string patchId, int minVersion = -1, int maxVersion = -1) {
-			PatchId = patchId;
+		public TweakPatchAttribute(int minVersion = -1, int maxVersion = -1) {
 			MinVersion = minVersion;
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, string className, int minVersion = -1, int maxVersion = -1) {
-			PatchId = patchId;
+		public TweakPatchAttribute(string className, int minVersion = -1, int maxVersion = -1) {
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			var declaringType = Assembly.GetType(className) ??
 			                    Assembly.GetTypes().FirstOrDefault(t => t.Name == className);
@@ -72,9 +45,8 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, string className, Type[] argumentTypes, int minVersion = -1,
+		public TweakPatchAttribute(string className, Type[] argumentTypes, int minVersion = -1,
 			int maxVersion = -1) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			var declaringType = Assembly.GetType(className) ??
 			                    Assembly.GetTypes().FirstOrDefault(t => t.Name == className);
@@ -84,9 +56,8 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, string className, string methodName, int minVersion = -1,
+		public TweakPatchAttribute(string className, string methodName, int minVersion = -1,
 			int maxVersion = -1) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			var declaringType = Assembly.GetType(className) ??
 			                    Assembly.GetTypes().FirstOrDefault(t => t.Name == className);
@@ -96,9 +67,8 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, string className, string methodName, int minVersion, int maxVersion,
+		public TweakPatchAttribute(string className, string methodName, int minVersion, int maxVersion,
 			params Type[] argumentTypes) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			var declaringType = Assembly.GetType(className) ??
 			                    Assembly.GetTypes().FirstOrDefault(t => t.Name == className);
@@ -109,8 +79,7 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, string className, string methodName, params Type[] argumentTypes) {
-			PatchId = patchId;
+		public TweakPatchAttribute(string className, string methodName, params Type[] argumentTypes) {
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			var declaringType = Assembly.GetType(className) ??
 			                    Assembly.GetTypes().FirstOrDefault(t => t.Name == className);
@@ -121,9 +90,8 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = -1;
 		}
 
-		public TweakPatchAttribute(string patchId, string className, string methodName, Type[] argumentTypes,
+		public TweakPatchAttribute(string className, string methodName, Type[] argumentTypes,
 			ArgumentType[] argumentVariations, int minVersion = -1, int maxVersion = -1) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			var declaringType = Assembly.GetType(className) ??
 			                    Assembly.GetTypes().FirstOrDefault(t => t.Name == className);
@@ -134,9 +102,8 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, string className, MethodType methodType, int minVersion = -1,
+		public TweakPatchAttribute(string className, MethodType methodType, int minVersion = -1,
 			int maxVersion = -1) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			var declaringType = Assembly.GetType(className) ??
 			                    Assembly.GetTypes().FirstOrDefault(t => t.Name == className);
@@ -146,9 +113,8 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, string className, MethodType methodType, int minVersion,
+		public TweakPatchAttribute(string className, MethodType methodType, int minVersion,
 			int maxVersion, params Type[] argumentTypes) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			var declaringType = Assembly.GetType(className) ??
 			                    Assembly.GetTypes().FirstOrDefault(t => t.Name == className);
@@ -159,9 +125,8 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, string className, MethodType methodType,
+		public TweakPatchAttribute(string className, MethodType methodType,
 			params Type[] argumentTypes) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			var declaringType = Assembly.GetType(className) ??
 			                    Assembly.GetTypes().FirstOrDefault(t => t.Name == className);
@@ -172,9 +137,8 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = -1;
 		}
 
-		public TweakPatchAttribute(string patchId, string className, MethodType methodType, Type[] argumentTypes,
+		public TweakPatchAttribute(string className, MethodType methodType, Type[] argumentTypes,
 			ArgumentType[] argumentVariations, int minVersion = -1, int maxVersion = -1) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			var declaringType = Assembly.GetType(className) ??
 			                    Assembly.GetTypes().FirstOrDefault(t => t.Name == className);
@@ -185,10 +149,9 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, string className, string methodName, MethodType methodType,
+		public TweakPatchAttribute(string className, string methodName, MethodType methodType,
 			int minVersion = -1,
 			int maxVersion = -1) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			var declaringType = Assembly.GetType(className) ??
 			                    Assembly.GetTypes().FirstOrDefault(t => t.Name == className);
@@ -199,10 +162,9 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, string methodName, Type[] argumentTypes,
+		public TweakPatchAttribute(string methodName, Type[] argumentTypes,
 			ArgumentType[] argumentVariations,
 			int minVersion = -1, int maxVersion = -1) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			this.info.methodName = methodName;
 			this.ParseSpecialArguments(argumentTypes, argumentVariations);
@@ -210,17 +172,15 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, MethodType methodType, int minVersion = -1, int maxVersion = -1) {
-			PatchId = patchId;
+		public TweakPatchAttribute(MethodType methodType, int minVersion = -1, int maxVersion = -1) {
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			this.info.methodType = new MethodType?(methodType);
 			MinVersion = minVersion;
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, MethodType methodType, int minVersion, int maxVersion,
+		public TweakPatchAttribute(MethodType methodType, int minVersion, int maxVersion,
 			params Type[] argumentTypes) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			this.info.methodType = new MethodType?(methodType);
 			this.info.argumentTypes = argumentTypes;
@@ -228,8 +188,7 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, MethodType methodType, params Type[] argumentTypes) {
-			PatchId = patchId;
+		public TweakPatchAttribute(MethodType methodType, params Type[] argumentTypes) {
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			this.info.methodType = new MethodType?(methodType);
 			this.info.argumentTypes = argumentTypes;
@@ -237,10 +196,9 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = -1;
 		}
 
-		public TweakPatchAttribute(string patchId, MethodType methodType, Type[] argumentTypes,
+		public TweakPatchAttribute(MethodType methodType, Type[] argumentTypes,
 			ArgumentType[] argumentVariations,
 			int minVersion = -1, int maxVersion = -1) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			this.info.methodType = new MethodType?(methodType);
 			this.ParseSpecialArguments(argumentTypes, argumentVariations);
@@ -248,17 +206,15 @@ namespace EditorHelper.Core.Patch {
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, Type[] argumentTypes, int minVersion = -1, int maxVersion = -1) {
-			PatchId = patchId;
+		public TweakPatchAttribute(Type[] argumentTypes, int minVersion = -1, int maxVersion = -1) {
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			this.info.argumentTypes = argumentTypes;
 			MinVersion = minVersion;
 			MaxVersion = maxVersion;
 		}
 
-		public TweakPatchAttribute(string patchId, Type[] argumentTypes, ArgumentType[] argumentVariations,
+		public TweakPatchAttribute(Type[] argumentTypes, ArgumentType[] argumentVariations,
 			int minVersion = -1, int maxVersion = -1) {
-			PatchId = patchId;
 			Assembly = Assembly.GetAssembly(typeof(ADOBase));
 			this.ParseSpecialArguments(argumentTypes, argumentVariations);
 			MinVersion = minVersion;

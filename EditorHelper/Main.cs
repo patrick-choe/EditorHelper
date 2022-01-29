@@ -38,9 +38,9 @@ namespace EditorHelper {
         private const int NotBigger = 2;
         private const int Bigger = 3;
         private const int Less = 4;
-        public static int Target = 78;
+        public static int Target = 80;
         
-        public static readonly int[] CompletelyIncompatible = {76, 75, 74, 73, 72, 71, 70, 69, 68};
+        public static readonly int[] CompletelyIncompatible = {79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68};
         
         private static bool Load(UnityModManager.ModEntry modEntry) { 
             var editorHelperDir = modEntry.Path;
@@ -121,7 +121,7 @@ namespace EditorHelper {
             }
             
             if (!Unusable) {
-                if (!Settings.PatchNote_2_0_beta_6a) {
+                if (!Settings.PatchNote_2_1_alpha_1) {
                     Alert.Show<PatchNote>();
                 }
             }
@@ -141,13 +141,13 @@ namespace EditorHelper {
                 foreach (var tweak in TweakManager.RegisteredTweaks) {
                     var instance = TweakManager.Instance(tweak);
                     if (instance == null) continue;
-                    if (instance.Enabled) instance.OnDisable();
+                    if (instance.Enabled) instance.OnEnable();
                 }
             } else {
                 foreach (var tweak in TweakManager.RegisteredTweaks) {
                     var instance = TweakManager.Instance(tweak);
                     if (instance == null) continue;
-                    if (instance.Enabled) instance.OnEnable();
+                    if (instance.Enabled) instance.OnDisable();
                 }
             }
             return true;

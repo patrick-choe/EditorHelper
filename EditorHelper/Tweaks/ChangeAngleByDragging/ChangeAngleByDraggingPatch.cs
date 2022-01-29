@@ -14,7 +14,7 @@ namespace EditorHelper.Tweaks.ChangeAngleByDragging {
     public abstract class ChangeAngleByDraggingPatch {
         public static ChangeAngleByDraggingSetting Setting => TweakManager.Setting<ChangeAngleByDraggingTweak, ChangeAngleByDraggingSetting>()!;
         
-        [TweakPatchId(nameof(scnEditor), "UpdateSelectedFloor")]
+        [TweakPatch(nameof(scnEditor), "UpdateSelectedFloor")]
         public static class UpdateFloorAnglePatch {
             public static scrLetterPress? LetterPress = null;
             public static bool Pressing = false;
@@ -31,7 +31,8 @@ namespace EditorHelper.Tweaks.ChangeAngleByDragging {
 
             public static void Postfix() {
                 if (!scnEditor.instance.SelectionIsSingle()) return;
-                if (!CustomLevel.instance.levelData.isOldLevel && Setting.ChangeTileAngle.Check && Input.GetMouseButton(0)) {
+                //TODO: Rework this
+                if (!CustomLevel.instance.levelData.isOldLevel &&/* Setting.ChangeTileAngle.Check && */Input.GetMouseButton(0)) {
                     var objects = scnEditor.instance.invoke<GameObject[]>("ObjectsAtMouse")();
                     if (scnEditor.instance.SelectionIsSingle() && (Pressing || objects.Any(o => o.GetComponent<scrFloor>() == scnEditor.instance.selectedFloors[0]))) {
                         var obj = scnEditor.instance.selectedFloors[0];
@@ -83,7 +84,5 @@ namespace EditorHelper.Tweaks.ChangeAngleByDragging {
                 }
             }
         }
-
-
     }
 }
